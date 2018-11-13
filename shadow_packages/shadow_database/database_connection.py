@@ -1,7 +1,7 @@
 import json
 import pyodbc
 # import pkgutil
-from database import database_config
+from shadow_database import database_config
 
 # Create a function called "chunks" with two arguments, l and n:
 def chunks(l, n):
@@ -38,17 +38,19 @@ class DatabaseConnection(object):
 	def sanitize(self,s):
 		return str(s).replace("'","''")
 
-	def insert(self,table,values):
-		
+	def insert(self,table,values,columns=[],print_only=True):
+		column_query = "(%s)" % ','.join(columns) if columns else ''
 		for query_values_list in chunks(values,999):
 			insert_list = []
 			for value in query_values_list:
 				query_row = '(%s)' % ','.join('\'%s\'' % self.sanitize(cell) for cell in value)
 				insert_list.append(query_row)
-			query = """INSERT INTO %s VALUES
+			query = """INSERT INTO %s %s VALUES
 			%s
-			""" % (table,'\n,'.join(insert_list))
-			# print(query)
-			self.execute(query)
+			""" % (table,column_query,'\n,'.join(insert_list))
+			if print_only:
+				print(query)
+			else:
+				self.execute(query)
 
 			
