@@ -38,7 +38,7 @@ class DatabaseConnection(object):
 	def sanitize(self,s):
 		return str(s).replace("'","''")
 
-	def insert(self,table,values,columns=[],print_only=True):
+	def insert(self,table,values,columns=[],print_only=False):
 		column_query = "(%s)" % ','.join(columns) if columns else ''
 		for query_values_list in chunks(values,999):
 			insert_list = []

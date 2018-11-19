@@ -7,5 +7,5 @@ setup(name='shadow_packages',
       author='Victor Meireles',
       author_email='victor@marciamello.com.br',
       license='MIT',
-      packages=['shadow_database','shadow_helpers'],
+      packages=['shadow_database','shadow_helpers','shadow_google_spreadsheet'],
       zip_safe=False)

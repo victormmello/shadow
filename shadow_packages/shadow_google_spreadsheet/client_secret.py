@@ -1,0 +1,12 @@
+client_secret_data = {
+  "type": "service_account",
+  "project_id": "marcia-mello",
+  "private_key_id": "098bc4cf108a65b31545c3fa94edb00c5ceb368c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCUxi6/DN+VIUry\nvf7AXi46WqDjiFNkz8Tp9maGd2wqCabvaUH19kUGFkTg4vOdRzJObzsYtZReRLnj\naViKOU7YgL5kN2qV/YYeLVyNGtbrvzlO2cz7jZ9ppl+7UKwTMg6d/dlOr/X32OVF\nwxv9rYENUmFPXOevUHR2+70UNHZ7R44Wtm+d6n17CcH98fbFN9ZKBPGUYQdtcu7k\n7EfqVQUt6MnB7XnQJjNFKN/+PMV3Dm+mQTPi+QbzlGwFp4FG7JzWz3/tKZQvbWXE\n3veavb7PAVjc21wLFUxwUSabWmScJW2BxKfrsK6x7tjiN9hq0gCYECm54Nk1K+TH\ncv4e1DQRAgMBAAECggEAHAXie0EZAjWlsOiByklTKtG0WXdtweDy5eDwOebXvGla\nBOGON56+LKHYMoX9PkRRYP3Jo2NcgY8vdnr63vphdB13/1eC36LD9v4zXy7NidVY\nnZYf6sgn3VYl1Roid3En2LGek5hIW/mCYiwYoyVh2BkK1FCbIWYlsd3EJUCmipzL\nx8+XM7Q/ElnlFwK/PMurjlp7xxUqbTw9Vu84Tsj7yJ7wBJd1i49s+UUlHrdg0HtK\nCyPlM9zPzm8GxfP65zI6zzxDDQDfhnFHHaoJYnGy5VhvllIe2ATh2KxpMMaQTqQ2\nSRsO4CY7NrolrzupxhLx5NCQ4xx7Gq7lsO9wI3pL+QKBgQDH2XjV167IgVh8DLjV\nS/MI+LtqfNm/UIFWraIYVWPZT4f0zr2r3ZH0/eYpzPQbVajm1iTzr47eLwEYsUyg\nlFRCBjPMeVqZ+kK4UXmjmirRDewjP5TjGC2q+pp7pDueYS70nJLkk3tYXIxzfiI+\nS0TUQjOMaWdtJhvcG7wrKJwkTQKBgQC+kwalD2CNd60obyB32LT0wrvH6DdGPQL2\nCpZ8embbpEFmilNbXq0oxN46Y7/wPPSLAzsSGE9SH+tdQ3AbJNvQtgVIUIDwlCaX\nSHcMN9bEFzi22R7r9XNtn8PMPEv95a1smfh5i030wHfCDPzvH5FSSneTK3hZgVwn\nvV6vpZIA1QKBgQCJDxqR/dN+60ZV/RueHPJWys8t3uYvEPVDDt3GNnm+BY9GU6s8\n/T4meSKqtEcNoBewCFlbTqF6u13TI3VcA54tkbdgmjGKvFmZszbq/sYyjYvPOMHR\nZTmcszXTafUBT8E2PVN4s7S6Cu7AHlc5xcE0mRplR7yI3MPqlpLcPoOnWQKBgAld\nB/KMMt5Ahw15iErbJujvuHI2AqE81ixokMRE71DTXTNAkJ/oovFh2tlblU6kcA90\ndS6KaztJvjKy4Ysz4Gj8yH2pFuy7GrpMIS1EgRTZXzv8pvxI7wbv1pruS32KD19K\noV63bXkdC8VJBhRppKY6am2csSkUpgZ9020l4WqRAoGBAL4LR9setNNCbI+itIJg\nhriKL3kfZ8Ytha4BXVmIsI1Jlw4s/k2b4Iol25slxVDncbGmy4LlsWDPEFXrsFPW\nUmo/Sib2eENAGBVGemnMdcbHuYOm3cvdLQ3pPbNE/D0sKNDdfRcn/njGcTuYff+8\n7H27flZ4NTlF/Rf8lkJXhISC\n-----END PRIVATE KEY-----\n",
+  "client_email": "spreadsheets@marcia-mello.iam.gserviceaccount.com",
+  "client_id": "113321101032304499391",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/spreadsheets%40marcia-mello.iam.gserviceaccount.com"
+}

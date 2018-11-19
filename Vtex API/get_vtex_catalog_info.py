@@ -31,7 +31,8 @@ api_connection_config = json.load(api_connection_file)
 
 url = "https://marciamello.vtexcommercestable.com.br/api/catalog_system/pub/products/search"
 params = {
-	"O":"OrderByNameASC"
+	# "O":"OrderByNameASC"
+	"O":"OrderByReleaseDateDESC"
 }
 
 product_categories = []
@@ -91,7 +92,8 @@ with open('catalog_output.csv', 'wb') as f:
 							item["itemId"], #"item_id"
 							item["ean"], #"ean"
 							item["sellers"][0]["commertialOffer"]["AvailableQuantity"], #"stock_quantity"
-							item["images"][0]["imageUrl"] #"image_url",
+							item["images"][0]["imageUrl"], #"image_url",
+							product["productId"]
 						])
 
 						# if item["ean"] == '35020650485PP':
