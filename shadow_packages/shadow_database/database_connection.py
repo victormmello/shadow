@@ -27,9 +27,29 @@ class DatabaseConnection(object):
 		self.cnxn.setencoding(encoding='latin1')
 		self.cursor = self.cnxn.cursor()
 
-	def select(self,query):
+	def select(self, query, strip=False, dict_format=False):
 		self.cursor.execute(query)
-		return self.cursor.fetchall()
+		results = self.cursor.fetchall()
+
+		if not dict_format:
+			return results
+		else:
+			columns = [column[0] for column in self.cursor.description]
+
+			result_dicts = []
+			for result in results:
+				result_dict = {}
+
+				for i, value in enumerate(result):
+					if strip and isinstance(value, str):
+						value = value.strip()
+
+					result_dict[columns[i]] = value
+
+				result_dicts.append(result_dict)
+
+			return result_dicts
+
 	
 	def execute(self,query):
 		self.cursor.execute(query)

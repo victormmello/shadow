@@ -1,4 +1,3 @@
-from database.database_connection import DatabaseConnection
 import requests, json, dateutil.relativedelta
 from datetime import datetime, timedelta
 
@@ -35,11 +34,19 @@ ORDER_STATUS = {
 	'canceled': 'Cancelado',
 }
 
-api_connection_file = open("api_connection.json", 'rb')
-api_connection_config = json.load(api_connection_file)
+# api_connection_file = open("api_connection.json", 'rb')
+# api_connection_config = json.load(api_connection_file)
 
+api_connection_config = {
+	"Content-Type": "application/json",
+	"X-VTEX-API-AppKey": "vtexappkey-marciamello-XNZFUX",
+	"X-VTEX-API-AppToken": "HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ"
+}
 end_date = datetime.now()
-start_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day, hour=2, minute=0, second=0) - timedelta(days=31)
+start_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day, hour=2, minute=0, second=0) - timedelta(days=1)
+
+print('start_date: %s' % start_date)
+print('end_date: %s' % end_date)
 
 formatted_end_date = (end_date + timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
 formatted_start_date = start_date.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
@@ -56,6 +63,7 @@ params = {
 # with open('order_output.csv', 'wb') as f:
 order_items = []
 total_items = 1
+skus_to_reduce_bypass = []
 
 c=0
 while (c*15) < total_items:
@@ -103,11 +111,25 @@ while (c*15) < total_items:
 
 			order_items.append(order_item)
 
+			skus_to_reduce_bypass.append({
+				'sku_id': int(item['id']),
+				'ordered_quantity': item['quantity'],
+				'status': ORDER_STATUS[order_json_response['status']],
+			})
+
 	total_items = list_json_response['stats']['stats']['totalValue']['Count']
 
+from shadow_database import DatabaseConnection
 
-from database.database_connection import DatabaseConnection
+print('Connecting to database...',end='')
 dc = DatabaseConnection()
+print('Done!')
+
+print('Inserting into tables...')
+
+print('	vtex_order_items')
+dc.execute('TRUNCATE TABLE vtex_order_items;')
+dc.insert('vtex_order_items', order_items, print_only=False)
 
 skus_to_reduce = dc.select("""
 	SELECT 
@@ -118,23 +140,29 @@ skus_to_reduce = dc.select("""
 	where status not in ('Faturado', 'Cancelado')
 	order by order_sequence
 	;
-""", trim=True)
+""", strip=True, dict_format=True)
 
+skus_to_reduce = skus_to_reduce_bypass
 for sku in skus_to_reduce:
 	get_stock_url = "http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s?an=marciamello" % sku['sku_id']
 	response = requests.request("GET", get_stock_url, headers=api_connection_config)
 
 	stock_info = json.loads(response.text)
+	print('%s: %s' % (sku['sku_id'], stock_info['balance'][0]['totalQuantity']))
 
 	available_quantity = stock_info['balance'][0]['totalQuantity']
 	# stock_info['balance'][0]['reservedQuantity']
 
 	true_quantity = available_quantity - sku['ordered_quantity']
+	if true_quantity >= 0:
+		set_stock_url = 'http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s/warehouses/1_1?an=marciamello' % sku['sku_id']
+		# response = requests.request("PUT", set_stock_url, headers=api_connection_config, data='{"quantity": 4}')
 
-	set_stock_url = 'http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s/warehouses/1_1?an=marciamello' % sku['sku_id']
-	response = requests.request("PUT", set_stock_url, headers=api_connection_config, data='{"quantity": 4}')
-
-	if response.text != 'true':
-		print('ERROR: %s' % response.text)
+		# if response.text != 'true':
+		# 	print('ERROR: %s' % response.text)
+		# else:
+		# 	print('OK: %s' % sku['sku_id'])
 	else:
-		print('OK: %s' % sku['sku_id'])
+		print('Sem estoque: %s' % sku['sku_id'])
+
+print(str(datetime.now()))
