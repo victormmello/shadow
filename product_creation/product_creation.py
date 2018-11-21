@@ -2,6 +2,7 @@ from shadow_database import DatabaseConnection
 import shadow_google_spreadsheet
 import shadow_helpers
 from datetime import datetime
+from unidecode import unidecode
 
 WORKBOOK_NAME = 'Product Creation'
 WORKSHEET_NAME = 'Cadastro'
@@ -106,6 +107,7 @@ if product_dict:
 	sequence_code_update_query_list = []
 	product_insert_query_values_list = []
 	product_price_insert_query_values_list = []
+	product_price_update_query_values_list = []
 	product_color_insert_query_values_list = []
 	product_size_insert_query_values_list = []
 	for group in product_dict:
@@ -121,7 +123,7 @@ if product_dict:
 				product['produto'] = '.'.join((subgroup_dict['group_code'],subgroup_dict['subgroup_code'],sequence_code))
 				product_insert_query_values_list.append([
 					product['produto'],
-					product['descricao'],
+					unidecode(product['descricao']),
 					product['grupo_produto'],
 					product['subgrupo_produto'],
 					1,
@@ -161,12 +163,15 @@ if product_dict:
 					0,
 					0,
 					'04',
-					0
+					0,
+					product['descricao']
 				])
 
 				product['promocao_desconto'] = 100 * (1-float(product['preco_por'])/float(product['preco_original']))
 				product_price_insert_query_values_list.append([product['produto'],'02',product['custo'],current_timestamp,product['custo'],0,0,0,0])
-				product_price_insert_query_values_list.append([product['produto'],'99',product['preco_original'],current_timestamp,product['preco_original'],0,0,0,0])
+				product_price_insert_query_values_list.append([product['produto'],'99',product['preco_original'],current_timestamp,product['preco_por'],0,0,0,product['promocao_desconto']])
+				if product['promocao_desconto'] > 0:
+					product_price_update_query_values_list.append("UPDATE produtos_precos SET preco1 = %s, preco_liquido1 = %s, promocao_desconto = 0 WHERE codigo_tab_preco = '97' and produto = '%s';" % (product['preco_por'],product['preco_por'],product['produto']))
 				# product_price_insert_query_values_list.append([product['produto'],'01',product['preco_original'],current_timestamp,product['preco_por'],0,0,0,product['promocao_desconto']])
 				# product_price_insert_query_values_list.append([product['produto'],'10',product['preco_original'],current_timestamp,product['preco_por'],0,0,0,product['promocao_desconto']])
 				# product_price_insert_query_values_list.append([product['produto'],'11',product['preco_original'],current_timestamp,product['preco_por'],0,0,0,product['promocao_desconto']])
@@ -209,21 +214,24 @@ if product_dict:
 
 			sequence_code_update_query_list.append("UPDATE produtos_subgrupo SET codigo_sequencial = '%s' WHERE inativo = 0 and grupo_produto = '%s' and subgrupo_produto = '%s';" % (sequence_code,group,subgroup))
 
-	product_columns = ['PRODUTO','DESC_PRODUTO','GRUPO_PRODUTO','SUBGRUPO_PRODUTO','FATOR_OPERACOES','CLASSIF_FISCAL','TIPO_PRODUTO','COLECAO','GRADE','DESC_PROD_NF','LINHA','GRIFFE','UNIDADE','REVENDA','REFER_FABRICANTE','FABRICANTE','PONTEIRO_PRECO_TAM','TRIBUT_ICMS','TRIBUT_ORIGEM','DATA_REPOSICAO','TAMANHO_BASE','ENVIA_LOJA_VAREJO','TAXA_JUROS_DEFLACIONAR','DATA_CADASTRAMENTO','STATUS_PRODUTO','TIPO_STATUS_PRODUTO','EMPRESA','CONTA_CONTABIL','INDICADOR_CFOP','QUALIDADE','CONTA_CONTABIL_COMPRA','CONTA_CONTABIL_VENDA','CONTA_CONTABIL_DEV_COMPRA','CONTA_CONTABIL_DEV_VENDA','COD_CATEGORIA','COD_SUBCATEGORIA','PERC_COMISSAO','ACEITA_ENCOMENDA','DIAS_GARANTIA_LOJA','DIAS_GARANTIA_FABRICANTE','TIPO_ITEM_SPED','POSSUI_GTIN']
+	product_columns = ['PRODUTO','DESC_PRODUTO','GRUPO_PRODUTO','SUBGRUPO_PRODUTO','FATOR_OPERACOES','CLASSIF_FISCAL','TIPO_PRODUTO','COLECAO','GRADE','DESC_PROD_NF','LINHA','GRIFFE','UNIDADE','REVENDA','REFER_FABRICANTE','FABRICANTE','PONTEIRO_PRECO_TAM','TRIBUT_ICMS','TRIBUT_ORIGEM','DATA_REPOSICAO','TAMANHO_BASE','ENVIA_LOJA_VAREJO','TAXA_JUROS_DEFLACIONAR','DATA_CADASTRAMENTO','STATUS_PRODUTO','TIPO_STATUS_PRODUTO','EMPRESA','CONTA_CONTABIL','INDICADOR_CFOP','QUALIDADE','CONTA_CONTABIL_COMPRA','CONTA_CONTABIL_VENDA','CONTA_CONTABIL_DEV_COMPRA','CONTA_CONTABIL_DEV_VENDA','COD_CATEGORIA','COD_SUBCATEGORIA','PERC_COMISSAO','ACEITA_ENCOMENDA','DIAS_GARANTIA_LOJA','DIAS_GARANTIA_FABRICANTE','TIPO_ITEM_SPED','POSSUI_GTIN','TITULO_B2C']
 	# dc.insert('PRODUTOS',product_insert_query_values_list,columns=product_columns,print_only=True)
-	dc.insert('PRODUTOS',product_insert_query_values_list,columns=product_columns)
+	# dc.insert('PRODUTOS',product_insert_query_values_list,columns=product_columns)
 	product_color_columns = ['PRODUTO','COR_PRODUTO','DESC_COR_PRODUTO','INICIO_VENDAS','FIM_VENDAS','COR_SORTIDA','STATUS_VENDA_ATUAL','COR','CUSTO_REPOSICAO1','PRECO_REPOSICAO_1','PRECO_A_VISTA_REPOSICAO_1','CLASSIF_FISCAL','TRIBUT_ORIGEM']
 	# dc.insert('PRODUTO_CORES',product_color_insert_query_values_list,columns=product_color_columns,print_only=True)
-	dc.insert('PRODUTO_CORES',product_color_insert_query_values_list,columns=product_color_columns)
+	# dc.insert('PRODUTO_CORES',product_color_insert_query_values_list,columns=product_color_columns)
 	product_price_columns = ['PRODUTO','CODIGO_TAB_PRECO','PRECO1','ULT_ATUALIZACAO','PRECO_LIQUIDO1','PRECO_LIQUIDO2','PRECO_LIQUIDO3','PRECO_LIQUIDO4','PROMOCAO_DESCONTO']
-	# dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns,print_only=True)
-	dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns)
+	dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns,print_only=True)
+	# dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns)
 	product_size_columns = ['PRODUTO','COR_PRODUTO','CODIGO_BARRA','GRADE','TAMANHO','CODIGO_BARRA_PADRAO','TIPO_COD_BAR']
 	# dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns,print_only=True)
-	dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns)
+	# dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns)
 	sequence_code_update_query = '\n'.join(sequence_code_update_query_list)
 	# print(sequence_code_update_query)
-	dc.execute(sequence_code_update_query)
+	# dc.execute(sequence_code_update_query)
+	product_price_update_query = '\n'.join(product_price_update_query_values_list)
+	print(product_price_update_query)
+	# dc.execute(product_price_update_query)
 
 	for group in product_dict:
 		for subgroup in product_dict[group]:
