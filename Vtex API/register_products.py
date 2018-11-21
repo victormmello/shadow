@@ -17,7 +17,7 @@ params = {
 
 auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
 
-path = 'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\upar5'
+path = 'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\upar6'
 filters = set()
 
 photo_count_dict = {}
@@ -56,6 +56,7 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 		except Exception as e:
 			if i == retry-1:
 				print('desistindo')
+				import pdb; pdb.set_trace()
 
 				return None
 
@@ -114,8 +115,8 @@ def f(product_info):
 
 	product_id = soup.find('a:ProductId').text
 
-	if sku_isactive == 'true':
-		return
+	# if sku_isactive == 'true':
+	# 	return
 
 	# soap_imageremove = """
 	# 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
@@ -357,38 +358,37 @@ if __name__ == '__main__':
 
 	filter_str = ' OR '.join(filters)
 
+	# filter_str = "ps.CODIGO_BARRA='28060015491G'"
+
+	filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
+
+	filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10') OR (p.produto='20.03.0030' AND pc.cor_produto='105') OR (p.produto='22.02.0002' AND pc.cor_produto='10') OR (p.produto='22.03.0216' AND pc.cor_produto='02') OR (p.produto='22.03.0216' AND pc.cor_produto='176') OR (p.produto='22.03.0217' AND pc.cor_produto='20') OR (p.produto='22.03.0217' AND pc.cor_produto='32') OR (p.produto='22.04.0150' AND pc.cor_produto='122') OR (p.produto='22.12.0361' AND pc.cor_produto='176') OR (p.produto='23.06.0085' AND pc.cor_produto='221') OR (p.produto='34.01.0079' AND pc.cor_produto='218') OR (p.produto='35.04.0035' AND pc.cor_produto='01')) "
+
+
 	query = """
 		SELECT 
-			-- count(*), count(distinct p.produto + pc.COR_PRODUTO), sum(e.estoque_disponivel)
-			-- , p.DATA_REPOSICAO 
 			p.produto as prod_code,
 			ps.grade as size, 
 			ps.COR_PRODUTO as cod_color, 
 			pc.DESC_COR_PRODUTO as desc_color, 
 			color.vtex_color,
 			ps.CODIGO_BARRA as ean,
-			'2000000' as brand_id,
+			case 
+				when p.griffe = 'NAKD' then '2000001' 
+				else '2000000' 
+			end as brand_id,
 			COALESCE(cat1.vtex_category_id, cat2.vtex_category_id) as vtex_category_id,
 			COALESCE(cat1.vtex_department_id, cat2.vtex_department_id) as vtex_department_id
-			-- p.DATA_REPOSICAO
-		from dbo.PRODUTOS_BARRA ps
-		inner join dbo.PRODUTOS p on p.produto = ps.produto
-		inner join dbo.PRODUTO_CORES pc on pc.produto = p.produto and ps.COR_PRODUTO = pc.COR_PRODUTO
+		from PRODUTOS_BARRA ps
+		inner join PRODUTOS p on p.produto = ps.produto
+		inner join PRODUTO_CORES pc on pc.produto = p.produto and ps.COR_PRODUTO = pc.COR_PRODUTO
 		left join w_estoque_disponivel_sku e on e.codigo_barra = ps.CODIGO_BARRA and e.filial = 'e-commerce'
-		left join dbo.bi_vtex_product_items v_item on v_item.ean = ps.codigo_barra
+		left join bi_vtex_product_items v_item on v_item.ean = ps.codigo_barra
 		left join bi_vtex_categorizacao_categoria cat1 on cat1.grupo_produto = p.GRUPO_PRODUTO and cat1.subgrupo_produto = p.SUBGRUPO_PRODUTO
 		left join bi_vtex_categorizacao_categoria cat2 on cat2.grupo_produto = p.GRUPO_PRODUTO and cat2.subgrupo_produto is null
 		left join bi_vtex_categorizacao_cor color on color.linx_color = pc.DESC_COR_PRODUTO
 		where 1=1
-			-- and pc.COR_PRODUTO not in ('%%')
-			-- and p.DATA_REPOSICAO > '2018-01-01'
-			-- and v_item.image_url is null
-			-- p.produto = '35.01.0608' and
-			-- and pc.COR_PRODUTO in ('256')
-			-- and e.estoque_disponivel > 0
-			-- and p.produto = '22.12.0620'
 			and (%s)
-			-- and ps.codigo_barra > '3501059604P'
 		order by ps.CODIGO_BARRA
 		;
 	""" % filter_str
@@ -396,11 +396,11 @@ if __name__ == '__main__':
 	products_to_register = dc.select(query, strip=True, dict_format=True)
 
 	errors = []
-	with Pool(5) as p:
-		errors = p.map(f, products_to_register,)
+	# with Pool(5) as p:
+	# 	errors = p.map(f, products_to_register,)
 
-	# for product in products_to_register:
-	# 	f(product)
+	for product in products_to_register:
+		f(product)
 
 	errors = [x for x in errors if x]
 	print(errors)
