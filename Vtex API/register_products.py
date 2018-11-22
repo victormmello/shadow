@@ -17,7 +17,7 @@ params = {
 
 auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
 
-path = 'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\upar6'
+path = 'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\upar7'
 filters = set()
 
 photo_count_dict = {}
@@ -56,7 +56,6 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 		except Exception as e:
 			if i == retry-1:
 				print('desistindo')
-				import pdb; pdb.set_trace()
 
 				return None
 
@@ -76,8 +75,6 @@ def f(product_info):
 	sku_color = product_info['vtex_color']
 	color_id = product_info['cod_color']
 
-
-	
 	# --------------------------------------------------------------------------------------------------------------------------------
 
 	soap_skuget = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
@@ -396,11 +393,11 @@ if __name__ == '__main__':
 	products_to_register = dc.select(query, strip=True, dict_format=True)
 
 	errors = []
-	# with Pool(5) as p:
-	# 	errors = p.map(f, products_to_register,)
+	with Pool(5) as p:
+		errors = p.map(f, products_to_register,)
 
-	for product in products_to_register:
-		f(product)
+	# for product in products_to_register:
+	# 	f(product)
 
 	errors = [x for x in errors if x]
 	print(errors)
