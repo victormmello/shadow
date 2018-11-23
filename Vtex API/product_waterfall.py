@@ -147,7 +147,7 @@ def search_directory(products_to_search):
 					set_in_dict(found_products, 1, [product[0], product[1]])
 
 	return found_products
-	
+
 from multiprocessing import Pool
 if __name__ == '__main__':
 	start = time.time()
