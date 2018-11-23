@@ -17,7 +17,7 @@ params = {
 
 auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
 
-path = 'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\upar7'
+path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear'
 filters = set()
 
 photo_count_dict = {}
@@ -112,8 +112,8 @@ def f(product_info):
 
 	product_id = soup.find('a:ProductId').text
 
-	# if sku_isactive == 'true':
-	# 	return
+	if sku_isactive == 'true':
+		return
 
 	# soap_imageremove = """
 	# 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
@@ -357,9 +357,9 @@ if __name__ == '__main__':
 
 	# filter_str = "ps.CODIGO_BARRA='28060015491G'"
 
-	filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
+	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
-	filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10') OR (p.produto='20.03.0030' AND pc.cor_produto='105') OR (p.produto='22.02.0002' AND pc.cor_produto='10') OR (p.produto='22.03.0216' AND pc.cor_produto='02') OR (p.produto='22.03.0216' AND pc.cor_produto='176') OR (p.produto='22.03.0217' AND pc.cor_produto='20') OR (p.produto='22.03.0217' AND pc.cor_produto='32') OR (p.produto='22.04.0150' AND pc.cor_produto='122') OR (p.produto='22.12.0361' AND pc.cor_produto='176') OR (p.produto='23.06.0085' AND pc.cor_produto='221') OR (p.produto='34.01.0079' AND pc.cor_produto='218') OR (p.produto='35.04.0035' AND pc.cor_produto='01')) "
+	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10') OR (p.produto='20.03.0030' AND pc.cor_produto='105') OR (p.produto='22.02.0002' AND pc.cor_produto='10') OR (p.produto='22.03.0216' AND pc.cor_produto='02') OR (p.produto='22.03.0216' AND pc.cor_produto='176') OR (p.produto='22.03.0217' AND pc.cor_produto='20') OR (p.produto='22.03.0217' AND pc.cor_produto='32') OR (p.produto='22.04.0150' AND pc.cor_produto='122') OR (p.produto='22.12.0361' AND pc.cor_produto='176') OR (p.produto='23.06.0085' AND pc.cor_produto='221') OR (p.produto='34.01.0079' AND pc.cor_produto='218') OR (p.produto='35.04.0035' AND pc.cor_produto='01')) "
 
 
 	query = """

@@ -117,7 +117,7 @@ def search_directory(products_to_search):
 	filename_to_product = {}
 	already_found_images = set()
 	found_products = {}
-	paths = ["C:\\Users\\Felipe\\Downloads\\mm\\fotos", "D:\\", "H:\\"]
+	paths = ["C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear"]
 
 	for product in products_to_search:
 		for n in range(1,5):
@@ -137,11 +137,11 @@ def search_directory(products_to_search):
 					already_found_images.add(filename)
 
 					filepath = os.path.abspath(os.path.join(folder, filename))
-					try:
-						shutil.copy(filepath,'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\nakd\\')
-					except Exception as e:
-						print(e)
-					# print(filepath)
+					# try:
+					# 	shutil.copy(filepath,'..\\fotosC:\\Users\\Felipe\\Downloads\\mm\\fotos\\nakd\\')
+					# except Exception as e:
+					# 	print(e)
+					# # print(filepath)
 
 					product = filename_to_product[filename]
 					set_in_dict(found_products, 1, [product[0], product[1]])
@@ -161,9 +161,270 @@ if __name__ == '__main__':
 	# product_filter = "and p.produto in ('35.02.0836','35.04.0049','35.04.0048','31.05.0015','22.05.0562','22.05.0579','32.03.0370','37.05.0029','37.01.0018','22.03.0247','22.05.0577','22.05.0574','22.05.0541','22.05.0573','22.05.0553','22.05.0566','22.12.0621','22.05.0544','22.05.0565','22.07.0284','22.02.0245','22.05.0572','22.05.0559','22.05.0570','22.07.0281','22.05.0580','22.07.0276','22.07.0280','22.05.0556','22.05.0575','22.07.0285','22.05.0560','22.05.0569','22.05.0557','22.05.0552','22.05.0543','22.05.0542','22.05.0578','22.05.0554','22.01.0007','22.07.0279','22.05.0551','22.07.0283','22.05.0555','22.05.0561','22.03.0248','22.05.0571','22.05.0558','22.05.0568','22.05.0563','22.03.0249','22.02.0249','22.05.0545','22.05.0564','22.07.0277','22.07.0278','22.02.0246','35.01.0842','22.05.0524','22.12.0615','22.12.0616','33.02.0232','22.05.0525','22.05.0523','22.12.0600','22.12.0597','22.12.0598','22.12.0601','22.12.0594','22.07.0250','22.07.0268','32.03.0290','32.02.0246','35.02.0483','31.02.0082','35.09.1208','35.02.0766','22.04.0161','34.01.0065','35.02.0489','35.09.0981')"
 	# product_filter = "and ((p.produto='35.02.0836' AND pc.cor_produto='219') OR (p.produto='35.04.0049' AND pc.cor_produto='217') OR (p.produto='35.04.0049' AND pc.cor_produto='223') OR (p.produto='35.04.0049' AND pc.cor_produto='221') OR (p.produto='35.02.0836' AND pc.cor_produto='217') OR (p.produto='35.04.0048' AND pc.cor_produto='485') OR (p.produto='31.05.0015' AND pc.cor_produto='02') OR (p.produto='22.05.0562' AND pc.cor_produto='01') OR (p.produto='22.05.0579' AND pc.cor_produto='05') OR (p.produto='22.05.0579' AND pc.cor_produto='06') OR (p.produto='22.05.0579' AND pc.cor_produto='02') OR (p.produto='32.03.0370' AND pc.cor_produto='219') OR (p.produto='37.05.0029' AND pc.cor_produto='219') OR (p.produto='37.05.0029' AND pc.cor_produto='218') OR (p.produto='37.05.0029' AND pc.cor_produto='221') OR (p.produto='37.01.0018' AND pc.cor_produto='216') OR (p.produto='37.01.0018' AND pc.cor_produto='218') OR (p.produto='37.01.0018' AND pc.cor_produto='220') OR (p.produto='22.03.0247' AND pc.cor_produto='451') OR (p.produto='22.03.0247' AND pc.cor_produto='221') OR (p.produto='22.05.0577' AND pc.cor_produto='252') OR (p.produto='22.05.0574' AND pc.cor_produto='05') OR (p.produto='22.05.0541' AND pc.cor_produto='02') OR (p.produto='22.05.0573' AND pc.cor_produto='217') OR (p.produto='22.05.0541' AND pc.cor_produto='03') OR (p.produto='22.05.0541' AND pc.cor_produto='01') OR (p.produto='22.05.0541' AND pc.cor_produto='04') OR (p.produto='22.05.0553' AND pc.cor_produto='01') OR (p.produto='22.05.0566' AND pc.cor_produto='01') OR (p.produto='22.12.0621' AND pc.cor_produto='217') OR (p.produto='22.05.0544' AND pc.cor_produto='155') OR (p.produto='22.05.0565' AND pc.cor_produto='485') OR (p.produto='22.05.0577' AND pc.cor_produto='507') OR (p.produto='22.07.0284' AND pc.cor_produto='07') OR (p.produto='22.02.0245' AND pc.cor_produto='06') OR (p.produto='22.05.0572' AND pc.cor_produto='221') OR (p.produto='22.05.0559' AND pc.cor_produto='04') OR (p.produto='22.05.0570' AND pc.cor_produto='13') OR (p.produto='22.07.0281' AND pc.cor_produto='07') OR (p.produto='22.05.0580' AND pc.cor_produto='231') OR (p.produto='22.02.0245' AND pc.cor_produto='04') OR (p.produto='22.07.0276' AND pc.cor_produto='218') OR (p.produto='22.07.0280' AND pc.cor_produto='485') OR (p.produto='22.05.0556' AND pc.cor_produto='219') OR (p.produto='22.05.0575' AND pc.cor_produto='176') OR (p.produto='22.07.0285' AND pc.cor_produto='505') OR (p.produto='22.07.0285' AND pc.cor_produto='243') OR (p.produto='22.05.0560' AND pc.cor_produto='472') OR (p.produto='22.05.0556' AND pc.cor_produto='221') OR (p.produto='22.05.0573' AND pc.cor_produto='219') OR (p.produto='22.05.0562' AND pc.cor_produto='64') OR (p.produto='22.05.0559' AND pc.cor_produto='64') OR (p.produto='22.05.0560' AND pc.cor_produto='68') OR (p.produto='22.05.0544' AND pc.cor_produto='05') OR (p.produto='22.05.0569' AND pc.cor_produto='01') OR (p.produto='22.05.0557' AND pc.cor_produto='219') OR (p.produto='22.05.0552' AND pc.cor_produto='01') OR (p.produto='22.05.0574' AND pc.cor_produto='03') OR (p.produto='22.05.0543' AND pc.cor_produto='01') OR (p.produto='22.05.0542' AND pc.cor_produto='20') OR (p.produto='22.05.0578' AND pc.cor_produto='01') OR (p.produto='22.05.0566' AND pc.cor_produto='02') OR (p.produto='22.05.0574' AND pc.cor_produto='01') OR (p.produto='22.05.0565' AND pc.cor_produto='217') OR (p.produto='22.05.0554' AND pc.cor_produto='219') OR (p.produto='22.01.0007' AND pc.cor_produto='216') OR (p.produto='22.07.0279' AND pc.cor_produto='219') OR (p.produto='22.05.0556' AND pc.cor_produto='218') OR (p.produto='22.07.0281' AND pc.cor_produto='01') OR (p.produto='22.05.0578' AND pc.cor_produto='08') OR (p.produto='22.05.0565' AND pc.cor_produto='219') OR (p.produto='22.05.0551' AND pc.cor_produto='64') OR (p.produto='22.05.0551' AND pc.cor_produto='03') OR (p.produto='22.07.0276' AND pc.cor_produto='216') OR (p.produto='22.07.0283' AND pc.cor_produto='06') OR (p.produto='22.05.0555' AND pc.cor_produto='216') OR (p.produto='22.05.0561' AND pc.cor_produto='20') OR (p.produto='22.03.0248' AND pc.cor_produto='493') OR (p.produto='22.05.0571' AND pc.cor_produto='20') OR (p.produto='22.05.0558' AND pc.cor_produto='07') OR (p.produto='22.07.0276' AND pc.cor_produto='219') OR (p.produto='22.05.0577' AND pc.cor_produto='198') OR (p.produto='22.05.0568' AND pc.cor_produto='05') OR (p.produto='22.05.0563' AND pc.cor_produto='219') OR (p.produto='22.02.0245' AND pc.cor_produto='02') OR (p.produto='22.05.0572' AND pc.cor_produto='223') OR (p.produto='22.03.0249' AND pc.cor_produto='244') OR (p.produto='22.02.0249' AND pc.cor_produto='05') OR (p.produto='22.05.0565' AND pc.cor_produto='452') OR (p.produto='22.03.0248' AND pc.cor_produto='105') OR (p.produto='22.07.0283' AND pc.cor_produto='02') OR (p.produto='22.05.0543' AND pc.cor_produto='05') OR (p.produto='22.05.0574' AND pc.cor_produto='02') OR (p.produto='22.05.0545' AND pc.cor_produto='217') OR (p.produto='22.05.0569' AND pc.cor_produto='105') OR (p.produto='22.05.0551' AND pc.cor_produto='02') OR (p.produto='22.05.0552' AND pc.cor_produto='03') OR (p.produto='22.05.0545' AND pc.cor_produto='221') OR (p.produto='22.02.0245' AND pc.cor_produto='07') OR (p.produto='22.07.0280' AND pc.cor_produto='217') OR (p.produto='22.05.0559' AND pc.cor_produto='07') OR (p.produto='22.05.0562' AND pc.cor_produto='03') OR (p.produto='22.05.0568' AND pc.cor_produto='06') OR (p.produto='22.05.0552' AND pc.cor_produto='02') OR (p.produto='22.05.0557' AND pc.cor_produto='217') OR (p.produto='22.05.0561' AND pc.cor_produto='03') OR (p.produto='22.05.0564' AND pc.cor_produto='216') OR (p.produto='22.05.0571' AND pc.cor_produto='04') OR (p.produto='22.05.0572' AND pc.cor_produto='217') OR (p.produto='22.07.0285' AND pc.cor_produto='231') OR (p.produto='22.05.0571' AND pc.cor_produto='02') OR (p.produto='22.07.0283' AND pc.cor_produto='05') OR (p.produto='22.05.0578' AND pc.cor_produto='02') OR (p.produto='22.05.0579' AND pc.cor_produto='94') OR (p.produto='22.05.0554' AND pc.cor_produto='218') OR (p.produto='22.07.0279' AND pc.cor_produto='217') OR (p.produto='22.05.0544' AND pc.cor_produto='02') OR (p.produto='22.05.0543' AND pc.cor_produto='02') OR (p.produto='22.07.0277' AND pc.cor_produto='218') OR (p.produto='22.05.0558' AND pc.cor_produto='02') OR (p.produto='22.07.0277' AND pc.cor_produto='457') OR (p.produto='22.05.0561' AND pc.cor_produto='04') OR (p.produto='22.07.0278' AND pc.cor_produto='337') OR (p.produto='22.07.0278' AND pc.cor_produto='338') OR (p.produto='22.07.0281' AND pc.cor_produto='05') OR (p.produto='22.07.0283' AND pc.cor_produto='03') OR (p.produto='22.05.0557' AND pc.cor_produto='221') OR (p.produto='22.05.0564' AND pc.cor_produto='452') OR (p.produto='22.05.0555' AND pc.cor_produto='217') OR (p.produto='22.07.0277' AND pc.cor_produto='219') OR (p.produto='22.05.0570' AND pc.cor_produto='02') OR (p.produto='22.05.0553' AND pc.cor_produto='05') OR (p.produto='22.05.0562' AND pc.cor_produto='02') OR (p.produto='22.05.0555' AND pc.cor_produto='221') OR (p.produto='22.07.0279' AND pc.cor_produto='221') OR (p.produto='22.05.0575' AND pc.cor_produto='02') OR (p.produto='22.05.0554' AND pc.cor_produto='221') OR (p.produto='22.07.0279' AND pc.cor_produto='216') OR (p.produto='22.07.0284' AND pc.cor_produto='02') OR (p.produto='22.05.0575' AND pc.cor_produto='105') OR (p.produto='22.05.0574' AND pc.cor_produto='64') OR (p.produto='22.07.0276' AND pc.cor_produto='221') OR (p.produto='22.05.0558' AND pc.cor_produto='05') OR (p.produto='22.02.0246' AND pc.cor_produto='231') OR (p.produto='35.01.0842' AND pc.cor_produto='07') OR (p.produto='35.01.0842' AND pc.cor_produto='68') OR (p.produto='22.05.0524' AND pc.cor_produto='176') OR (p.produto='22.12.0615' AND pc.cor_produto='176') OR (p.produto='22.12.0616' AND pc.cor_produto='105') OR (p.produto='22.12.0616' AND pc.cor_produto='04') OR (p.produto='33.02.0232' AND pc.cor_produto='259') OR (p.produto='22.05.0525' AND pc.cor_produto='176') OR (p.produto='22.05.0523' AND pc.cor_produto='04') OR (p.produto='33.02.0232' AND pc.cor_produto='02') OR (p.produto='22.05.0525' AND pc.cor_produto='02') OR (p.produto='22.12.0616' AND pc.cor_produto='155') OR (p.produto='22.05.0523' AND pc.cor_produto='02') OR (p.produto='33.02.0232' AND pc.cor_produto='32') OR (p.produto='22.12.0615' AND pc.cor_produto='02') OR (p.produto='22.12.0616' AND pc.cor_produto='02') OR (p.produto='22.12.0615' AND pc.cor_produto='07') OR (p.produto='33.02.0232' AND pc.cor_produto='216') OR (p.produto='22.05.0524' AND pc.cor_produto='16') OR (p.produto='22.05.0523' AND pc.cor_produto='176') OR (p.produto='22.05.0525' AND pc.cor_produto='105') OR (p.produto='33.02.0232' AND pc.cor_produto='457') OR (p.produto='22.05.0524' AND pc.cor_produto='32') OR (p.produto='22.12.0616' AND pc.cor_produto='176') OR (p.produto='33.02.0232' AND pc.cor_produto='105') OR (p.produto='22.12.0600' AND pc.cor_produto='02') OR (p.produto='22.12.0597' AND pc.cor_produto='94') OR (p.produto='22.12.0598' AND pc.cor_produto='336') OR (p.produto='22.12.0597' AND pc.cor_produto='01') OR (p.produto='22.12.0598' AND pc.cor_produto='482') OR (p.produto='22.12.0601' AND pc.cor_produto='02') OR (p.produto='22.12.0594' AND pc.cor_produto='341') OR (p.produto='22.12.0594' AND pc.cor_produto='02') OR (p.produto='22.07.0250' AND pc.cor_produto='263') OR (p.produto='22.07.0268' AND pc.cor_produto='176') OR (p.produto='22.07.0268' AND pc.cor_produto='02') OR (p.produto='22.12.0598' AND pc.cor_produto='01') OR (p.produto='32.03.0290' AND pc.cor_produto='01') OR (p.produto='32.02.0246' AND pc.cor_produto='01') OR (p.produto='35.02.0483' AND pc.cor_produto='02') OR (p.produto='31.02.0082' AND pc.cor_produto='02') OR (p.produto='35.09.1208' AND pc.cor_produto='10') OR (p.produto='35.02.0766' AND pc.cor_produto='02') OR (p.produto='22.04.0161' AND pc.cor_produto='155') OR (p.produto='34.01.0065' AND pc.cor_produto='07') OR (p.produto='35.02.0489' AND pc.cor_produto='105') OR (p.produto='35.09.0981' AND pc.cor_produto='02'))"
 	# product_filter = "and p.griffe = 'NAKD'"
-	product_filter = "and e.estoque_disponivel > 0"
+	product_filter = """ and (
+		(p.produto = '35.01.0692' and pc.cor_produto = '176') OR
+		(p.produto = '35.09.0929' and pc.cor_produto = '2') OR
+		(p.produto = '35.09.0957' and pc.cor_produto = '2') OR
+		(p.produto = '22.07.0258' and pc.cor_produto = '10') OR
+		(p.produto = '22.07.0213' and pc.cor_produto = '105') OR
+		(p.produto = '22.07.0213' and pc.cor_produto = '122') OR
+		(p.produto = '22.12.0541' and pc.cor_produto = '105') OR
+		(p.produto = '22.07.0252' and pc.cor_produto = '39') OR
+		(p.produto = '22.12.0611' and pc.cor_produto = '2') OR
+		(p.produto = '22.07.0214' and pc.cor_produto = '6') OR
+		(p.produto = '22.15.0014' and pc.cor_produto = '176') OR
+		(p.produto = '22.12.0580' and pc.cor_produto = '9') OR
+		(p.produto = '33.02.0154' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0611' and pc.cor_produto = '8') OR
+		(p.produto = '22.06.0550' and pc.cor_produto = '10') OR
+		(p.produto = '37.06.0014' and pc.cor_produto = '4') OR
+		(p.produto = '33.02.0194' and pc.cor_produto = '217') OR
+		(p.produto = '32.02.0216' and pc.cor_produto = '2') OR
+		(p.produto = '32.03.0290' and pc.cor_produto = '4') OR
+		(p.produto = '32.03.0297' and pc.cor_produto = '16') OR
+		(p.produto = '33.02.0153' and pc.cor_produto = '105') OR
+		(p.produto = '33.03.0027' and pc.cor_produto = '5') OR
+		(p.produto = '23.03.0027' and pc.cor_produto = '7') OR
+		(p.produto = '35.01.0602' and pc.cor_produto = '259') OR
+		(p.produto = '35.09.0612' and pc.cor_produto = '94') OR
+		(p.produto = '31.01.0106' and pc.cor_produto = '7') OR
+		(p.produto = '31.02.0089' and pc.cor_produto = '176') OR
+		(p.produto = '35.09.0702' and pc.cor_produto = '3') OR
+		(p.produto = '22.02.0192' and pc.cor_produto = '2') OR
+		(p.produto = '32.06.0051' and pc.cor_produto = '461') OR
+		(p.produto = '32.03.0297' and pc.cor_produto = '460') OR
+		(p.produto = '23.11.0238' and pc.cor_produto = '35') OR
+		(p.produto = '23.03.0027' and pc.cor_produto = '4') OR
+		(p.produto = '23.11.0170' and pc.cor_produto = '4') OR
+		(p.produto = '22.05.0577' and pc.cor_produto = '244') OR
+		(p.produto = '32.03.0293' and pc.cor_produto = '176') OR
+		(p.produto = '22.07.0191' and pc.cor_produto = '94') OR
+		(p.produto = '32.07.0048' and pc.cor_produto = '176') OR
+		(p.produto = '22.07.0213' and pc.cor_produto = '68') OR
+		(p.produto = '22.12.0443' and pc.cor_produto = '155') OR
+		(p.produto = '32.03.0328' and pc.cor_produto = '2') OR
+		(p.produto = '37.06.0014' and pc.cor_produto = '94') OR
+		(p.produto = '32.06.0052' and pc.cor_produto = '2') OR
+		(p.produto = '32.03.0293' and pc.cor_produto = '105') OR
+		(p.produto = '22.02.0192' and pc.cor_produto = '1') OR
+		(p.produto = '32.03.0294' and pc.cor_produto = '2') OR
+		(p.produto = '32.03.0291' and pc.cor_produto = '94') OR
+		(p.produto = '32.03.0291' and pc.cor_produto = '105') OR
+		(p.produto = '23.11.0206' and pc.cor_produto = '453') OR
+		(p.produto = '32.07.0020' and pc.cor_produto = '460') OR
+		(p.produto = '32.03.0292' and pc.cor_produto = '24') OR
+		(p.produto = '32.06.0040' and pc.cor_produto = '5') OR
+		(p.produto = '32.07.0082' and pc.cor_produto = '244') OR
+		(p.produto = '23.11.0234' and pc.cor_produto = '14') OR
+		(p.produto = '22.07.0192' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0447' and pc.cor_produto = '6') OR
+		(p.produto = '22.05.0513' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0467' and pc.cor_produto = '94') OR
+		(p.produto = '22.02.0201' and pc.cor_produto = '2') OR
+		(p.produto = '22.11.0211' and pc.cor_produto = '94') OR
+		(p.produto = '22.03.0187' and pc.cor_produto = '221') OR
+		(p.produto = '22.12.0597' and pc.cor_produto = '94') OR
+		(p.produto = '22.12.0467' and pc.cor_produto = '25') OR
+		(p.produto = '21.01.0008' and pc.cor_produto = '176') OR
+		(p.produto = '22.05.0517' and pc.cor_produto = '176') OR
+		(p.produto = '22.05.0517' and pc.cor_produto = '3') OR
+		(p.produto = '31.02.0070' and pc.cor_produto = '257') OR
+		(p.produto = '31.02.0070' and pc.cor_produto = '223') OR
+		(p.produto = '22.12.0395' and pc.cor_produto = '94') OR
+		(p.produto = '20.03.0034' and pc.cor_produto = '2') OR
+		(p.produto = '35.02.0836' and pc.cor_produto = '507') OR
+		(p.produto = '35.04.0049' and pc.cor_produto = '217') OR
+		(p.produto = '35.04.0049' and pc.cor_produto = '223') OR
+		(p.produto = '35.04.0049' and pc.cor_produto = '221') OR
+		(p.produto = '35.02.0836' and pc.cor_produto = '198') OR
+		(p.produto = '35.04.0048' and pc.cor_produto = '485') OR
+		(p.produto = '31.05.0015' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0562' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0579' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0579' and pc.cor_produto = '6') OR
+		(p.produto = '22.05.0579' and pc.cor_produto = '2') OR
+		(p.produto = '32.03.0370' and pc.cor_produto = '507') OR
+		(p.produto = '37.05.0029' and pc.cor_produto = '219') OR
+		(p.produto = '37.05.0029' and pc.cor_produto = '218') OR
+		(p.produto = '37.05.0029' and pc.cor_produto = '221') OR
+		(p.produto = '37.01.0018' and pc.cor_produto = '216') OR
+		(p.produto = '37.01.0018' and pc.cor_produto = '218') OR
+		(p.produto = '37.01.0018' and pc.cor_produto = '220') OR
+		(p.produto = '22.03.0247' and pc.cor_produto = '451') OR
+		(p.produto = '22.03.0247' and pc.cor_produto = '221') OR
+		(p.produto = '22.05.0577' and pc.cor_produto = '252') OR
+		(p.produto = '22.05.0574' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0541' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0573' and pc.cor_produto = '217') OR
+		(p.produto = '22.05.0541' and pc.cor_produto = '3') OR
+		(p.produto = '22.05.0541' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0541' and pc.cor_produto = '4') OR
+		(p.produto = '22.05.0553' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0566' and pc.cor_produto = '1') OR
+		(p.produto = '22.12.0621' and pc.cor_produto = '217') OR
+		(p.produto = '22.05.0544' and pc.cor_produto = '155') OR
+		(p.produto = '22.05.0565' and pc.cor_produto = '505') OR
+		(p.produto = '22.05.0577' and pc.cor_produto = '507') OR
+		(p.produto = '22.07.0284' and pc.cor_produto = '7') OR
+		(p.produto = '22.02.0245' and pc.cor_produto = '6') OR
+		(p.produto = '22.05.0572' and pc.cor_produto = '221') OR
+		(p.produto = '22.05.0559' and pc.cor_produto = '4') OR
+		(p.produto = '22.05.0570' and pc.cor_produto = '13') OR
+		(p.produto = '22.07.0281' and pc.cor_produto = '7') OR
+		(p.produto = '22.05.0580' and pc.cor_produto = '231') OR
+		(p.produto = '22.02.0245' and pc.cor_produto = '25') OR
+		(p.produto = '22.07.0276' and pc.cor_produto = '218') OR
+		(p.produto = '22.07.0280' and pc.cor_produto = '485') OR
+		(p.produto = '22.05.0556' and pc.cor_produto = '219') OR
+		(p.produto = '22.05.0575' and pc.cor_produto = '176') OR
+		(p.produto = '22.07.0285' and pc.cor_produto = '505') OR
+		(p.produto = '22.07.0285' and pc.cor_produto = '243') OR
+		(p.produto = '22.05.0560' and pc.cor_produto = '472') OR
+		(p.produto = '22.05.0556' and pc.cor_produto = '221') OR
+		(p.produto = '22.05.0573' and pc.cor_produto = '219') OR
+		(p.produto = '22.05.0562' and pc.cor_produto = '64') OR
+		(p.produto = '22.05.0559' and pc.cor_produto = '64') OR
+		(p.produto = '22.05.0560' and pc.cor_produto = '68') OR
+		(p.produto = '22.05.0544' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0569' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0557' and pc.cor_produto = '219') OR
+		(p.produto = '22.05.0552' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0574' and pc.cor_produto = '3') OR
+		(p.produto = '22.05.0543' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0542' and pc.cor_produto = '20') OR
+		(p.produto = '22.05.0578' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0566' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0574' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0565' and pc.cor_produto = '229') OR
+		(p.produto = '22.05.0554' and pc.cor_produto = '219') OR
+		(p.produto = '22.01.0007' and pc.cor_produto = '216') OR
+		(p.produto = '22.07.0279' and pc.cor_produto = '219') OR
+		(p.produto = '22.05.0556' and pc.cor_produto = '218') OR
+		(p.produto = '22.07.0281' and pc.cor_produto = '1') OR
+		(p.produto = '22.05.0578' and pc.cor_produto = '8') OR
+		(p.produto = '22.05.0565' and pc.cor_produto = '507') OR
+		(p.produto = '22.05.0551' and pc.cor_produto = '64') OR
+		(p.produto = '22.05.0551' and pc.cor_produto = '3') OR
+		(p.produto = '22.07.0276' and pc.cor_produto = '216') OR
+		(p.produto = '22.07.0283' and pc.cor_produto = '6') OR
+		(p.produto = '22.05.0555' and pc.cor_produto = '216') OR
+		(p.produto = '22.05.0561' and pc.cor_produto = '20') OR
+		(p.produto = '22.03.0248' and pc.cor_produto = '493') OR
+		(p.produto = '22.05.0571' and pc.cor_produto = '20') OR
+		(p.produto = '22.05.0558' and pc.cor_produto = '7') OR
+		(p.produto = '22.07.0276' and pc.cor_produto = '219') OR
+		(p.produto = '22.05.0577' and pc.cor_produto = '198') OR
+		(p.produto = '22.05.0568' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0563' and pc.cor_produto = '219') OR
+		(p.produto = '22.02.0245' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0572' and pc.cor_produto = '223') OR
+		(p.produto = '22.03.0249' and pc.cor_produto = '244') OR
+		(p.produto = '22.02.0249' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0565' and pc.cor_produto = '238') OR
+		(p.produto = '22.03.0248' and pc.cor_produto = '105') OR
+		(p.produto = '22.07.0283' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0543' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0574' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0545' and pc.cor_produto = '217') OR
+		(p.produto = '22.05.0569' and pc.cor_produto = '105') OR
+		(p.produto = '22.05.0551' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0552' and pc.cor_produto = '3') OR
+		(p.produto = '22.05.0545' and pc.cor_produto = '221') OR
+		(p.produto = '22.02.0245' and pc.cor_produto = '7') OR
+		(p.produto = '22.07.0280' and pc.cor_produto = '217') OR
+		(p.produto = '22.05.0559' and pc.cor_produto = '7') OR
+		(p.produto = '22.05.0562' and pc.cor_produto = '3') OR
+		(p.produto = '22.05.0568' and pc.cor_produto = '6') OR
+		(p.produto = '22.05.0552' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0557' and pc.cor_produto = '217') OR
+		(p.produto = '22.05.0561' and pc.cor_produto = '3') OR
+		(p.produto = '22.05.0564' and pc.cor_produto = '216') OR
+		(p.produto = '22.05.0571' and pc.cor_produto = '4') OR
+		(p.produto = '22.05.0572' and pc.cor_produto = '217') OR
+		(p.produto = '22.07.0285' and pc.cor_produto = '231') OR
+		(p.produto = '22.05.0571' and pc.cor_produto = '2') OR
+		(p.produto = '22.07.0283' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0578' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0579' and pc.cor_produto = '94') OR
+		(p.produto = '22.05.0554' and pc.cor_produto = '218') OR
+		(p.produto = '22.07.0279' and pc.cor_produto = '217') OR
+		(p.produto = '22.05.0544' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0543' and pc.cor_produto = '2') OR
+		(p.produto = '22.07.0277' and pc.cor_produto = '218') OR
+		(p.produto = '22.05.0558' and pc.cor_produto = '2') OR
+		(p.produto = '22.07.0277' and pc.cor_produto = '457') OR
+		(p.produto = '22.05.0561' and pc.cor_produto = '4') OR
+		(p.produto = '22.07.0278' and pc.cor_produto = '337') OR
+		(p.produto = '22.07.0278' and pc.cor_produto = '338') OR
+		(p.produto = '22.07.0281' and pc.cor_produto = '5') OR
+		(p.produto = '22.07.0283' and pc.cor_produto = '3') OR
+		(p.produto = '22.05.0557' and pc.cor_produto = '221') OR
+		(p.produto = '22.05.0564' and pc.cor_produto = '452') OR
+		(p.produto = '22.05.0555' and pc.cor_produto = '217') OR
+		(p.produto = '22.07.0277' and pc.cor_produto = '219') OR
+		(p.produto = '22.05.0570' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0553' and pc.cor_produto = '5') OR
+		(p.produto = '22.05.0562' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0555' and pc.cor_produto = '221') OR
+		(p.produto = '22.07.0279' and pc.cor_produto = '221') OR
+		(p.produto = '22.05.0575' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0554' and pc.cor_produto = '221') OR
+		(p.produto = '22.07.0279' and pc.cor_produto = '216') OR
+		(p.produto = '22.07.0284' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0575' and pc.cor_produto = '105') OR
+		(p.produto = '22.05.0574' and pc.cor_produto = '64') OR
+		(p.produto = '22.07.0276' and pc.cor_produto = '221') OR
+		(p.produto = '22.05.0558' and pc.cor_produto = '5') OR
+		(p.produto = '22.02.0246' and pc.cor_produto = '231') OR
+		(p.produto = '35.01.0842' and pc.cor_produto = '7') OR
+		(p.produto = '35.01.0842' and pc.cor_produto = '68') OR
+		(p.produto = '22.05.0524' and pc.cor_produto = '176') OR
+		(p.produto = '22.12.0615' and pc.cor_produto = '176') OR
+		(p.produto = '22.12.0616' and pc.cor_produto = '105') OR
+		(p.produto = '22.12.0616' and pc.cor_produto = '4') OR
+		(p.produto = '33.02.0232' and pc.cor_produto = '259') OR
+		(p.produto = '22.05.0525' and pc.cor_produto = '176') OR
+		(p.produto = '22.05.0523' and pc.cor_produto = '4') OR
+		(p.produto = '33.02.0232' and pc.cor_produto = '2') OR
+		(p.produto = '22.05.0525' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0616' and pc.cor_produto = '155') OR
+		(p.produto = '22.05.0523' and pc.cor_produto = '2') OR
+		(p.produto = '33.02.0232' and pc.cor_produto = '32') OR
+		(p.produto = '22.12.0615' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0616' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0615' and pc.cor_produto = '7') OR
+		(p.produto = '33.02.0232' and pc.cor_produto = '216') OR
+		(p.produto = '22.05.0524' and pc.cor_produto = '16') OR
+		(p.produto = '22.05.0523' and pc.cor_produto = '176') OR
+		(p.produto = '22.05.0525' and pc.cor_produto = '105') OR
+		(p.produto = '33.02.0232' and pc.cor_produto = '457') OR
+		(p.produto = '22.05.0524' and pc.cor_produto = '32') OR
+		(p.produto = '22.12.0616' and pc.cor_produto = '176') OR
+		(p.produto = '33.02.0232' and pc.cor_produto = '105') OR
+		(p.produto = '22.12.0600' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0597' and pc.cor_produto = '94') OR
+		(p.produto = '22.12.0598' and pc.cor_produto = '336') OR
+		(p.produto = '22.12.0597' and pc.cor_produto = '1') OR
+		(p.produto = '22.12.0598' and pc.cor_produto = '482') OR
+		(p.produto = '22.12.0601' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0594' and pc.cor_produto = '341') OR
+		(p.produto = '22.12.0594' and pc.cor_produto = '2') OR
+		(p.produto = '22.07.0250' and pc.cor_produto = '263') OR
+		(p.produto = '22.07.0268' and pc.cor_produto = '176') OR
+		(p.produto = '22.07.0268' and pc.cor_produto = '2') OR
+		(p.produto = '22.12.0598' and pc.cor_produto = '1') OR
+		(p.produto = '32.03.0290' and pc.cor_produto = '1') OR
+		(p.produto = '32.02.0246' and pc.cor_produto = '1') OR
+		(p.produto = '35.02.0483' and pc.cor_produto = '2') OR
+		(p.produto = '31.02.0082' and pc.cor_produto = '2') OR
+		(p.produto = '35.09.1208' and pc.cor_produto = '10') OR
+		(p.produto = '35.02.0766' and pc.cor_produto = '2') OR
+		(p.produto = '22.04.0161' and pc.cor_produto = '155') OR
+		(p.produto = '34.01.0065' and pc.cor_produto = '7') OR
+		(p.produto = '35.02.0489' and pc.cor_produto = '105') OR
+		(p.produto = '35.09.0981' and pc.cor_produto = '2')
+	)"""
 	
-
 	products_without_ean = dc.select("""
 		SELECT 
 			p.produto, 
@@ -253,7 +514,7 @@ if __name__ == '__main__':
 	with Pool(10) as p:
 		integration_check = p.map(f, products_to_test)
 
-	# products_to_search_photo = [x for x in integration_check if x[2] == 'sem foto']
+	products_to_search_photo = [x for x in integration_check if x[2] == 'sem foto']
 	skus_info = [x for x in integration_check if x[2] != 'sem foto']
 
 	found_products = search_directory(integration_check)
