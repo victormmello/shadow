@@ -216,22 +216,22 @@ if product_dict:
 
 	product_columns = ['PRODUTO','DESC_PRODUTO','GRUPO_PRODUTO','SUBGRUPO_PRODUTO','FATOR_OPERACOES','CLASSIF_FISCAL','TIPO_PRODUTO','COLECAO','GRADE','DESC_PROD_NF','LINHA','GRIFFE','UNIDADE','REVENDA','REFER_FABRICANTE','FABRICANTE','PONTEIRO_PRECO_TAM','TRIBUT_ICMS','TRIBUT_ORIGEM','DATA_REPOSICAO','TAMANHO_BASE','ENVIA_LOJA_VAREJO','TAXA_JUROS_DEFLACIONAR','DATA_CADASTRAMENTO','STATUS_PRODUTO','TIPO_STATUS_PRODUTO','EMPRESA','CONTA_CONTABIL','INDICADOR_CFOP','QUALIDADE','CONTA_CONTABIL_COMPRA','CONTA_CONTABIL_VENDA','CONTA_CONTABIL_DEV_COMPRA','CONTA_CONTABIL_DEV_VENDA','COD_CATEGORIA','COD_SUBCATEGORIA','PERC_COMISSAO','ACEITA_ENCOMENDA','DIAS_GARANTIA_LOJA','DIAS_GARANTIA_FABRICANTE','TIPO_ITEM_SPED','POSSUI_GTIN','TITULO_B2C']
 	# dc.insert('PRODUTOS',product_insert_query_values_list,columns=product_columns,print_only=True)
-	# dc.insert('PRODUTOS',product_insert_query_values_list,columns=product_columns)
+	dc.insert('PRODUTOS',product_insert_query_values_list,columns=product_columns)
 	product_color_columns = ['PRODUTO','COR_PRODUTO','DESC_COR_PRODUTO','INICIO_VENDAS','FIM_VENDAS','COR_SORTIDA','STATUS_VENDA_ATUAL','COR','CUSTO_REPOSICAO1','PRECO_REPOSICAO_1','PRECO_A_VISTA_REPOSICAO_1','CLASSIF_FISCAL','TRIBUT_ORIGEM']
 	# dc.insert('PRODUTO_CORES',product_color_insert_query_values_list,columns=product_color_columns,print_only=True)
-	# dc.insert('PRODUTO_CORES',product_color_insert_query_values_list,columns=product_color_columns)
+	dc.insert('PRODUTO_CORES',product_color_insert_query_values_list,columns=product_color_columns)
 	product_price_columns = ['PRODUTO','CODIGO_TAB_PRECO','PRECO1','ULT_ATUALIZACAO','PRECO_LIQUIDO1','PRECO_LIQUIDO2','PRECO_LIQUIDO3','PRECO_LIQUIDO4','PROMOCAO_DESCONTO']
-	dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns,print_only=True)
-	# dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns)
+	# dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns,print_only=True)
+	dc.insert('PRODUTOS_PRECOS',product_price_insert_query_values_list,columns=product_price_columns)
 	product_size_columns = ['PRODUTO','COR_PRODUTO','CODIGO_BARRA','GRADE','TAMANHO','CODIGO_BARRA_PADRAO','TIPO_COD_BAR']
 	# dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns,print_only=True)
-	# dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns)
+	dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns)
 	sequence_code_update_query = '\n'.join(sequence_code_update_query_list)
 	# print(sequence_code_update_query)
-	# dc.execute(sequence_code_update_query)
+	dc.execute(sequence_code_update_query)
 	product_price_update_query = '\n'.join(product_price_update_query_values_list)
-	print(product_price_update_query)
-	# dc.execute(product_price_update_query)
+	# print(product_price_update_query)
+	dc.execute(product_price_update_query)
 
 	for group in product_dict:
 		for subgroup in product_dict[group]:

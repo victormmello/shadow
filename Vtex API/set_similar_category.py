@@ -1,4 +1,6 @@
+
 from shadow_database import DatabaseConnection
+
 import os, fnmatch, shutil, requests, csv
 import requests
 from bs4 import BeautifulSoup as Soup
@@ -106,6 +108,7 @@ for category_id, products in category_and_products.items():
 			continue
 		if product_id not in product_list:
 			product_list.append(product_id)
+
 
 with open('similar_succeed.csv', 'w') as f:
 	csv_file = csv.writer(f, delimiter=";")

@@ -22,13 +22,13 @@ with open('lista_renomear_foto.csv', encoding='latin-1') as csvfile:
 
 import os
 path = os.getcwd()
-path += '/fotos_para_renomear/renomear'
+path += '/fotos_para_renomear'
 images = list(os.listdir(path))
 
 images = sorted(images, key=(lambda x: x.split('-')[1].zfill(8)))
 
-if len(images) != len(photo_file_names):
-	raise Exception("%s - %s" % (len(images), len(photo_file_names)))
+# if len(images) != len(photo_file_names):
+	# raise Exception("%s - %s" % (len(images), len(photo_file_names)))
 
 for i, old_filename in enumerate(images):
 	old_file_path = path + '/' + old_filename

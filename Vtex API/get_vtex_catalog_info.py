@@ -1,5 +1,5 @@
 from shadow_database import DatabaseConnection
-import requests, json, dateutil.relativedelta
+import requests, json
 from datetime import datetime
 from multiprocessing import Pool
 

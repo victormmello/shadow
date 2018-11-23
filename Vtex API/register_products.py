@@ -17,7 +17,7 @@ params = {
 
 auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
 
-path = 'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\upar7'
+path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear'
 filters = set()
 
 photo_count_dict = {}
@@ -56,7 +56,6 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 		except Exception as e:
 			if i == retry-1:
 				print('desistindo')
-
 				return None
 
 	return Soup(response.text, "xml")
@@ -74,6 +73,8 @@ def f(product_info):
 	sku_size = product_info['size']
 	sku_color = product_info['vtex_color']
 	color_id = product_info['cod_color']
+	list_price = product_info['list_price']
+	price = product_info['price']
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -101,10 +102,10 @@ def f(product_info):
 	sku_isavailable = soup.find('a:IsAvaiable').text
 	sku_iskit = soup.find('a:IsKit').text
 	sku_length = soup.find('a:Length').text
-	sku_listprice = soup.find('a:ListPrice').text
+	sku_listprice = soup.find('a:ListPrice').text if float(soup.find('a:ListPrice').text) > 0 else list_price
 	sku_modalid = soup.find('a:ModalId').text
 	sku_name = soup.find('a:Name').text
-	sku_price = soup.find('a:Price').text
+	sku_price = soup.find('a:Price').text if float(soup.find('a:Price').text) > 0 else price
 	# sku_weightkg = soup.find('a:WeightKg').text
 	sku_width = soup.find('a:Width').text
 	sku_cubicweight = soup.find('a:CubicWeight').text
@@ -112,8 +113,9 @@ def f(product_info):
 
 	product_id = soup.find('a:ProductId').text
 
-	# if sku_isactive == 'true':
-	# 	return
+	# Comentar esse bloco para atualizar informações de produto:
+	if sku_isactive == 'true':
+		return
 
 	# soap_imageremove = """
 	# 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
@@ -303,31 +305,49 @@ def f(product_info):
 		  <tem:StockKeepingUnitInsertUpdate>
 			 <!--Optional:-->
 			 <tem:stockKeepingUnitVO>
-				<vtex:CostPrice>%s</vtex:CostPrice>
-				<vtex:CubicWeight>%s</vtex:CubicWeight>
-				<vtex:Height>%s</vtex:Height>
-				<vtex:Id>%s</vtex:Id>
-				<vtex:IsActive>%s</vtex:IsActive>
-				<vtex:IsAvaiable>%s</vtex:IsAvaiable>
-				<vtex:IsKit>%s</vtex:IsKit>
-				<vtex:Length>%s</vtex:Length>
-				<vtex:ListPrice>%s</vtex:ListPrice>
-				<vtex:ModalId>%s</vtex:ModalId>
-				<vtex:Name>%s</vtex:Name>
-				<vtex:Price>%s</vtex:Price>
-				<vtex:ProductId>%s</vtex:ProductId>
-				<vtex:RefId>%s</vtex:RefId>
+				<vtex:CostPrice>%(sku_costprice)s</vtex:CostPrice>
+				<vtex:CubicWeight>%(sku_cubicweight)s</vtex:CubicWeight>
+				<vtex:Height>%(sku_height)s</vtex:Height>
+				<vtex:Id>%(sku_id)s</vtex:Id>
+				<vtex:IsActive>%(sku_isactive)s</vtex:IsActive>
+				<vtex:IsAvaiable>%(sku_isavailable)s</vtex:IsAvaiable>
+				<vtex:IsKit>%(sku_iskit)s</vtex:IsKit>
+				<vtex:Length>%(sku_length)s</vtex:Length>
+				<vtex:ListPrice>%(sku_listprice)s</vtex:ListPrice>
+				<vtex:ModalId>%(sku_modalid)s</vtex:ModalId>
+				<vtex:Name>%(sku_name)s</vtex:Name>
+				<vtex:Price>%(sku_price)s</vtex:Price>
+				<vtex:ProductId>%(product_id)s</vtex:ProductId>
+				<vtex:RefId>%(EAN)s</vtex:RefId>
 				<vtex:StockKeepingUnitEans>
 				   <vtex:StockKeepingUnitEanDTO>
-					  <vtex:Ean>%s</vtex:Ean>
+					  <vtex:Ean>%(EAN)s</vtex:Ean>
 				   </vtex:StockKeepingUnitEanDTO>
 				</vtex:StockKeepingUnitEans>
-				<vtex:WeightKg>%s</vtex:WeightKg>
-				<vtex:Width>%s</vtex:Width>
+				<vtex:WeightKg>%(sku_weightkg)s</vtex:WeightKg>
+				<vtex:Width>%(sku_width)s</vtex:Width>
 			 </tem:stockKeepingUnitVO>
 		  </tem:StockKeepingUnitInsertUpdate>
 	   </soapenv:Body>
-	</soapenv:Envelope>""" % (sku_costprice, sku_cubicweight, sku_height, sku_id, sku_isactive, sku_isavailable, sku_iskit, sku_length, sku_listprice, sku_modalid, sku_name, sku_price, product_id, EAN, EAN, sku_weightkg, sku_width)
+	</soapenv:Envelope>""" % {
+		'sku_costprice':sku_costprice,
+		'sku_cubicweight':sku_cubicweight,
+		'sku_height':sku_height,
+		'sku_id':sku_id,
+		'sku_isactive':sku_isactive,
+		'sku_isavailable':sku_isavailable,
+		'sku_iskit':sku_iskit,
+		'sku_length':sku_length,
+		'sku_listprice':sku_listprice,
+		'sku_modalid':sku_modalid,
+		'sku_name':sku_name,
+		'sku_price':sku_price,
+		'product_id':product_id,
+		'EAN':EAN,
+		'EAN':EAN,
+		'sku_weightkg':sku_weightkg,
+		'sku_width':sku_width
+	}
 
 	soup = post_to_webservice("http://tempuri.org/IService/StockKeepingUnitInsertUpdate", soap_skuupdate)
 	if not soup:
@@ -357,10 +377,49 @@ if __name__ == '__main__':
 
 	# filter_str = "ps.CODIGO_BARRA='28060015491G'"
 
-	filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
+	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
-	filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10') OR (p.produto='20.03.0030' AND pc.cor_produto='105') OR (p.produto='22.02.0002' AND pc.cor_produto='10') OR (p.produto='22.03.0216' AND pc.cor_produto='02') OR (p.produto='22.03.0216' AND pc.cor_produto='176') OR (p.produto='22.03.0217' AND pc.cor_produto='20') OR (p.produto='22.03.0217' AND pc.cor_produto='32') OR (p.produto='22.04.0150' AND pc.cor_produto='122') OR (p.produto='22.12.0361' AND pc.cor_produto='176') OR (p.produto='23.06.0085' AND pc.cor_produto='221') OR (p.produto='34.01.0079' AND pc.cor_produto='218') OR (p.produto='35.04.0035' AND pc.cor_produto='01')) "
-
+# 	filter_str = """
+# 		(p.produto = '22.05.0569' and pc.cor_produto = '105') OR
+# 		(p.produto = '22.12.0616' and pc.cor_produto = '105') OR
+# 		(p.produto = '33.02.0232' and pc.cor_produto = '216') OR
+# 		(p.produto = '35.04.0049' and pc.cor_produto = '221') OR
+# 		(p.produto = '22.05.0525' and pc.cor_produto = '105') OR
+# 		(p.produto = '22.05.0564' and pc.cor_produto = '216') OR
+# 		(p.produto = '22.05.0580' and pc.cor_produto = '231') OR
+# 		(p.produto = '22.12.0615' and pc.cor_produto = '176') OR
+# 		(p.produto = '35.02.0830' and pc.cor_produto = '198') OR
+# 		(p.produto = '22.05.0524' and pc.cor_produto = '16') OR
+# 		(p.produto = '37.05.0029' and pc.cor_produto = '219') OR
+# 		(p.produto = '22.05.0579' and pc.cor_produto = '94') OR
+# 		(p.produto = '22.05.0577' and pc.cor_produto = '252') OR
+# 		(p.produto = '37.05.0029' and pc.cor_produto = '218') OR
+# 		(p.produto = '35.04.0048' and pc.cor_produto = '485') OR
+# 		(p.produto = '22.05.0542' and pc.cor_produto = '20') OR
+# 		(p.produto = '33.02.0232' and pc.cor_produto = '105') OR
+# 		(p.produto = '22.05.0577' and pc.cor_produto = '198') OR
+# 		(p.produto = '22.05.0524' and pc.cor_produto = '32') OR
+# 		(p.produto = '33.02.0232' and pc.cor_produto = '457') OR
+# 		(p.produto = '22.05.0564' and pc.cor_produto = '452') OR
+# 		(p.produto = '22.05.0577' and pc.cor_produto = '244') OR
+# 		(p.produto = '33.02.0232' and pc.cor_produto = '259') OR
+# 		(p.produto = '35.04.0049' and pc.cor_produto = '223') OR
+# 		(p.produto = '22.05.0523' and pc.cor_produto = '176') OR
+# 		(p.produto = '35.02.0836' and pc.cor_produto = '507') OR
+# 		(p.produto = '37.05.0029' and pc.cor_produto = '221') OR
+# 		(p.produto = '33.02.0232' and pc.cor_produto = '32') OR
+# 		(p.produto = '22.12.0616' and pc.cor_produto = '155') OR
+# 		(p.produto = '35.02.0836' and pc.cor_produto = '198') OR
+# 		(p.produto = '35.04.0049' and pc.cor_produto = '217') OR
+# 		(p.produto = '22.05.0525' and pc.cor_produto = '176') OR
+# 		(p.produto = '32.03.0370' and pc.cor_produto = '507') OR
+# 		(p.produto = '22.12.0616' and pc.cor_produto = '176') OR
+# 		(p.produto = '22.05.0577' and pc.cor_produto = '507') OR
+# 		(p.produto = '22.07.0285' and pc.cor_produto = '505') OR
+# 		(p.produto = '22.07.0285' and pc.cor_produto = '231') OR
+# 		(p.produto = '22.05.0524' and pc.cor_produto = '176') OR
+# 		(p.produto = '28.06.0015' and pc.cor_produto = '491')
+# """
 
 	query = """
 		SELECT 
@@ -375,10 +434,13 @@ if __name__ == '__main__':
 				else '2000000' 
 			end as brand_id,
 			COALESCE(cat1.vtex_category_id, cat2.vtex_category_id) as vtex_category_id,
-			COALESCE(cat1.vtex_department_id, cat2.vtex_department_id) as vtex_department_id
+			COALESCE(cat1.vtex_department_id, cat2.vtex_department_id) as vtex_department_id,
+			pp.preco1 as list_price,
+			pp.preco_liquido1 as price
 		from PRODUTOS_BARRA ps
 		inner join PRODUTOS p on p.produto = ps.produto
 		inner join PRODUTO_CORES pc on pc.produto = p.produto and ps.COR_PRODUTO = pc.COR_PRODUTO
+		inner join produtos_precos pp on pp.produto = ps.produto and pp.codigo_tab_preco = '11'
 		left join w_estoque_disponivel_sku e on e.codigo_barra = ps.CODIGO_BARRA and e.filial = 'e-commerce'
 		left join bi_vtex_product_items v_item on v_item.ean = ps.codigo_barra
 		left join bi_vtex_categorizacao_categoria cat1 on cat1.grupo_produto = p.GRUPO_PRODUTO and cat1.subgrupo_produto = p.SUBGRUPO_PRODUTO
@@ -389,15 +451,17 @@ if __name__ == '__main__':
 		order by ps.CODIGO_BARRA
 		;
 	""" % filter_str
-
+	# print(query)
 	products_to_register = dc.select(query, strip=True, dict_format=True)
+	# print(products_to_register)
 
 	errors = []
+	# Rodar sem thread:
+	# for product_to_register in products_to_register:
+		# f(product_to_register)
+
 	with Pool(5) as p:
 		errors = p.map(f, products_to_register,)
-
-	# for product in products_to_register:
-	# 	f(product)
 
 	errors = [x for x in errors if x]
 	print(errors)
