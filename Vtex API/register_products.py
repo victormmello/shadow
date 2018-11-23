@@ -56,7 +56,6 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 		except Exception as e:
 			if i == retry-1:
 				print('desistindo')
-				import pdb; pdb.set_trace()
 				return None
 
 	return Soup(response.text, "xml")
@@ -380,8 +379,6 @@ if __name__ == '__main__':
 
 	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
-	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10') OR (p.produto='20.03.0030' AND pc.cor_produto='105') OR (p.produto='22.02.0002' AND pc.cor_produto='10') OR (p.produto='22.03.0216' AND pc.cor_produto='02') OR (p.produto='22.03.0216' AND pc.cor_produto='176') OR (p.produto='22.03.0217' AND pc.cor_produto='20') OR (p.produto='22.03.0217' AND pc.cor_produto='32') OR (p.produto='22.04.0150' AND pc.cor_produto='122') OR (p.produto='22.12.0361' AND pc.cor_produto='176') OR (p.produto='23.06.0085' AND pc.cor_produto='221') OR (p.produto='34.01.0079' AND pc.cor_produto='218') OR (p.produto='35.04.0035' AND pc.cor_produto='01')) "
-
 # 	filter_str = """
 # 		(p.produto = '22.05.0569' and pc.cor_produto = '105') OR
 # 		(p.produto = '22.12.0616' and pc.cor_produto = '105') OR
@@ -454,9 +451,9 @@ if __name__ == '__main__':
 		order by ps.CODIGO_BARRA
 		;
 	""" % filter_str
-	print(query)
+	# print(query)
 	products_to_register = dc.select(query, strip=True, dict_format=True)
-	print(products_to_register)
+	# print(products_to_register)
 
 	errors = []
 	# Rodar sem thread:

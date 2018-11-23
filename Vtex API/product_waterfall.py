@@ -300,13 +300,13 @@ if __name__ == '__main__':
 		(p.produto = '22.07.0280' and pc.cor_produto = '485') OR
 		(p.produto = '22.05.0556' and pc.cor_produto = '219') OR
 		(p.produto = '22.05.0575' and pc.cor_produto = '176') OR
-		(p.produto = '22.07.0285' and pc.cor_produto = '505') OR
+		(p.produto = '22.07.0285' and pc.cor_produto = '220') OR
 		(p.produto = '22.07.0285' and pc.cor_produto = '243') OR
 		(p.produto = '22.05.0560' and pc.cor_produto = '472') OR
 		(p.produto = '22.05.0556' and pc.cor_produto = '221') OR
 		(p.produto = '22.05.0573' and pc.cor_produto = '219') OR
 		(p.produto = '22.05.0562' and pc.cor_produto = '64') OR
-		(p.produto = '22.05.0559' and pc.cor_produto = '64') OR
+		(p.produto = '22.05.0559' and pc.cor_produto = '02') OR
 		(p.produto = '22.05.0560' and pc.cor_produto = '68') OR
 		(p.produto = '22.05.0544' and pc.cor_produto = '5') OR
 		(p.produto = '22.05.0569' and pc.cor_produto = '1') OR
@@ -314,7 +314,7 @@ if __name__ == '__main__':
 		(p.produto = '22.05.0552' and pc.cor_produto = '1') OR
 		(p.produto = '22.05.0574' and pc.cor_produto = '3') OR
 		(p.produto = '22.05.0543' and pc.cor_produto = '1') OR
-		(p.produto = '22.05.0542' and pc.cor_produto = '20') OR
+		(p.produto = '22.05.0542' and pc.cor_produto = '13') OR
 		(p.produto = '22.05.0578' and pc.cor_produto = '1') OR
 		(p.produto = '22.05.0566' and pc.cor_produto = '2') OR
 		(p.produto = '22.05.0574' and pc.cor_produto = '1') OR
@@ -349,7 +349,7 @@ if __name__ == '__main__':
 		(p.produto = '22.05.0543' and pc.cor_produto = '5') OR
 		(p.produto = '22.05.0574' and pc.cor_produto = '2') OR
 		(p.produto = '22.05.0545' and pc.cor_produto = '217') OR
-		(p.produto = '22.05.0569' and pc.cor_produto = '105') OR
+		(p.produto = '22.05.0569' and pc.cor_produto = '05') OR
 		(p.produto = '22.05.0551' and pc.cor_produto = '2') OR
 		(p.produto = '22.05.0552' and pc.cor_produto = '3') OR
 		(p.produto = '22.05.0545' and pc.cor_produto = '221') OR
@@ -364,7 +364,7 @@ if __name__ == '__main__':
 		(p.produto = '22.05.0564' and pc.cor_produto = '216') OR
 		(p.produto = '22.05.0571' and pc.cor_produto = '4') OR
 		(p.produto = '22.05.0572' and pc.cor_produto = '217') OR
-		(p.produto = '22.07.0285' and pc.cor_produto = '231') OR
+		(p.produto = '22.07.0285' and pc.cor_produto = '218') OR
 		(p.produto = '22.05.0571' and pc.cor_produto = '2') OR
 		(p.produto = '22.07.0283' and pc.cor_produto = '5') OR
 		(p.produto = '22.05.0578' and pc.cor_produto = '2') OR
@@ -382,7 +382,7 @@ if __name__ == '__main__':
 		(p.produto = '22.07.0281' and pc.cor_produto = '5') OR
 		(p.produto = '22.07.0283' and pc.cor_produto = '3') OR
 		(p.produto = '22.05.0557' and pc.cor_produto = '221') OR
-		(p.produto = '22.05.0564' and pc.cor_produto = '452') OR
+		(p.produto = '22.05.0564' and pc.cor_produto = '64') OR
 		(p.produto = '22.05.0555' and pc.cor_produto = '217') OR
 		(p.produto = '22.07.0277' and pc.cor_produto = '219') OR
 		(p.produto = '22.05.0570' and pc.cor_produto = '2') OR
