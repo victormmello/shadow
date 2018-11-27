@@ -4,7 +4,7 @@ dc = DatabaseConnection()
 import os, fnmatch, shutil, requests, csv
 import requests
 from bs4 import BeautifulSoup as Soup
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager
 
 # --------------------------------------------------------------------------------------------------------------------------------
 
@@ -21,6 +21,8 @@ path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear'
 filters = set()
 
 photo_count_dict = {}
+image_dict = {}
+
 for folder, subs, files in os.walk(path):
 	for filename in files:
 		filename = filename[:-4]
@@ -42,7 +44,6 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 	for i in range(0, retry):
 		try:
 			response = requests.post("http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl", auth=auth, headers=params, data=soap_message.encode(), timeout=10)
-
 			print("%s %s" % (request_type, response.status_code))
 			if response.status_code == 200:
 				break
@@ -60,12 +61,16 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 
 	return Soup(response.text, "xml")
 
-def f(product_info):
+def f(product_and_img_dict):
+	print(product_and_img_dict)
+	product_info = product_and_img_dict[0]
+	image_dict = product_and_img_dict[1]
+
 	if not (product_info['vtex_color'] or product_info['vtex_category_id'] or product_info['vtex_department_id']):
 		return product_info
 
-	# print(product_info)
-
+	print(product_info)
+	print(image_dict)
 	EAN = product_info['ean']
 	brand_id = product_info['brand_id']
 	department_id = product_info['vtex_department_id']
@@ -110,12 +115,10 @@ def f(product_info):
 	sku_width = soup.find('a:Width').text
 	sku_cubicweight = soup.find('a:CubicWeight').text
 	sku_weightkg = "300"
-
+	print(sku_id)
 	product_id = soup.find('a:ProductId').text
 
-	# Comentar esse bloco para atualizar informações de produto:
-	if sku_isactive == 'true':
-		return
+
 
 	# soap_imageremove = """
 	# 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
@@ -150,7 +153,53 @@ def f(product_info):
 	soup = post_to_webservice("http://tempuri.org/IService/ImageListByStockKeepingUnitId", soap_imageget)
 	if not soup:
 		return 'error: soap_imageget %s' % EAN
-	image_test_name = soup.find('a:Name')
+	image_verification = bool(soup.find('a:Name'))
+
+	if not image_verification:
+		found = False
+
+		if product_id in image_dict:
+			if color_id in image_dict[product_id]:
+				found = True
+				image_verification = True
+				sku_found = image_dict[product_id][color_id]
+
+		if found:
+			soap_image_copy = """
+				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+				   <soapenv:Header/>
+				   <soapenv:Body>
+				      <tem:ImageServiceCopyAllImagesFromSkuToSku>
+				         <!--Optional:-->
+				         <tem:stockKeepingUnitIdFrom>%s</tem:stockKeepingUnitIdFrom>
+				         <!--Optional:-->
+				         <tem:stockKeepingUnitIdTo>%s</tem:stockKeepingUnitIdTo>
+				      </tem:ImageServiceCopyAllImagesFromSkuToSku>
+				   </soapenv:Body>
+				</soapenv:Envelope>""" % (sku_found, sku_id)
+			soup = post_to_webservice("http://tempuri.org/IService/ImageServiceCopyAllImagesFromSkuToSku", soap_image_copy)
+			if not soup:
+				return 'error: soap_image_copy %s' % EAN
+		else:
+			if product_id not in image_dict:
+				image_color = {}
+				image_color[color_id] = sku_id
+				image_dict[product_id] = image_color
+			else:
+				image_color = image_dict[product_id]
+				image_color[color_id] = sku_id
+	else:
+		if product_id not in image_dict:
+			image_color = {}
+			image_color[color_id] = sku_id
+			image_dict[product_id] = image_color
+		else:
+			image_color = image_dict[product_id]
+			image_color[color_id] = sku_id
+	
+	# Comentar esse bloco para atualizar informações de produto:
+	if sku_isactive == 'true':
+		return
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -220,8 +269,12 @@ def f(product_info):
 	# sku_imagename = "-".join(sku_name.split('-')[:-1])
 	sku_imagename = ""
 
-	if not image_test_name:
-		photo_count = photo_count_dict[product_info['prod_code']][product_info['cod_color']]
+	if not image_verification:
+		try:
+			photo_count = photo_count_dict[product_info['prod_code']][product_info['cod_color']]
+		except Exception as e:
+			photo_count = 4
+		
 		for x in range(1,photo_count+1):
 			sku_url = "http://blog.marciamello.com.br/Ecommerce/Cadastro_Produtos/%s.%s_0%s.jpg" % (product_refid.replace(".", ""), color_id, x)
 			print(sku_url)
@@ -253,6 +306,7 @@ def f(product_info):
 			soup = post_to_webservice("http://tempuri.org/IService/ImageInsertUpdate", soap_imageinsert)
 			if not soup:
 				continue
+
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -369,15 +423,19 @@ def f(product_info):
 
 
 if __name__ == '__main__':
-	
-	if not filters:
-		raise Exception('Nenhuma imagem encontrada')
+
+	image_dict = Manager().dict()
+
+	# if not filters:
+	# 	raise Exception('Nenhuma imagem encontrada')
 
 	filter_str = ' OR '.join(filters)
 
 	# filter_str = "ps.CODIGO_BARRA='28060015491G'"
 
 	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
+
+	filter_str = """ (p.produto = '22.15.0007' and pc.cor_produto = '03') """
 
 # 	filter_str = """
 # 		(p.produto = '22.05.0569' and pc.cor_produto = '105') OR
@@ -458,10 +516,10 @@ if __name__ == '__main__':
 	errors = []
 	# Rodar sem thread:
 	# for product_to_register in products_to_register:
-		# f(product_to_register)
+	# 	f(product_to_register)
 
 	with Pool(5) as p:
-		errors = p.map(f, products_to_register,)
+		errors = p.map(f, [(x, image_dict) for x in products_to_register])
 
 	errors = [x for x in errors if x]
 	print(errors)
