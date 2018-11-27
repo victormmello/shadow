@@ -1,9 +1,37 @@
 import requests, json, dateutil.relativedelta
 from datetime import datetime, timedelta
+from shadow_database import DatabaseConnection
+
+# ssh -i kibe.pem ec2-user@ec2-18-228-150-241.sa-east-1.compute.amazonaws.com
 
 def format_int_to_float(int_value):
 	str_value = str(int_value)
 	return float(str_value[:-2] + '.' + str_value[-2:])
+
+def try_to_request(*args, **kwargs):
+	retry = 3
+	for i in range(0, retry):
+		response = None
+		try:
+			response = requests.request(*args, **kwargs)
+
+			if response.status_code == 200:
+				break
+			elif response.status_code == 429:
+				import time
+				time.sleep(10)
+			else:
+				raise Exception()
+
+
+		except Exception as e:
+			if i == retry-1:
+				if response:
+					print(response.text)
+
+				return None
+	
+	return response
 
 ORDER_STATUS = {
 	'waiting-for-seller-confirmation': 'Aguardando confirmação do Seller',
@@ -45,7 +73,7 @@ api_connection_config = {
 list_orders_url = 'http://marciamello.vtexcommercestable.com.br/api/oms/pvt/orders'
 
 end_date = datetime.now()
-start_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day, hour=2, minute=0, second=0) - timedelta(days=2)
+start_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day, hour=2, minute=0, second=0) - timedelta(days=1)
 
 print('start_date: %s' % start_date)
 print('end_date: %s' % end_date)
@@ -120,17 +148,16 @@ while (c*15) < total_items:
 
 	total_items = list_json_response['stats']['stats']['totalValue']['Count']
 
-from shadow_database import DatabaseConnection
 
-print('Connecting to database...',end='')
-dc = DatabaseConnection()
-print('Done!')
+# print('Connecting to database...',end='')
+# dc = DatabaseConnection()
+# print('Done!')
 
-print('Inserting into tables...')
+# print('Inserting into tables...')
 
-print('	vtex_order_items')
-dc.execute('TRUNCATE TABLE vtex_order_items;')
-dc.insert('vtex_order_items', order_items, print_only=False)
+# print('	vtex_order_items')
+# dc.execute('TRUNCATE TABLE vtex_order_items;')
+# dc.insert('vtex_order_items', order_items, print_only=False)
 
 # skus_to_reduce = dc.select("""
 # 	SELECT 
@@ -143,32 +170,33 @@ dc.insert('vtex_order_items', order_items, print_only=False)
 # 	;
 # """, strip=True, dict_format=True)
 
-# stock_infos = []
-# skus_to_reduce = skus_to_reduce_bypass
-# for sku in skus_to_reduce:
-# 	get_stock_url = "http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s?an=marciamello" % sku['sku_id']
-# 	response = requests.request("GET", get_stock_url, headers=api_connection_config)
+stock_infos = []
+skus_to_reduce = skus_to_reduce_bypass
 
-# 	stock_info = json.loads(response.text)
-# 	print('%s: %s' % (sku['sku_id'], stock_info['balance'][0]['totalQuantity']))
+for sku in skus_to_reduce:
+	get_stock_url = "http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s?an=marciamello" % sku['sku_id']
+	response = try_to_request("GET", get_stock_url, headers=api_connection_config)
 
-# 	available_quantity = stock_info['balance'][0]['totalQuantity']
-# 	stock_infos.append([sku['sku_id'], available_quantity])
-# 	# stock_info['balance'][0]['reservedQuantity']
+	stock_info = json.loads(response.text)
+	print('%s: %s' % (sku['sku_id'], stock_info['balance'][0]['totalQuantity']))
 
-# 	true_quantity = available_quantity - sku['ordered_quantity']
-# 	if true_quantity >= 0:
-# 		set_stock_url = 'http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s/warehouses/1_1?an=marciamello' % sku['sku_id']
-# 		response = requests.request("PUT", set_stock_url, headers=api_connection_config, data='{"quantity": 4}')
+	available_quantity = stock_info['balance'][0]['totalQuantity']
+	stock_infos.append([sku['sku_id'], available_quantity])
+	# stock_info['balance'][0]['reservedQuantity']
 
-# 		if response.text != 'true':
-# 			print('ERROR: %s' % response.text)
-# 		else:
-# 			print('OK: %s' % sku['sku_id'])
-# 	else:
-# 		print('Sem estoque: %s' % sku['sku_id'])
+	true_quantity = available_quantity - sku['ordered_quantity']
+	if true_quantity >= 0:
+		set_stock_url = 'http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s/warehouses/1_1?an=marciamello' % sku['sku_id']
+		response = try_to_request("PUT", set_stock_url, headers=api_connection_config, data='{"quantity": 4}')
 
-# print(str(datetime.now()))
+		if response.text != 'true':
+			print('ERROR: %s' % response.text)
+		else:
+			print('OK: %s' % sku['sku_id'])
+	else:
+		print('Sem estoque: %s' % sku['sku_id'])
+
+print(str(datetime.now()))
 
 
 # print('	vtex_stock_backup2')

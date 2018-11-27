@@ -53,7 +53,8 @@ def get_product_info(product_ref_id):
 			product["categoryId"], #"category_id"
 			product["categories"][0], #"category_name"
 			original_price, #"original_price"
-			sale_price #"sale_price"
+			sale_price, #"sale_price"
+			product["description"], #"description"
 		])
 
 		# Product Categories:
@@ -95,13 +96,18 @@ if __name__ == '__main__':
 		"product_images":[],
 		"products":[]
 	}
+
+	result = []
+	for x in product_ref_ids:
+		result.append(get_product_info(x))
+
 	# Multi Threading:
-	with Pool(200) as p:
+	with Pool(20) as p:
 		result = p.map(get_product_info, product_ref_ids)
 
-	for result_thread in result:
-		for key in product_info:
-			product_info[key].extend(result_thread[key])
+	# for result_thread in result:
+	# 	for key in product_info:
+	# 		product_info[key].extend(result_thread[key])
 
 	print('Done!')
 
