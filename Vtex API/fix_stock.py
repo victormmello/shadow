@@ -170,6 +170,25 @@ while (c*15) < total_items:
 # 	;
 # """, strip=True, dict_format=True)
 
+
+differente_stock_query = """
+	SELECT 
+		vpi.item_id as sku_id,
+		e.estoque_disponivel as stock
+	from bi_vtex_product_items vpi
+	LEFT JOIN w_estoque_disponivel_sku e on e.codigo_barra = vpi.ean and e.filial = 'e-commerce'
+	where vpi.stock_quantity != e.estoque_disponivel
+	;
+"""
+dc = DatabaseConnection()
+skus_with_differente_stock = dc.select(differente_stock_query, strip=True, dict_format=True)
+
+for sku in skus_with_differente_stock:
+	set_stock_url = 'http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s/warehouses/1_1?an=marciamello' % sku['sku_id']
+	response = try_to_request("PUT", set_stock_url, headers=api_connection_config, data='{"quantity": %s}' % sku['stock'])
+	print(sku)
+
+
 stock_infos = []
 skus_to_reduce = skus_to_reduce_bypass
 
@@ -178,7 +197,7 @@ for sku in skus_to_reduce:
 	response = try_to_request("GET", get_stock_url, headers=api_connection_config)
 
 	stock_info = json.loads(response.text)
-	print('%s: %s' % (sku['sku_id'], stock_info['balance'][0]['totalQuantity']))
+	# print('%s: %s' % (sku['sku_id'], stock_info['balance'][0]['totalQuantity']))
 
 	available_quantity = stock_info['balance'][0]['totalQuantity']
 	stock_infos.append([sku['sku_id'], available_quantity])
@@ -187,7 +206,7 @@ for sku in skus_to_reduce:
 	true_quantity = available_quantity - sku['ordered_quantity']
 	if true_quantity >= 0:
 		set_stock_url = 'http://logistics.vtexcommercestable.com.br/api/logistics/pvt/inventory/skus/%s/warehouses/1_1?an=marciamello' % sku['sku_id']
-		response = try_to_request("PUT", set_stock_url, headers=api_connection_config, data='{"quantity": 4}')
+		response = try_to_request("PUT", set_stock_url, headers=api_connection_config, data='{"quantity": %s}' % true_quantity)
 
 		if response.text != 'true':
 			print('ERROR: %s' % response.text)

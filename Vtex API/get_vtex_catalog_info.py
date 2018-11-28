@@ -17,6 +17,7 @@ def get_product_info(product_ref_id):
 	url = "https://marciamello.vtexcommercestable.com.br/api/catalog_system/pub/products/search"
 	params = {"fq":"alternateIds_RefId:%s" % product_ref_id['produto']}
 	response = requests.request("GET", url, headers=api_connection_config, params=params)
+	print('.', end='')
 	json_response = json.loads(response.text)
 	for product in json_response:
 		product_id = product["productId"]
@@ -34,7 +35,8 @@ def get_product_info(product_ref_id):
 				item["ean"], #"ean"
 				item["sellers"][0]["commertialOffer"]["AvailableQuantity"], #"stock_quantity"
 				item["images"][0]["imageUrl"], #"image_url",
-				product["productId"]
+				product["productId"],
+				item.get('Cor', [''])[0], #"cor vtex",
 			])
 
 			# if item["ean"] == '35020650485PP':
@@ -53,7 +55,8 @@ def get_product_info(product_ref_id):
 			product["categoryId"], #"category_id"
 			product["categories"][0], #"category_name"
 			original_price, #"original_price"
-			sale_price #"sale_price"
+			sale_price, #"sale_price"
+			product["description"], #"description"
 		])
 
 		# Product Categories:
@@ -95,6 +98,11 @@ if __name__ == '__main__':
 		"product_images":[],
 		"products":[]
 	}
+
+	result = []
+	# for x in product_ref_ids:
+	# 	result.append(get_product_info(x))
+
 	# Multi Threading:
 	with Pool(200) as p:
 		result = p.map(get_product_info, product_ref_ids)

@@ -4,7 +4,7 @@ dc = DatabaseConnection()
 import os, fnmatch, shutil, requests, csv
 import requests
 from bs4 import BeautifulSoup as Soup
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager
 
 # --------------------------------------------------------------------------------------------------------------------------------
 
@@ -21,6 +21,8 @@ path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear\\'
 filters = set()
 
 photo_count_dict = {}
+image_dict = {}
+
 for folder, subs, files in os.walk(path):
 	for filename in files:
 		filename = filename[:-4]
@@ -40,7 +42,6 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 	for i in range(0, retry):
 		try:
 			response = requests.post("http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl", auth=auth, headers=params, data=soap_message.encode(), timeout=10)
-
 			print("%s %s" % (request_type, response.status_code))
 			if response.status_code == 200:
 				break
@@ -59,12 +60,16 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 
 	return Soup(response.text, "xml")
 
-def f(product_info):
+def f(product_and_img_dict):
+	print(product_and_img_dict)
+	product_info = product_and_img_dict[0]
+	image_dict = product_and_img_dict[1]
+
 	if not (product_info['vtex_color'] or product_info['vtex_category_id'] or product_info['vtex_department_id']):
 		return product_info
 
-	# print(product_info)
-
+	print(product_info)
+	print(image_dict)
 	EAN = product_info['ean']
 	brand_id = product_info['brand_id']
 	department_id = product_info['vtex_department_id']
@@ -109,12 +114,8 @@ def f(product_info):
 	sku_width = soup.find('a:Width').text
 	sku_cubicweight = soup.find('a:CubicWeight').text
 	sku_weightkg = "300"
-
+	print(sku_id)
 	product_id = soup.find('a:ProductId').text
-
-	# Comentar esse bloco para atualizar informações de produto:
-	# if sku_isactive == 'true':
-		# return
 
 	# soap_imageremove = """
 	# 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
@@ -149,7 +150,53 @@ def f(product_info):
 	soup = post_to_webservice("http://tempuri.org/IService/ImageListByStockKeepingUnitId", soap_imageget)
 	if not soup:
 		return 'error: soap_imageget %s' % EAN
-	image_test_name = soup.find('a:Name')
+	image_verification = bool(soup.find('a:Name'))
+
+	if not image_verification:
+		found = False
+
+		if product_id in image_dict:
+			if color_id in image_dict[product_id]:
+				found = True
+				image_verification = True
+				sku_found = image_dict[product_id][color_id]
+
+		if found:
+			soap_image_copy = """
+				<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+				   <soapenv:Header/>
+				   <soapenv:Body>
+				      <tem:ImageServiceCopyAllImagesFromSkuToSku>
+				         <!--Optional:-->
+				         <tem:stockKeepingUnitIdFrom>%s</tem:stockKeepingUnitIdFrom>
+				         <!--Optional:-->
+				         <tem:stockKeepingUnitIdTo>%s</tem:stockKeepingUnitIdTo>
+				      </tem:ImageServiceCopyAllImagesFromSkuToSku>
+				   </soapenv:Body>
+				</soapenv:Envelope>""" % (sku_found, sku_id)
+			soup = post_to_webservice("http://tempuri.org/IService/ImageServiceCopyAllImagesFromSkuToSku", soap_image_copy)
+			if not soup:
+				return 'error: soap_image_copy %s' % EAN
+		else:
+			if product_id not in image_dict:
+				image_color = {}
+				image_color[color_id] = sku_id
+				image_dict[product_id] = image_color
+			else:
+				image_color = image_dict[product_id]
+				image_color[color_id] = sku_id
+	else:
+		if product_id not in image_dict:
+			image_color = {}
+			image_color[color_id] = sku_id
+			image_dict[product_id] = image_color
+		else:
+			image_color = image_dict[product_id]
+			image_color[color_id] = sku_id
+	
+	# Comentar esse bloco para atualizar informações de produto:
+	if sku_isactive == 'true':
+		return
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -172,6 +219,7 @@ def f(product_info):
 	link_id = soup.find('a:LinkId').text
 	product_refid = soup.find('a:RefId').text
 	product_isactive = soup.find('a:IsActive').text
+	description = soup.find('a:Description').text
 
 	if not product_refid:
 		product_refid = product_info['prod_code']
@@ -189,6 +237,7 @@ def f(product_info):
 					<vtex:BrandId>%s</vtex:BrandId>
 					<vtex:CategoryId>%s</vtex:CategoryId>
 					<vtex:DepartmentId>%s</vtex:DepartmentId>
+					<vtex:Description>%s</vtex:Description>
 					<vtex:Id>%s</vtex:Id>
 					<vtex:IsActive>true</vtex:IsActive>
 					<vtex:IsVisible>true</vtex:IsVisible>
@@ -203,7 +252,7 @@ def f(product_info):
 				 </tem:productVO>
 			  </tem:ProductInsertUpdate>
 		   </soapenv:Body>
-		</soapenv:Envelope>""" % (brand_id, category_id, department_id, product_id, link_id, product_name, product_refid)
+		</soapenv:Envelope>""" % (brand_id, category_id, department_id, description, product_id, link_id, product_name, product_refid)
 
 	soup = post_to_webservice("http://tempuri.org/IService/ProductInsertUpdate", soap_productupdate)
 
@@ -219,8 +268,12 @@ def f(product_info):
 	# sku_imagename = "-".join(sku_name.split('-')[:-1])
 	sku_imagename = ""
 
-	if not image_test_name:
-		photo_count = photo_count_dict[product_info['prod_code']][product_info['cod_color']]
+	if not image_verification:
+		try:
+			photo_count = photo_count_dict[product_info['prod_code']][product_info['cod_color']]
+		except Exception as e:
+			photo_count = 4
+		
 		for x in range(1,photo_count+1):
 			sku_url = "http://blog.marciamello.com.br/Ecommerce/Cadastro_Produtos/%s.%s_0%s.jpg" % (product_refid.replace(".", ""), color_id, x)
 			print(sku_url)
@@ -252,6 +305,7 @@ def f(product_info):
 			soup = post_to_webservice("http://tempuri.org/IService/ImageInsertUpdate", soap_imageinsert)
 			if not soup:
 				continue
+
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -302,7 +356,6 @@ def f(product_info):
 	   <soapenv:Header/>
 	   <soapenv:Body>
 		  <tem:StockKeepingUnitInsertUpdate>
-			 <!--Optional:-->
 			 <tem:stockKeepingUnitVO>
 				<vtex:CostPrice>%(sku_costprice)s</vtex:CostPrice>
 				<vtex:CubicWeight>%(sku_cubicweight)s</vtex:CubicWeight>
@@ -368,9 +421,11 @@ def f(product_info):
 
 
 if __name__ == '__main__':
-	
-	if not filters:
-		raise Exception('Nenhuma imagem encontrada')
+
+	image_dict = Manager().dict()
+
+	# if not filters:
+	# 	raise Exception('Nenhuma imagem encontrada')
 
 	# Atualização Manual:
 	product_list = [
@@ -387,47 +442,7 @@ if __name__ == '__main__':
 
 	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
-# 	filter_str = """
-# 		(p.produto = '22.05.0569' and pc.cor_produto = '105') OR
-# 		(p.produto = '22.12.0616' and pc.cor_produto = '105') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '216') OR
-# 		(p.produto = '35.04.0049' and pc.cor_produto = '221') OR
-# 		(p.produto = '22.05.0525' and pc.cor_produto = '105') OR
-# 		(p.produto = '22.05.0564' and pc.cor_produto = '216') OR
-# 		(p.produto = '22.05.0580' and pc.cor_produto = '231') OR
-# 		(p.produto = '22.12.0615' and pc.cor_produto = '176') OR
-# 		(p.produto = '35.02.0830' and pc.cor_produto = '198') OR
-# 		(p.produto = '22.05.0524' and pc.cor_produto = '16') OR
-# 		(p.produto = '37.05.0029' and pc.cor_produto = '219') OR
-# 		(p.produto = '22.05.0579' and pc.cor_produto = '94') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '252') OR
-# 		(p.produto = '37.05.0029' and pc.cor_produto = '218') OR
-# 		(p.produto = '35.04.0048' and pc.cor_produto = '485') OR
-# 		(p.produto = '22.05.0542' and pc.cor_produto = '20') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '105') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '198') OR
-# 		(p.produto = '22.05.0524' and pc.cor_produto = '32') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '457') OR
-# 		(p.produto = '22.05.0564' and pc.cor_produto = '452') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '244') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '259') OR
-# 		(p.produto = '35.04.0049' and pc.cor_produto = '223') OR
-# 		(p.produto = '22.05.0523' and pc.cor_produto = '176') OR
-# 		(p.produto = '35.02.0836' and pc.cor_produto = '507') OR
-# 		(p.produto = '37.05.0029' and pc.cor_produto = '221') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '32') OR
-# 		(p.produto = '22.12.0616' and pc.cor_produto = '155') OR
-# 		(p.produto = '35.02.0836' and pc.cor_produto = '198') OR
-# 		(p.produto = '35.04.0049' and pc.cor_produto = '217') OR
-# 		(p.produto = '22.05.0525' and pc.cor_produto = '176') OR
-# 		(p.produto = '32.03.0370' and pc.cor_produto = '507') OR
-# 		(p.produto = '22.12.0616' and pc.cor_produto = '176') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '507') OR
-# 		(p.produto = '22.07.0285' and pc.cor_produto = '505') OR
-# 		(p.produto = '22.07.0285' and pc.cor_produto = '231') OR
-# 		(p.produto = '22.05.0524' and pc.cor_produto = '176') OR
-# 		(p.produto = '28.06.0015' and pc.cor_produto = '491')
-# """
+	filter_str = """p.produto in ('08.04.023','20.02.0005','22.02.0238','22.02.0240','22.02.0245','22.02.0246','22.03.0217','22.03.0239','22.03.0243','22.03.0248','22.03.0249','22.05.0292','22.05.0368','22.05.0439','22.05.0464','22.05.0467','22.05.0472','22.05.0473','22.05.0512','22.05.0555','22.05.0560','22.05.0565','22.05.0572','22.06.0457','22.07.0129','22.07.0236','22.07.0267','22.07.0276','22.07.0279','22.07.0285','22.12.0206','22.12.0541','22.12.0563','22.12.0570','22.12.0576','22.12.0582','22.12.0584','22.12.0591','22.15.0007','23.08.0217','23.11.0206','23.11.0234','23.11.0248','23.11.0263','24.04.0535','29.02.0083','31.01.0140','31.02.0070','32.02.0237','32.06.0051','32.06.0062','32.07.0071','32.07.0082','33.02.0153','33.02.0209','35.01.0635','35.01.0734','35.01.0735','35.01.0748','35.01.0840','35.01.0857','35.02.0766','35.02.0786','35.02.0787','35.02.0830','35.02.0833','35.02.0834','35.09.0702','35.09.0981','35.09.1044','35.09.1201','37.01.0018','37.09.0002','77.22.0243','77.61.0105','77.61.0106','77.61.0107','77.61.0123','77.61.0136','77.61.0139','77.62.0023','77.73.0354','77.99.2300','77.99.2308')"""
 
 	query = """
 		SELECT 
@@ -470,7 +485,7 @@ if __name__ == '__main__':
 	# 	f(product_to_register)
 
 	with Pool(5) as p:
-		errors = p.map(f, products_to_register,)
+		errors = p.map(f, [(x, image_dict) for x in products_to_register])
 
 	errors = [x for x in errors if x]
 	print(errors)

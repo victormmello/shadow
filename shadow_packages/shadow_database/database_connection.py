@@ -58,12 +58,28 @@ class DatabaseConnection(object):
 	def sanitize(self,s):
 		return str(s).replace("'","''")
 
-	def insert(self,table,values,columns=[],print_only=False):
+	def insert(self, table, values, columns=[], print_only=False):
 		column_query = "(%s)" % ','.join(columns) if columns else ''
 		for query_values_list in chunks(values,999):
 			insert_list = []
 			for value in query_values_list:
 				query_row = '(%s)' % ','.join('\'%s\'' % self.sanitize(cell) for cell in value)
+				insert_list.append(query_row)
+			query = """INSERT INTO %s %s VALUES
+			%s
+			""" % (table,column_query,'\n,'.join(insert_list))
+			if print_only:
+				print(query)
+			else:
+				self.execute(query)
+
+	def insert_dict(self, table, value_dicts, print_only=False):
+		columns = value_dicts[0].keys()
+		column_query = "(%s)" % ','.join(columns)
+		for query_values_dicts in chunks(value_dicts, 999):
+			insert_list = []
+			for query_values_dict in query_values_dicts:
+				query_row = '(%s)' % ','.join('\'%s\'' % self.sanitize(query_values_dict[col]) for col in columns)
 				insert_list.append(query_row)
 			query = """INSERT INTO %s %s VALUES
 			%s
