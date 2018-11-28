@@ -17,7 +17,7 @@ params = {
 
 auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
 
-path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear'
+path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear\\'
 filters = set()
 
 photo_count_dict = {}
@@ -32,8 +32,6 @@ for folder, subs, files in os.walk(path):
 		set_in_dict(photo_count_dict, 1, [prod_code, color_code], repeated_key='sum')
 
 		filters.add("(ps.produto = '%s' and ps.COR_PRODUTO = '%s')" % (prod_code, color_code))
-
-
 
 def post_to_webservice(soap_action, soap_message, retry=3):
 	params["SOAPAction"] = soap_action
@@ -55,6 +53,7 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 
 		except Exception as e:
 			if i == retry-1:
+				import pdb; pdb.set_trace()
 				print('desistindo')
 				return None
 
@@ -114,8 +113,8 @@ def f(product_info):
 	product_id = soup.find('a:ProductId').text
 
 	# Comentar esse bloco para atualizar informações de produto:
-	if sku_isactive == 'true':
-		return
+	# if sku_isactive == 'true':
+		# return
 
 	# soap_imageremove = """
 	# 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
@@ -373,9 +372,18 @@ if __name__ == '__main__':
 	if not filters:
 		raise Exception('Nenhuma imagem encontrada')
 
-	filter_str = ' OR '.join(filters)
+	# Atualização Manual:
+	product_list = [
+		{'produto':'41.01.0109','cor':'02','photo_count':4}
+	]
+	if product_list:
+		filters = set()
+		photo_count_dict = {}
+		for product in product_list:
+			filters.add("(ps.produto = '%s' and ps.COR_PRODUTO = '%s')" % (product['produto'],product['cor']))
+			set_in_dict(photo_count_dict, product['photo_count'], [product['produto'], product['cor']], repeated_key='sum')
 
-	# filter_str = "ps.CODIGO_BARRA='28060015491G'"
+	filter_str = ' OR '.join(filters)
 
 	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
@@ -433,6 +441,7 @@ if __name__ == '__main__':
 				when p.griffe = 'NAKD' then '2000001' 
 				else '2000000' 
 			end as brand_id,
+			-- '2000000' as brand_id,
 			COALESCE(cat1.vtex_category_id, cat2.vtex_category_id) as vtex_category_id,
 			COALESCE(cat1.vtex_department_id, cat2.vtex_department_id) as vtex_department_id,
 			pp.preco1 as list_price,
@@ -458,7 +467,7 @@ if __name__ == '__main__':
 	errors = []
 	# Rodar sem thread:
 	# for product_to_register in products_to_register:
-		# f(product_to_register)
+	# 	f(product_to_register)
 
 	with Pool(5) as p:
 		errors = p.map(f, products_to_register,)

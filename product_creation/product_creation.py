@@ -15,6 +15,7 @@ data = worksheet.get_all_records()
 
 categorization_keys = [
 	'manga',
+	'decote',
 	'cumprimento',
 	'detalhe'
 ]
@@ -63,14 +64,11 @@ for row in data:
 			else:
 				for categorization_key in categorization_keys:
 					if key.startswith(categorization_key) and row[key] != '':
-						row_to_insert['categorizacao'].append({categorization_key:row[key]})
+						row_to_insert['categorizacao'].append({'key':categorization_key,'value':row[key]})
 		if valid_row and has_color:
 			shadow_helpers.set_in_dict(product_dict,row_to_insert,[row_to_insert['grupo_produto'],row_to_insert['subgrupo_produto'],'products'],repeated_key='append')
 		else:
 			shadow_helpers.set_in_dict(invalid_product_dict,row_to_insert,[row_to_insert['grupo_produto'],row_to_insert['subgrupo_produto'],'products'],repeated_key='append')
-
-
-print(product_dict)
 
 if product_dict:
 	current_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -110,6 +108,7 @@ if product_dict:
 	product_price_update_query_values_list = []
 	product_color_insert_query_values_list = []
 	product_size_insert_query_values_list = []
+	categorization_insert_query_values_list = []
 	for group in product_dict:
 		for subgroup in product_dict[group]:
 			subgroup_dict = product_dict[group][subgroup]
@@ -212,6 +211,14 @@ if product_dict:
 						])
 						size_number += 1
 
+				for categorization_item in product['categorizacao']:
+					# print(product['categorizacao'])
+					categorization_insert_query_values_list.append([
+						product['produto'],
+						categorization_item['key'],
+						categorization_item['value'],
+					])
+
 			sequence_code_update_query_list.append("UPDATE produtos_subgrupo SET codigo_sequencial = '%s' WHERE inativo = 0 and grupo_produto = '%s' and subgrupo_produto = '%s';" % (sequence_code,group,subgroup))
 
 	product_columns = ['PRODUTO','DESC_PRODUTO','GRUPO_PRODUTO','SUBGRUPO_PRODUTO','FATOR_OPERACOES','CLASSIF_FISCAL','TIPO_PRODUTO','COLECAO','GRADE','DESC_PROD_NF','LINHA','GRIFFE','UNIDADE','REVENDA','REFER_FABRICANTE','FABRICANTE','PONTEIRO_PRECO_TAM','TRIBUT_ICMS','TRIBUT_ORIGEM','DATA_REPOSICAO','TAMANHO_BASE','ENVIA_LOJA_VAREJO','TAXA_JUROS_DEFLACIONAR','DATA_CADASTRAMENTO','STATUS_PRODUTO','TIPO_STATUS_PRODUTO','EMPRESA','CONTA_CONTABIL','INDICADOR_CFOP','QUALIDADE','CONTA_CONTABIL_COMPRA','CONTA_CONTABIL_VENDA','CONTA_CONTABIL_DEV_COMPRA','CONTA_CONTABIL_DEV_VENDA','COD_CATEGORIA','COD_SUBCATEGORIA','PERC_COMISSAO','ACEITA_ENCOMENDA','DIAS_GARANTIA_LOJA','DIAS_GARANTIA_FABRICANTE','TIPO_ITEM_SPED','POSSUI_GTIN','TITULO_B2C']
@@ -227,11 +234,17 @@ if product_dict:
 	# dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns,print_only=True)
 	dc.insert('PRODUTOS_BARRA',product_size_insert_query_values_list,columns=product_size_columns)
 	sequence_code_update_query = '\n'.join(sequence_code_update_query_list)
-	# print(sequence_code_update_query)
+	# # print(sequence_code_update_query)
 	dc.execute(sequence_code_update_query)
-	product_price_update_query = '\n'.join(product_price_update_query_values_list)
-	# print(product_price_update_query)
-	dc.execute(product_price_update_query)
+	product_categorization_columns = ['produto','attr_key','attr_value']
+	# dc.insert('sw_product_attributes',categorization_insert_query_values_list,columns=product_categorization_columns,print_only=True)
+	dc.insert('sw_product_attributes',categorization_insert_query_values_list,columns=product_categorization_columns)
+	
+
+	if product_price_update_query_values_list:
+		product_price_update_query = '\n'.join(product_price_update_query_values_list)
+		# print(product_price_update_query)
+		dc.execute(product_price_update_query)
 
 	for group in product_dict:
 		for subgroup in product_dict[group]:
