@@ -222,6 +222,7 @@ def f(product_and_img_dict):
 	link_id = soup.find('a:LinkId').text
 	product_refid = soup.find('a:RefId').text
 	product_isactive = soup.find('a:IsActive').text
+	description = soup.find('a:Description').text
 
 	if not product_refid:
 		product_refid = product_info['prod_code']
@@ -239,6 +240,7 @@ def f(product_and_img_dict):
 					<vtex:BrandId>%s</vtex:BrandId>
 					<vtex:CategoryId>%s</vtex:CategoryId>
 					<vtex:DepartmentId>%s</vtex:DepartmentId>
+					<vtex:Description>%s</vtex:Description>
 					<vtex:Id>%s</vtex:Id>
 					<vtex:IsActive>true</vtex:IsActive>
 					<vtex:IsVisible>true</vtex:IsVisible>
@@ -253,7 +255,7 @@ def f(product_and_img_dict):
 				 </tem:productVO>
 			  </tem:ProductInsertUpdate>
 		   </soapenv:Body>
-		</soapenv:Envelope>""" % (brand_id, category_id, department_id, product_id, link_id, product_name, product_refid)
+		</soapenv:Envelope>""" % (brand_id, category_id, department_id, description, product_id, link_id, product_name, product_refid)
 
 	soup = post_to_webservice("http://tempuri.org/IService/ProductInsertUpdate", soap_productupdate)
 
@@ -357,7 +359,6 @@ def f(product_and_img_dict):
 	   <soapenv:Header/>
 	   <soapenv:Body>
 		  <tem:StockKeepingUnitInsertUpdate>
-			 <!--Optional:-->
 			 <tem:stockKeepingUnitVO>
 				<vtex:CostPrice>%(sku_costprice)s</vtex:CostPrice>
 				<vtex:CubicWeight>%(sku_cubicweight)s</vtex:CubicWeight>
@@ -435,49 +436,7 @@ if __name__ == '__main__':
 
 	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
-	filter_str = """ (p.produto = '22.15.0007' and pc.cor_produto = '03') """
-
-# 	filter_str = """
-# 		(p.produto = '22.05.0569' and pc.cor_produto = '105') OR
-# 		(p.produto = '22.12.0616' and pc.cor_produto = '105') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '216') OR
-# 		(p.produto = '35.04.0049' and pc.cor_produto = '221') OR
-# 		(p.produto = '22.05.0525' and pc.cor_produto = '105') OR
-# 		(p.produto = '22.05.0564' and pc.cor_produto = '216') OR
-# 		(p.produto = '22.05.0580' and pc.cor_produto = '231') OR
-# 		(p.produto = '22.12.0615' and pc.cor_produto = '176') OR
-# 		(p.produto = '35.02.0830' and pc.cor_produto = '198') OR
-# 		(p.produto = '22.05.0524' and pc.cor_produto = '16') OR
-# 		(p.produto = '37.05.0029' and pc.cor_produto = '219') OR
-# 		(p.produto = '22.05.0579' and pc.cor_produto = '94') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '252') OR
-# 		(p.produto = '37.05.0029' and pc.cor_produto = '218') OR
-# 		(p.produto = '35.04.0048' and pc.cor_produto = '485') OR
-# 		(p.produto = '22.05.0542' and pc.cor_produto = '20') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '105') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '198') OR
-# 		(p.produto = '22.05.0524' and pc.cor_produto = '32') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '457') OR
-# 		(p.produto = '22.05.0564' and pc.cor_produto = '452') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '244') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '259') OR
-# 		(p.produto = '35.04.0049' and pc.cor_produto = '223') OR
-# 		(p.produto = '22.05.0523' and pc.cor_produto = '176') OR
-# 		(p.produto = '35.02.0836' and pc.cor_produto = '507') OR
-# 		(p.produto = '37.05.0029' and pc.cor_produto = '221') OR
-# 		(p.produto = '33.02.0232' and pc.cor_produto = '32') OR
-# 		(p.produto = '22.12.0616' and pc.cor_produto = '155') OR
-# 		(p.produto = '35.02.0836' and pc.cor_produto = '198') OR
-# 		(p.produto = '35.04.0049' and pc.cor_produto = '217') OR
-# 		(p.produto = '22.05.0525' and pc.cor_produto = '176') OR
-# 		(p.produto = '32.03.0370' and pc.cor_produto = '507') OR
-# 		(p.produto = '22.12.0616' and pc.cor_produto = '176') OR
-# 		(p.produto = '22.05.0577' and pc.cor_produto = '507') OR
-# 		(p.produto = '22.07.0285' and pc.cor_produto = '505') OR
-# 		(p.produto = '22.07.0285' and pc.cor_produto = '231') OR
-# 		(p.produto = '22.05.0524' and pc.cor_produto = '176') OR
-# 		(p.produto = '28.06.0015' and pc.cor_produto = '491')
-# """
+	filter_str = """p.produto in ('08.04.023','20.02.0005','22.02.0238','22.02.0240','22.02.0245','22.02.0246','22.03.0217','22.03.0239','22.03.0243','22.03.0248','22.03.0249','22.05.0292','22.05.0368','22.05.0439','22.05.0464','22.05.0467','22.05.0472','22.05.0473','22.05.0512','22.05.0555','22.05.0560','22.05.0565','22.05.0572','22.06.0457','22.07.0129','22.07.0236','22.07.0267','22.07.0276','22.07.0279','22.07.0285','22.12.0206','22.12.0541','22.12.0563','22.12.0570','22.12.0576','22.12.0582','22.12.0584','22.12.0591','22.15.0007','23.08.0217','23.11.0206','23.11.0234','23.11.0248','23.11.0263','24.04.0535','29.02.0083','31.01.0140','31.02.0070','32.02.0237','32.06.0051','32.06.0062','32.07.0071','32.07.0082','33.02.0153','33.02.0209','35.01.0635','35.01.0734','35.01.0735','35.01.0748','35.01.0840','35.01.0857','35.02.0766','35.02.0786','35.02.0787','35.02.0830','35.02.0833','35.02.0834','35.09.0702','35.09.0981','35.09.1044','35.09.1201','37.01.0018','37.09.0002','77.22.0243','77.61.0105','77.61.0106','77.61.0107','77.61.0123','77.61.0136','77.61.0139','77.62.0023','77.73.0354','77.99.2300','77.99.2308')"""
 
 	query = """
 		SELECT 
