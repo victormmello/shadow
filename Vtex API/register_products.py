@@ -17,7 +17,7 @@ params = {
 
 auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
 
-path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear\\'
+path = 'C:\\Users\\victo\\git\\shadow\\fotos\\temp\\'
 filters = set()
 
 photo_count_dict = {}
@@ -54,7 +54,6 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 
 		except Exception as e:
 			if i == retry-1:
-				import pdb; pdb.set_trace()
 				print('desistindo')
 				return None
 
@@ -68,8 +67,6 @@ def f(product_and_img_dict):
 	if not (product_info['vtex_color'] or product_info['vtex_category_id'] or product_info['vtex_department_id']):
 		return product_info
 
-	print(product_info)
-	print(image_dict)
 	EAN = product_info['ean']
 	brand_id = product_info['brand_id']
 	department_id = product_info['vtex_department_id']
@@ -150,7 +147,8 @@ def f(product_and_img_dict):
 	soup = post_to_webservice("http://tempuri.org/IService/ImageListByStockKeepingUnitId", soap_imageget)
 	if not soup:
 		return 'error: soap_imageget %s' % EAN
-	image_verification = bool(soup.find('a:Name'))
+	# image_verification = bool(soup.find('a:Name'))
+	image_verification = False
 
 	if not image_verification:
 		found = False
@@ -195,8 +193,8 @@ def f(product_and_img_dict):
 			image_color[color_id] = sku_id
 	
 	# Comentar esse bloco para atualizar informações de produto:
-	if sku_isactive == 'true':
-		return
+	# if sku_isactive == 'true':
+		# return
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -424,25 +422,25 @@ if __name__ == '__main__':
 
 	image_dict = Manager().dict()
 
-	# if not filters:
-	# 	raise Exception('Nenhuma imagem encontrada')
+	if not filters:
+		raise Exception('Nenhuma imagem encontrada')
 
 	# Atualização Manual:
-	product_list = [
-		{'produto':'41.01.0109','cor':'02','photo_count':4}
-	]
-	if product_list:
-		filters = set()
-		photo_count_dict = {}
-		for product in product_list:
-			filters.add("(ps.produto = '%s' and ps.COR_PRODUTO = '%s')" % (product['produto'],product['cor']))
-			set_in_dict(photo_count_dict, product['photo_count'], [product['produto'], product['cor']], repeated_key='sum')
+	# product_list = [
+	# 	{'produto':'41.01.0109','cor':'02','photo_count':4}
+	# ]
+	# if product_list:
+	# 	filters = set()
+	# 	photo_count_dict = {}
+	# 	for product in product_list:
+	# 		filters.add("(ps.produto = '%s' and ps.COR_PRODUTO = '%s')" % (product['produto'],product['cor']))
+	# 		set_in_dict(photo_count_dict, product['photo_count'], [product['produto'], product['cor']], repeated_key='sum')
 
 	filter_str = ' OR '.join(filters)
 
 	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
-	filter_str = """p.produto in ('08.04.023','20.02.0005','22.02.0238','22.02.0240','22.02.0245','22.02.0246','22.03.0217','22.03.0239','22.03.0243','22.03.0248','22.03.0249','22.05.0292','22.05.0368','22.05.0439','22.05.0464','22.05.0467','22.05.0472','22.05.0473','22.05.0512','22.05.0555','22.05.0560','22.05.0565','22.05.0572','22.06.0457','22.07.0129','22.07.0236','22.07.0267','22.07.0276','22.07.0279','22.07.0285','22.12.0206','22.12.0541','22.12.0563','22.12.0570','22.12.0576','22.12.0582','22.12.0584','22.12.0591','22.15.0007','23.08.0217','23.11.0206','23.11.0234','23.11.0248','23.11.0263','24.04.0535','29.02.0083','31.01.0140','31.02.0070','32.02.0237','32.06.0051','32.06.0062','32.07.0071','32.07.0082','33.02.0153','33.02.0209','35.01.0635','35.01.0734','35.01.0735','35.01.0748','35.01.0840','35.01.0857','35.02.0766','35.02.0786','35.02.0787','35.02.0830','35.02.0833','35.02.0834','35.09.0702','35.09.0981','35.09.1044','35.09.1201','37.01.0018','37.09.0002','77.22.0243','77.61.0105','77.61.0106','77.61.0107','77.61.0123','77.61.0136','77.61.0139','77.62.0023','77.73.0354','77.99.2300','77.99.2308')"""
+	# filter_str = """p.produto in ('08.04.023','20.02.0005','22.02.0238','22.02.0240','22.02.0245','22.02.0246','22.03.0217','22.03.0239','22.03.0243','22.03.0248','22.03.0249','22.05.0292','22.05.0368','22.05.0439','22.05.0464','22.05.0467','22.05.0472','22.05.0473','22.05.0512','22.05.0555','22.05.0560','22.05.0565','22.05.0572','22.06.0457','22.07.0129','22.07.0236','22.07.0267','22.07.0276','22.07.0279','22.07.0285','22.12.0206','22.12.0541','22.12.0563','22.12.0570','22.12.0576','22.12.0582','22.12.0584','22.12.0591','22.15.0007','23.08.0217','23.11.0206','23.11.0234','23.11.0248','23.11.0263','24.04.0535','29.02.0083','31.01.0140','31.02.0070','32.02.0237','32.06.0051','32.06.0062','32.07.0071','32.07.0082','33.02.0153','33.02.0209','35.01.0635','35.01.0734','35.01.0735','35.01.0748','35.01.0840','35.01.0857','35.02.0766','35.02.0786','35.02.0787','35.02.0830','35.02.0833','35.02.0834','35.09.0702','35.09.0981','35.09.1044','35.09.1201','37.01.0018','37.09.0002','77.22.0243','77.61.0105','77.61.0106','77.61.0107','77.61.0123','77.61.0136','77.61.0139','77.62.0023','77.73.0354','77.99.2300','77.99.2308')"""
 
 	query = """
 		SELECT 

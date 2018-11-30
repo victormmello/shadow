@@ -249,4 +249,4 @@ if product_dict:
 	for group in product_dict:
 		for subgroup in product_dict[group]:
 			for product in product_dict[group][subgroup]['products']:
-				worksheet.update_cell(product['linha'],2,product['produto'])
+				worksheet.update_cell(product['linha'],2,"'" + product['produto'])
