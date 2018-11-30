@@ -1,6 +1,8 @@
 *fb_config.py
+*vtex_config.py
 *database_config.py
 *client_secret.py
+*api_connection.json
 
 # Compiled source #
 ###################
@@ -31,6 +33,10 @@
 *.sql
 *.sqlite
 *.csv
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
 *.jpg
 
 # OS generated files #

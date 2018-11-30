@@ -1,133 +1,38 @@
 from shadow_database import DatabaseConnection
 from shadow_helpers.helpers import set_in_dict
-dc = DatabaseConnection()
+from shadow_vtex.vtex import update_vtex_product
+
 import os, fnmatch, shutil, requests, csv
 import requests
 from bs4 import BeautifulSoup as Soup
 from multiprocessing import Pool
 
 # --------------------------------------------------------------------------------------------------------------------------------
-
-webserviceURL = "http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl"
-
-params = {
-	"Content-Type": "text/xml",
-	"Authorization": "Basic dnRleGFwcGtleS1tYXJjaWFtZWxsby1YTlpGVVg6SEpHVkdVUFVTTVpTRllJSFZQTEpQRkJaUFlCTkxDRkhSWVRUVVRQWlNZVFlDSFRJT1BUSktBQUJISEZIVENJUEdTQUhGT01CWkxSUk1DWEhGU1lXSlZXUlhSTE5PSUdQUERTSkhMRFpDUktaSklQRktZQkJETUZMVklLT0RaTlE=",
-}
-
-auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
-
-def post_to_webservice(soap_action, soap_message, retry=3):
-	params["SOAPAction"] = soap_action
-	request_type = soap_action.split('/')[-1]
-
-	for i in range(0, retry):
-		try:
-			response = requests.post("http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl", auth=auth, headers=params, data=soap_message.encode(), timeout=10)
-
-			print("%s %s" % (request_type, response.status_code))
-			if response.status_code == 200:
-				break
-			elif response.status_code == 429:
-				import time
-				time.sleep(10)
-				raise Exception()
-			else:
-				raise Exception()
-
-		except Exception as e:
-			if i == retry-1:
-				print('desistindo')
-				return None
-
-	return Soup(response.text, "xml")
-
-def f(product_info):
-	# print(product_info)
-	product_id = product_info['product_id']
-
-	# --------------------------------------------------------------------------------------------------------------------------------
-
-	soap_productget = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-	   <soapenv:Header/>
-	   <soapenv:Body>
-		  <tem:ProductGet>
-			 <!--Optional:-->
-			 <tem:idProduct>%s</tem:idProduct>
-		  </tem:ProductGet>
-	   </soapenv:Body>
-	</soapenv:Envelope>""" % (product_id)
-
-	soup = post_to_webservice("http://tempuri.org/IService/ProductGet", soap_productget)
-	if not soup:
-		return 'error: soap_productget %s' % product_id
-
-	product_name = soup.find('a:Name').text
-	link_id = soup.find('a:LinkId').text
-	product_refid = soup.find('a:RefId').text
-	product_isactive = soup.find('a:IsActive').text
-	brand_id = soup.find('a:BrandId').text
-	category_id = soup.find('a:CategoryId').text
-	department_id = soup.find('a:DepartmentId').text
-
-	# --------------------------------------------------------------------------------------------------------------------------------
-
-	soap_productupdate = """
-		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:vtex="http://schemas.datacontract.org/2004/07/Vtex.Commerce.WebApps.AdminWcfService.Contracts" xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
-		<soapenv:Header/>
-		<soapenv:Body>
-			<tem:ProductInsertUpdate>
-				 <!--Optional:-->
-				 <tem:productVO>
-					<vtex:BrandId>%s</vtex:BrandId>
-					<vtex:CategoryId>%s</vtex:CategoryId>
-					<vtex:DepartmentId>%s</vtex:DepartmentId>
-					<vtex:Description>%s</vtex:Description>
-					<vtex:DescriptionShort>%s</vtex:DescriptionShort>
-					<vtex:Id>%s</vtex:Id>
-					<vtex:IsActive>true</vtex:IsActive>
-					<vtex:IsVisible>true</vtex:IsVisible>
-					<vtex:LinkId>%s</vtex:LinkId>
-					<vtex:ListStoreId>
-					   <arr:int>1</arr:int>
-					   <arr:int>3</arr:int>
-					</vtex:ListStoreId>
-					<vtex:Name>%s</vtex:Name>
-					<vtex:RefId>%s</vtex:RefId>
-					<vtex:ShowWithoutStock>false</vtex:ShowWithoutStock>
-				 </tem:productVO>
-			  </tem:ProductInsertUpdate>
-		   </soapenv:Body>
-		</soapenv:Envelope>""" % (brand_id, category_id, department_id, product_name, product_name, product_id, link_id, product_name, product_refid)
-
-
-	soup = post_to_webservice("http://tempuri.org/IService/ProductInsertUpdate", soap_productupdate)
-	if not soup:
-		return 'error: soap_productupdate %s' % product_id
-
 if __name__ == '__main__':
-	filter_str = "vp.produto = '22.05.0448'"
-
 	query = """
 		SELECT distinct
 			vpi.product_id
 		from dbo.bi_vtex_products vp
 		inner join bi_vtex_product_items vpi on vpi.product_id = vp.product_id
 		where 1=1
-			-- and vpi.item_id = 571599
+			-- and vp.produto = '35.02.0766'
+			and vpi.item_id in ('565561','576484','579452','576199','576185','576196','576204','576189','576203','576190','576205','576200','576191','576193','576197','576198','576202','576186','576201','576192','563753','563755','577973','577981','577979','577976','577977','577974','577978','581775','571642','571648','571645','571644','571646','571647','571643','571732','571729','571734','571731','571730','571727','571728','581727','581724','581725','581728','581774','581777','581772','581776','581771','571001','581722','572140','572144','572143','572145','572141','572139','581726','581723','583254','571009','571007','581384','571006','571003','571002','571005','571004','581387','581377','581370','581373','565384','565382','565386','581388','565381','565379','581379','581369','581383','581386','581371','581380','581375','565380','581382','565377','581385','581389','565376','581374','581376','581381','581378','581372')
 			-- and vpi.product_id = 530739
-			-- and len(vp.description) = 0
-			and (%s)
 		;
-	""" % filter_str
+	"""
+	dc = DatabaseConnection()
 	products_to_fix = dc.select(query, strip=True, dict_format=True)
 	# print(products_to_fix)
 
-
 	errors = []
+	description_fields = {
+		'Description': '%(Name)s',
+		'DescriptionShort': '%(Name)s',
+	}
 	# Rodar sem thread:
 	for product_to_fix in products_to_fix:
-		errors.append(f(product_to_fix))
+		update_vtex_product(product_to_fix['product_id'], description_fields)
+		# errors.append(f(product_to_fix))
 
 	errors = [x for x in errors if x]
 	print(errors)
