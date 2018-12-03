@@ -39,7 +39,6 @@ def f(product_and_img_dict):
 	if not (product_info['vtex_color'] or product_info['vtex_category_id'] or product_info['vtex_department_id']):
 		return product_info
 
-	print(product_info)
 	EAN = product_info['ean']
 	brand_id = product_info['brand_id']
 	department_id = product_info['vtex_department_id']
@@ -120,7 +119,8 @@ def f(product_and_img_dict):
 	soup = post_to_webservice("http://tempuri.org/IService/ImageListByStockKeepingUnitId", soap_imageget)
 	if not soup:
 		return 'error: soap_imageget %s' % EAN
-	image_verification = bool(soup.find('a:Name'))
+	# image_verification = bool(soup.find('a:Name'))
+	image_verification = False
 
 	if not image_verification:
 		found = False
@@ -164,7 +164,6 @@ def f(product_and_img_dict):
 			image_color = image_dict[product_id]
 			image_color[color_id] = sku_id
 	
-	# Comentar esse bloco para atualizar informações de produto:
 	if program_params['skip_active_skus'] and sku_isactive == 'true':
 		return
 
@@ -337,7 +336,16 @@ if __name__ == '__main__':
 	if not filters:
 		raise Exception('Nenhuma imagem encontrada')
 
-	filter_str = ' OR '.join(filters)
+	# Atualização Manual:
+	# product_list = [
+	# 	{'produto':'41.01.0109','cor':'02','photo_count':4}
+	# ]
+	# if product_list:
+	# 	filters = set()
+	# 	photo_count_dict = {}
+	# 	for product in product_list:
+	# 		filters.add("(ps.produto = '%s' and ps.COR_PRODUTO = '%s')" % (product['produto'],product['cor']))
+	# 		set_in_dict(photo_count_dict, product['photo_count'], [product['produto'], product['cor']], repeated_key='sum')
 
 	# filter_str = "ps.CODIGO_BARRA='08060790234'"
 	# filter_str = "ps.CODIGO_BARRA='08011950239'"
@@ -359,6 +367,7 @@ if __name__ == '__main__':
 				when p.griffe = 'NAKD' then '2000001' 
 				else '2000000' 
 			end as brand_id,
+			-- '2000000' as brand_id,
 			COALESCE(cat1.vtex_category_id, cat2.vtex_category_id) as vtex_category_id,
 			COALESCE(cat1.vtex_department_id, cat2.vtex_department_id) as vtex_department_id,
 			pp.preco1 as list_price,
