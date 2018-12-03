@@ -2,6 +2,7 @@ import requests, json, dateutil.relativedelta
 from shadow_vtex.vtex import try_to_request
 from datetime import datetime, timedelta
 from shadow_database import DatabaseConnection
+from multiprocessing import Pool, Manager
 
 # ssh -i kibe.pem ec2-user@ec2-18-228-150-241.sa-east-1.compute.amazonaws.com
 
@@ -48,18 +49,15 @@ api_connection_config = {
 }
 list_orders_url = 'http://marciamello.vtexcommercestable.com.br/api/oms/pvt/orders'
 
-tomorrow = datetime.now() + timedelta(days=1)
+def get_orders_by_date_range(date_range):
+	start_date = date_range[0]
+	end_date = date_range[1]
 
-end_date = datetime(year=tomorrow.year, month=tomorrow.month, day=tomorrow.day, hour=2, minute=0, second=0)
-start_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day, hour=2, minute=0, second=0) - timedelta(days=2)
-
-order_items = []
-skus_to_reduce_bypass = []
-for i in range(0,17):
 	print('start_date: %s' % start_date)
 	print('end_date: %s' % end_date)
 
-	formatted_end_date = (end_date + timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+	order_items = []
+	formatted_end_date = end_date.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
 	formatted_start_date = start_date.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
 	params = {
 		'orderBy': 'creationDate,desc',
@@ -67,10 +65,9 @@ for i in range(0,17):
 		'f_creationDate': 'creationDate:[%sZ TO %sZ]' % (formatted_start_date, formatted_end_date)
 	}
 
-
 	# print('creationDate:[¨%sZ TO %sZ]' % (formatted_start_date, formatted_end_date))
-
 	# with open('order_output.csv', 'wb') as f:
+	
 	total_items = 1
 	c=0
 	while (c*15) < total_items:
@@ -87,8 +84,13 @@ for i in range(0,17):
 			try:
 				order_id = order_json['orderId']
 
-				order_response = requests.request("GET", list_orders_url + '/' + order_id, headers=api_connection_config)
-				order_json_response = json.loads(order_response.text)
+				for i in range(0,20):
+					order_response = requests.request("GET", list_orders_url + '/' + order_id, headers=api_connection_config)
+					order_json_response = json.loads(order_response.text)
+
+					if order_json_response.get('error'):
+						continue
+					break
 
 				order_info = []
 				order_info.append(order_id) # order_id
@@ -117,12 +119,6 @@ for i in range(0,17):
 						order_item.append(format_int_to_float(item['price'])) # tb tem sellingPrice # price
 
 						order_items.append(order_item)
-
-						skus_to_reduce_bypass.append({
-							'sku_id': int(item['id']),
-							'ordered_quantity': item['quantity'],
-							'status': ORDER_STATUS[order_json_response['status']],
-						})
 					except Exception as e:
 						print('item error')
 						continue
@@ -132,27 +128,44 @@ for i in range(0,17):
 
 		total_items = list_json_response['stats']['stats']['totalValue']['Count']
 
-	end_date -= timedelta(days=2)
-	start_date -= timedelta(days=2)
+	return order_items
 
+if __name__ == '__main__':
+	tomorrow = datetime.now() + timedelta(days=1)
+	end_date = datetime(year=tomorrow.year, month=tomorrow.month, day=tomorrow.day, hour=2, minute=0, second=0)
+	start_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day, hour=2, minute=0, second=0) - timedelta(days=3)
 
-print('Connecting to database...',end='')
-dc = DatabaseConnection()
-print('Done!')
+	date_ranges = []
+	for i in range(0,12):
+		date_ranges.append([start_date, end_date])
 
-print('Inserting into tables...')
+		end_date -= timedelta(days=3)
+		start_date -= timedelta(days=3)
 
-print('	bi_vtex_order_items')
-# dc.execute('TRUNCATE TABLE bi_vtex_order_items;')
-dc.insert('bi_vtex_order_items', order_items, print_only=False)
+	with Pool(len(date_ranges)) as p:
+		order_items_lists = p.map(get_orders_by_date_range, date_ranges)
 
-# skus_to_reduce = dc.select("""
-# 	SELECT 
-# 		voi.vtex_sku as sku_id,
-# 		voi.quantity as ordered_quantity,
-# 		voi.status as status
-# 	from dbo.vtex_order_items voi 
-# 	where status not in ('Faturado', 'Cancelado')
-# 	order by order_sequence
-# 	;
-# """, strip=True, dict_format=True)
+	order_items = []
+	for x in order_items_lists:
+		order_items.extend(x)
+
+	print('Connecting to database...',end='')
+	dc = DatabaseConnection()
+	print('Done!')
+
+	print('Inserting into tables...')
+
+	print('	bi_vtex_order_items')
+	# dc.execute('TRUNCATE TABLE bi_vtex_order_items;')
+	dc.insert('bi_vtex_order_items', order_items, print_only=False)
+
+	# skus_to_reduce = dc.select("""
+	# 	SELECT 
+	# 		voi.vtex_sku as sku_id,
+	# 		voi.quantity as ordered_quantity,
+	# 		voi.status as status
+	# 	from dbo.vtex_order_items voi 
+	# 	where status not in ('Faturado', 'Cancelado')
+	# 	order by order_sequence
+	# 	;
+	# """, strip=True, dict_format=True)

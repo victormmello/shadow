@@ -32,6 +32,8 @@ def try_to_request(*args, **kwargs):
 
 def check_vtex(ean):
 	check_result = {
+		'product_id': None,
+
 		'integrado': False,
 		'imagem_vtex': False,
 		'ativo': False,
@@ -60,6 +62,7 @@ def check_vtex(ean):
 		return check_result
 
 	check_result['integrado'] = True
+	check_result['product_id'] = soup.find('a:ProductId').text
 
 	sku_id = sku_id.text
 
@@ -245,8 +248,8 @@ if __name__ == '__main__':
 	dc = DatabaseConnection()
 
 	# product_filter = "and p.griffe = 'NAKD'"
-	product_filter = 'e.estoque_disponivel > 0'
-	# product_filter = "(p.produto = '35.01.0854')"
+	product_filter = "e.estoque_disponivel > 0 and e.filial='e-commerce'"
+	# product_filter = "(p.produto = '22.01.0007')"
 
 	query = """
 		SELECT
@@ -258,16 +261,15 @@ if __name__ == '__main__':
 		from dbo.PRODUTOS p
 		INNER JOIN dbo.PRODUTO_CORES pc on pc.produto = p.produto
 		INNER JOIN dbo.PRODUTOS_BARRA ps on ps.produto = p.produto and ps.COR_PRODUTO = pc.COR_PRODUTO
-		LEFT JOIN w_estoque_disponivel_sku e on e.codigo_barra = ps.CODIGO_BARRA and e.filial = 'e-commerce'
+		LEFT JOIN w_estoque_disponivel_sku e on e.codigo_barra = ps.CODIGO_BARRA
 		WHERE 1=1
 			and (%s)
 		group by p.produto, ps.COR_PRODUTO
+		having SUM(e.estoque_disponivel) > 0
 		;
 	""" % product_filter
 
 	products_to_check = dc.select(query, strip=True, dict_format=True)
-
-	dc.execute('TRUNCATE TABLE bi_vtex_product_waterfall;')
 
 	product_checks = []
 	with Pool(10) as p:
@@ -288,6 +290,7 @@ if __name__ == '__main__':
 	for found_product in found_products:
 		set_in_dict(product_check_dict, True, [found_product['produto'], found_product['cor_produto'], 'imagem_hd'])
 
+	dc.execute('TRUNCATE TABLE bi_vtex_product_waterfall;')
 	dc.insert_dict('bi_vtex_product_waterfall', list(for_each_leaf(product_check_dict, depth=2, return_keys=False)))
 
 	end = time.time()

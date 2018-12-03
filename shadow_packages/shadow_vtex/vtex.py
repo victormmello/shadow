@@ -1,6 +1,7 @@
 from shadow_vtex import vtex_config
 from bs4 import BeautifulSoup as Soup
 import time, requests
+from datetime import datetime
 
 def try_to_request(*args, **kwargs):
 	retry = 3
@@ -12,6 +13,8 @@ def try_to_request(*args, **kwargs):
 			print(response.status_code)
 			if response.status_code == 200:
 				break
+			elif response.status_code == 404:
+				return None
 			elif response.status_code == 429:
 				time.sleep(10)
 			else:
@@ -20,6 +23,7 @@ def try_to_request(*args, **kwargs):
 		except Exception as e:
 			if i == retry-1:
 				print(response.text)
+				# import pdb; pdb.set_trace()
 				if response:
 					print('desistindo')
 
@@ -67,7 +71,7 @@ def post_to_webservice(soap_action, soap_message, retry=3):
 
 
 
-def update_vtex_product(product_id, update_dict):
+def update_vtex_product(product_id, update_dict, dafiti_store=False):
 	soap_productget = """
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
 			<soapenv:Header/>
@@ -114,7 +118,20 @@ def update_vtex_product(product_id, update_dict):
 		if k not in product_dict:
 			raise Exception('setando atributo inexistente %s' % k)
 
-		product_dict[k] = (v % product_dict)
+		if isinstance(v, str):
+			product_dict[k] = (v % product_dict)
+
+	dafiti_store_str = ''
+	if dafiti_store:
+		dafiti_store_str = '<arr:int>3</arr:int>'
+	product_dict['dafiti_store'] = dafiti_store_str
+
+
+	release_date_str = datetime.today().strftime('%Y-%m-%dT00:00:00')
+	if product_dict['ReleaseDate']:
+		release_date_str = '<vtex:ReleaseDate>%(ReleaseDate)s</vtex:ReleaseDate>' % product_dict
+	product_dict['release_date_str'] = release_date_str
+
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -137,13 +154,13 @@ def update_vtex_product(product_id, update_dict):
 						<vtex:LinkId>%(LinkId)s</vtex:LinkId>
 						<vtex:ListStoreId>
 							<arr:int>1</arr:int>
-							<!--<arr:int>3</arr:int>-->
+							%(dafiti_store)s
 						</vtex:ListStoreId>
 						<!--<vtex:LomadeeCampaignCode>%(LomadeeCampaignCode)s</vtex:LomadeeCampaignCode>-->
 						<!--<vtex:MetaTagDescription>%(MetaTagDescription)s</vtex:MetaTagDescription>-->
 						<vtex:Name>%(Name)s</vtex:Name>
 						<vtex:RefId>%(RefId)s</vtex:RefId>
-						<vtex:ReleaseDate>%(ReleaseDate)s</vtex:ReleaseDate>
+						%(release_date_str)s
 						<vtex:Score>%(Score)s</vtex:Score>
 						<vtex:ShowWithoutStock>%(ShowWithoutStock)s</vtex:ShowWithoutStock>
 						<!--<vtex:SupplierId>%(SupplierId)s</vtex:SupplierId>-->
@@ -154,6 +171,8 @@ def update_vtex_product(product_id, update_dict):
 			</soapenv:Body>
 		</soapenv:Envelope>""" % product_dict
 
+
 	soup = post_to_webservice("http://tempuri.org/IService/ProductInsertUpdate", soap_productupdate)
 	if not soup:
+		print(soap_productupdate)
 		return 'error: soap_productupdate %s' % product_id

@@ -1,4 +1,6 @@
 from shadow_database import DatabaseConnection
+from shadow_vtex.vtex import try_to_request
+from shadow_helpers.helpers import set_in_dict
 # from shadow_database.shadow_helpers import make_dict, get_from_dict
 import os, fnmatch, shutil, requests, csv, json, requests
 from bs4 import BeautifulSoup as Soup
@@ -12,66 +14,22 @@ api_connection_config = {
 	"X-VTEX-API-AppToken": "HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ"
 }
 
-def try_to_request(*args, **kwargs):
-	retry = 3
-	for i in range(0, retry):
-		response = None
-		try:
-			response = requests.request(*args, **kwargs)
-
-			if response.status_code == 200:
-				break
-			elif response.status_code == 429:
-				import time
-				time.sleep(10)
-			else:
-				raise Exception()
-
-
-		except Exception as e:
-			if i == retry-1:
-				if response:
-					print(response.text)
-
-				return None
-	
-	return response
-
-# product_filter = "p.produto='22.07.0254'"
-# query = """
-# 	SELECT
-# 		vpi.item_id as sku_id,
-# 		pp.preco1 as original_price,
-# 		pp.preco_liquido1 as sale_price,
-# 		c.preco1 as cost
-# 	from dbo.PRODUTOS_BARRA ps
-# 	INNER JOIN dbo.PRODUTOS p on p.produto = ps.produto
-# 	INNER JOIN dbo.PRODUTO_CORES pc on pc.produto = p.produto and ps.COR_PRODUTO = pc.COR_PRODUTO
-# 	INNER JOIN dbo.bi_vtex_product_items vpi on vpi.ean = ps.codigo_barra
-# 	INNER JOIN produtos_precos pp on p.produto = pp.produto and pp.codigo_tab_preco = 11
-# 	INNER JOIN produtos_precos c on p.produto = c.produto and c.codigo_tab_preco = 2
-# 	LEFT JOIN w_estoque_disponivel_sku e on e.codigo_barra = ps.CODIGO_BARRA and e.filial = 'e-commerce'
-# 	where 1=1 
-# 		and pp.preco_liquido1 > (pp.preco1/2)
-# 		and (%s) 
-# 	;
-# """ % product_filter
-
+# =================== atualiza para o preco do csv
 product_price = {}
-# with open('repricing.csv', encoding='latin-1') as csvfile:
-# 	reader = csv.DictReader(csvfile, delimiter=';')
-# 	for row in reader:
-# 		prod_code = row['produto'].strip()
-# 		product_price[prod_code] = float(row['novo_preco'].strip().replace(',', '.'))
+with open('repricing.csv', encoding='latin-1') as csvfile:
+	reader = csv.DictReader(csvfile, delimiter=';')
+	for row in reader:
+		prod_code = row['produto'].strip()
 
-product_filter = ','.join(product_price)
+		# set_in_dict(product_price, float(row['preco_de'].strip().replace(',', '.')), [prod_code, 'original_price'])
+		set_in_dict(product_price, float(row['preco_por'].strip().replace(',', '.')), [prod_code, 'sale_price'])
 
-product_filter = "1=1"
+product_filter = ','.join(["'%s'" % x for x in product_price])
+
 query = """
 	SELECT
 		ps.produto as prod_code,
 		vpi.item_id as sku_id,
-		CAST(vp.original_price as float)/2 as fixed_sale_price,
 		vp.original_price as original_price,
 		c.preco1 as cost
 	from bi_vtex_products vp
@@ -79,17 +37,38 @@ query = """
 	INNER JOIN PRODUTOS_BARRA ps on vpi.ean = ps.codigo_barra
 	INNER JOIN produtos_precos c on ps.produto = c.produto and c.codigo_tab_preco = 2
 	where 1=1 
-		and vp.sale_price/CAST(vp.original_price as float) > 0.5
-		and (%s)
+		and ps.produto in (%s)
+	order by ps.produto
 	;
 """ % product_filter
 
-skus_to_update = dc.select(query, strip=True, dict_format=True)
+# =================== atualiza tudo para 50% +
+# product_filter = "1=1"
+# query = """
+# 	SELECT
+# 		ps.produto as prod_code,
+# 		vpi.item_id as sku_id,
+# 		CAST(vp.original_price as float)/2 as fixed_sale_price,
+# 		vp.original_price as original_price,
+# 		c.preco1 as cost
+# 	from bi_vtex_products vp
+# 	INNER JOIN bi_vtex_product_items vpi on vpi.product_id = vp.product_id
+# 	INNER JOIN PRODUTOS_BARRA ps on vpi.ean = ps.codigo_barra
+# 	INNER JOIN produtos_precos c on ps.produto = c.produto and c.codigo_tab_preco = 2
+# 	where 1=1 
+# 		and vp.sale_price/CAST(vp.original_price as float) > 0.5
+# 		and (%s)
+# 	;
+# """ % product_filter
+
+# ======================================================
 
 # skus_to_update = [{'sku_id': 574838}]
+print(query)
+skus_to_update = dc.select(query, strip=True, dict_format=True)
 
 def f(sku):
-	get_price_url = 'https://api.vtex.com/marciamello/pricing/prices/%(sku_id)s' % sku
+	# get_price_url = 'https://api.vtex.com/marciamello/pricing/prices/%(sku_id)s' % sku
 
 	# response = try_to_request('GET', get_price_url, headers=api_connection_config)
 
@@ -101,8 +80,16 @@ def f(sku):
 	# 	if x['tradePolicyId'] == '1':
 	# 		current_price = x['value']
 	# sale_price = product_filter[sku['prod_code']]
-	original_price = float(sku['original_price'])
-	sale_price = sku['fixed_sale_price']
+	if 'original_price' in sku:
+		original_price = float(sku['original_price'])
+	else:
+		original_price = product_price[sku['prod_code']]['original_price']
+
+	if 'fixed_sale_price' in sku:
+		sale_price = sku['fixed_sale_price']
+	else:
+		sale_price = product_price[sku['prod_code']]['sale_price']
+
 
 	data = {
 		"basePrice": original_price,

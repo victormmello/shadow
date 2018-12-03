@@ -7,33 +7,21 @@ from datetime import datetime, timedelta
 dc = DatabaseConnection()
 
 query = """
-	SELECT
-		pp.PRODUTO,
-		case
-			when pp.CODIGO_TAB_PRECO = '01' then 'Outras'
-			when pp.CODIGO_TAB_PRECO = '10' then 'Outlet'
-			when pp.CODIGO_TAB_PRECO = '11' then 'e-commerce'
-		end as filial,
-		pp.preco1 as original_price,
-		pp.PRECO_LIQUIDO1 as sale_price
-	from produtos_precos pp
-	where 1=1 
-		and pp.CODIGO_TAB_PRECO in ('01', '10', '11')
-		and exists (
-			select 1 
-			from W_ESTOQUE_DISPONIVEL_SKU e 
-			where 
-			e.produto = pp.produto and
-			case e.filial
-				when 'E-commerce' then 11 
-				when 'Premium outlet itupeva' then 10 
-				else 1 
-			end = pp.CODIGO_TAB_PRECO)
+	SELECT 
+		e.codigo_barra,
+		vpi.item_id as sku_id,
+		e.estoque_disponivel as stock_linx,
+		vpi.stock_quantity as stock_vtex
+	from w_estoque_disponivel_sku e
+	LEFT JOIN bi_vtex_product_items vpi on e.codigo_barra = vpi.ean and e.filial = 'e-commerce'
+	where vpi.stock_quantity is null or vpi.stock_quantity != e.estoque_disponivel
 	;
 """
 
 results = dc.select(query, strip=True)
+columns = [column[0] for column in dc.cursor.description]
 
 with open('query_result.csv', 'w', newline='\n') as csvfile:
 	writer = csv.writer(csvfile, delimiter=';')
+	writer.writerow(columns)
 	writer.writerows(results)

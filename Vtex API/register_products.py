@@ -1,5 +1,6 @@
 from shadow_database import DatabaseConnection
 from shadow_helpers.helpers import set_in_dict
+from shadow_vtex.vtex import update_vtex_product, post_to_webservice
 dc = DatabaseConnection()
 import os, fnmatch, shutil, requests, csv
 import requests
@@ -8,21 +9,17 @@ from multiprocessing import Pool, Manager
 
 # --------------------------------------------------------------------------------------------------------------------------------
 
-webserviceURL = "http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl"
-
-params = {
-	"Content-Type": "text/xml",
-	"Authorization": "Basic dnRleGFwcGtleS1tYXJjaWFtZWxsby1YTlpGVVg6SEpHVkdVUFVTTVpTRllJSFZQTEpQRkJaUFlCTkxDRkhSWVRUVVRQWlNZVFlDSFRJT1BUSktBQUJISEZIVENJUEdTQUhGT01CWkxSUk1DWEhGU1lXSlZXUlhSTE5PSUdQUERTSkhMRFpDUktaSklQRktZQkJETUZMVklLT0RaTlE=",
+program_params = {
+	'remove_sku_photos': True,
+	'skip_active_skus': False,
+	'dafiti_store': True,
 }
 
-auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
-
-path = 'C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear'
-filters = set()
+path = 'C:\\Users\\Felipe\\Downloads\\mm\\fotos\\substituir'
 
 photo_count_dict = {}
 image_dict = {}
-
+filters = set()
 for folder, subs, files in os.walk(path):
 	for filename in files:
 		filename = filename[:-4]
@@ -35,34 +32,7 @@ for folder, subs, files in os.walk(path):
 
 		filters.add("(ps.produto = '%s' and ps.COR_PRODUTO = '%s')" % (prod_code, color_code))
 
-
-
-def post_to_webservice(soap_action, soap_message, retry=3):
-	params["SOAPAction"] = soap_action
-	request_type = soap_action.split('/')[-1]
-
-	for i in range(0, retry):
-		try:
-			response = requests.post("http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl", auth=auth, headers=params, data=soap_message.encode(), timeout=10)
-			print("%s %s" % (request_type, response.status_code))
-			if response.status_code == 200:
-				break
-			elif response.status_code == 429:
-				import time
-				time.sleep(10)
-				raise Exception()
-			else:
-				raise Exception()
-
-		except Exception as e:
-			if i == retry-1:
-				print('desistindo')
-				return None
-
-	return Soup(response.text, "xml")
-
 def f(product_and_img_dict):
-	print(product_and_img_dict)
 	product_info = product_and_img_dict[0]
 	image_dict = product_and_img_dict[1]
 
@@ -70,7 +40,6 @@ def f(product_and_img_dict):
 		return product_info
 
 	print(product_info)
-	print(image_dict)
 	EAN = product_info['ean']
 	brand_id = product_info['brand_id']
 	department_id = product_info['vtex_department_id']
@@ -80,6 +49,7 @@ def f(product_and_img_dict):
 	color_id = product_info['cod_color']
 	list_price = product_info['list_price']
 	price = product_info['price']
+	prod_code = product_info['prod_code']
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -115,27 +85,24 @@ def f(product_and_img_dict):
 	sku_width = soup.find('a:Width').text
 	sku_cubicweight = soup.find('a:CubicWeight').text
 	sku_weightkg = "300"
-	print(sku_id)
 	product_id = soup.find('a:ProductId').text
 
+	if program_params['remove_sku_photos']:
+		soap_imageremove = """
+			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+			   <soapenv:Header/>
+			   <soapenv:Body>
+			      <tem:StockKeepingUnitImageRemove>
+			         <!--Optional:-->
+			         <tem:stockKeepingUnitId>%s</tem:stockKeepingUnitId>
+			      </tem:StockKeepingUnitImageRemove>
+			   </soapenv:Body>
+			</soapenv:Envelope>
+		""" % sku_id
 
-
-	# soap_imageremove = """
-	# 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-	# 	   <soapenv:Header/>
-	# 	   <soapenv:Body>
-	# 	      <tem:StockKeepingUnitImageRemove>
-	# 	         <!--Optional:-->
-	# 	         <tem:stockKeepingUnitId>%s</tem:stockKeepingUnitId>
-	# 	      </tem:StockKeepingUnitImageRemove>
-	# 	   </soapenv:Body>
-	# 	</soapenv:Envelope>
-	# """ % sku_id
-
-	# soup = post_to_webservice("http://tempuri.org/IService/StockKeepingUnitImageRemove", soap_imageremove)
-	# if not soup:
-	# 	continue
-	# continue
+		soup = post_to_webservice("http://tempuri.org/IService/StockKeepingUnitImageRemove", soap_imageremove)
+		if not soup:
+			return 'error: soap_removeimage %s' % EAN
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -198,69 +165,21 @@ def f(product_and_img_dict):
 			image_color[color_id] = sku_id
 	
 	# Comentar esse bloco para atualizar informações de produto:
-	if sku_isactive == 'true':
+	if program_params['skip_active_skus'] and sku_isactive == 'true':
 		return
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
-	soap_productget = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-	   <soapenv:Header/>
-	   <soapenv:Body>
-		  <tem:ProductGet>
-			 <!--Optional:-->
-			 <tem:idProduct>%s</tem:idProduct>
-		  </tem:ProductGet>
-	   </soapenv:Body>
-	</soapenv:Envelope>""" % (product_id)
-
-	soup = post_to_webservice("http://tempuri.org/IService/ProductGet", soap_productget)
-	if not soup:
-		return 'error: soap_productget %s' % EAN
-
-
-	product_name = soup.find('a:Name').text
-	link_id = soup.find('a:LinkId').text
-	product_refid = soup.find('a:RefId').text
-	product_isactive = soup.find('a:IsActive').text
-	description = soup.find('a:Description').text
-
-	if not product_refid:
-		product_refid = product_info['prod_code']
-
-	# --------------------------------------------------------------------------------------------------------------------------------
-
-	# if product_refid not in product_list:
-	soap_productupdate = """
-		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:vtex="http://schemas.datacontract.org/2004/07/Vtex.Commerce.WebApps.AdminWcfService.Contracts" xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
-		<soapenv:Header/>
-		<soapenv:Body>
-			<tem:ProductInsertUpdate>
-				 <!--Optional:-->
-				 <tem:productVO>
-					<vtex:BrandId>%s</vtex:BrandId>
-					<vtex:CategoryId>%s</vtex:CategoryId>
-					<vtex:DepartmentId>%s</vtex:DepartmentId>
-					<vtex:Description>%s</vtex:Description>
-					<vtex:Id>%s</vtex:Id>
-					<vtex:IsActive>true</vtex:IsActive>
-					<vtex:IsVisible>true</vtex:IsVisible>
-					<vtex:LinkId>%s</vtex:LinkId>
-					<vtex:ListStoreId>
-					   <arr:int>1</arr:int>
-					   <arr:int>3</arr:int>
-					</vtex:ListStoreId>
-					<vtex:Name>%s</vtex:Name>
-					<vtex:RefId>%s</vtex:RefId>
-					<vtex:ShowWithoutStock>false</vtex:ShowWithoutStock>
-				 </tem:productVO>
-			  </tem:ProductInsertUpdate>
-		   </soapenv:Body>
-		</soapenv:Envelope>""" % (brand_id, category_id, department_id, description, product_id, link_id, product_name, product_refid)
-
-	soup = post_to_webservice("http://tempuri.org/IService/ProductInsertUpdate", soap_productupdate)
-
-	if not soup:
-		return 'error: soap_productupdate %s' % EAN
+	update_vtex_product(product_id, {
+		'RefId': product_info['prod_code'],
+		'BrandId': brand_id,
+		'CategoryId': category_id,
+		'DepartmentId': department_id,
+		'Description': '%(Name)s',
+		'IsActive': 'true',
+		'IsVisible': 'true',
+		'ShowWithoutStock': 'false',
+	}, dafiti_store=program_params['dafiti_store'])
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -278,7 +197,7 @@ def f(product_and_img_dict):
 			photo_count = 4
 		
 		for x in range(1,photo_count+1):
-			sku_url = "http://blog.marciamello.com.br/Ecommerce/Cadastro_Produtos/%s.%s_0%s.jpg" % (product_refid.replace(".", ""), color_id, x)
+			sku_url = "http://blog.marciamello.com.br/Ecommerce/Cadastro_Produtos/%s.%s_0%s.jpg" % (prod_code.replace(".", ""), color_id, x)
 			print(sku_url)
 			if x==2:
 				sku_label = "detail"
@@ -291,7 +210,6 @@ def f(product_and_img_dict):
 			 <soapenv:Header/>
 			 <soapenv:Body>
 				<tem:ImageInsertUpdate>
-				   <!--Optional:-->
 				   <tem:image>
 					  <vtex:Description>%s</vtex:Description>
 					  <vtex:FileLocation>%s</vtex:FileLocation>
@@ -309,20 +227,15 @@ def f(product_and_img_dict):
 			if not soup:
 				continue
 
-
 	# --------------------------------------------------------------------------------------------------------------------------------
 
 	soap_size = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
 	   <soapenv:Header/>
 	   <soapenv:Body>
 		  <tem:StockKeepingUnitEspecificationInsert>
-			 <!--number, identificador do SKU dono do campo-->
 			 <tem:idSku>%s</tem:idSku>
-			 <!--string, identificador do campo, nome do campo-->
 			 <tem:fieldName>Tamanho</tem:fieldName>
-			 <!--array, lista de valores dos campos-->
 			 <tem:fieldValues>
-				<!--string, valor de campo-->
 				<arr:string>%s</arr:string>
 			 </tem:fieldValues>
 		  </tem:StockKeepingUnitEspecificationInsert>
@@ -333,13 +246,9 @@ def f(product_and_img_dict):
 	   <soapenv:Header/>
 	   <soapenv:Body>
 		  <tem:StockKeepingUnitEspecificationInsert>
-			 <!--number, identificador do SKU dono do campo-->
 			 <tem:idSku>%s</tem:idSku>
-			 <!--string, identificador do campo, nome do campo-->
 			 <tem:fieldName>Cor</tem:fieldName>
-			 <!--array, lista de valores dos campos-->
 			 <tem:fieldValues>
-				<!--string, valor de campo-->
 				<arr:string>%s</arr:string>
 			 </tem:fieldValues>
 		  </tem:StockKeepingUnitEspecificationInsert>
@@ -421,22 +330,22 @@ def f(product_and_img_dict):
 	if not soup:
 		return 'error: soap_skuactive %s' % EAN
 
-
-
 if __name__ == '__main__':
 
 	image_dict = Manager().dict()
 
-	# if not filters:
-	# 	raise Exception('Nenhuma imagem encontrada')
+	if not filters:
+		raise Exception('Nenhuma imagem encontrada')
 
 	filter_str = ' OR '.join(filters)
 
-	# filter_str = "ps.CODIGO_BARRA='28060015491G'"
+	# filter_str = "ps.CODIGO_BARRA='08060790234'"
+	# filter_str = "ps.CODIGO_BARRA='08011950239'"
+
 
 	# filter_str = "((p.produto='35.01.0828' AND pc.cor_produto='260') OR (p.produto='35.02.0803' AND pc.cor_produto='10'))"
 
-	filter_str = """p.produto in ('08.04.023','20.02.0005','22.02.0238','22.02.0240','22.02.0245','22.02.0246','22.03.0217','22.03.0239','22.03.0243','22.03.0248','22.03.0249','22.05.0292','22.05.0368','22.05.0439','22.05.0464','22.05.0467','22.05.0472','22.05.0473','22.05.0512','22.05.0555','22.05.0560','22.05.0565','22.05.0572','22.06.0457','22.07.0129','22.07.0236','22.07.0267','22.07.0276','22.07.0279','22.07.0285','22.12.0206','22.12.0541','22.12.0563','22.12.0570','22.12.0576','22.12.0582','22.12.0584','22.12.0591','22.15.0007','23.08.0217','23.11.0206','23.11.0234','23.11.0248','23.11.0263','24.04.0535','29.02.0083','31.01.0140','31.02.0070','32.02.0237','32.06.0051','32.06.0062','32.07.0071','32.07.0082','33.02.0153','33.02.0209','35.01.0635','35.01.0734','35.01.0735','35.01.0748','35.01.0840','35.01.0857','35.02.0766','35.02.0786','35.02.0787','35.02.0830','35.02.0833','35.02.0834','35.09.0702','35.09.0981','35.09.1044','35.09.1201','37.01.0018','37.09.0002','77.22.0243','77.61.0105','77.61.0106','77.61.0107','77.61.0123','77.61.0136','77.61.0139','77.62.0023','77.73.0354','77.99.2300','77.99.2308')"""
+	# filter_str = """(p.produto='32.06.0040' AND pc.cor_produto='05') OR (p.produto='32.07.0082' AND pc.cor_produto='244')"""
 
 	query = """
 		SELECT 
@@ -474,11 +383,12 @@ if __name__ == '__main__':
 
 	errors = []
 	# Rodar sem thread:
-	# for product_to_register in products_to_register:
-	# 	f(product_to_register)
+	for product_to_register in products_to_register:
+		f([product_to_register, image_dict])
 
-	with Pool(5) as p:
-		errors = p.map(f, [(x, image_dict) for x in products_to_register])
+	# ============== nao rodar com threads ainda
+	# with Pool(5) as p:
+	# 	errors = p.map(f, [(x, image_dict) for x in products_to_register])
 
 	errors = [x for x in errors if x]
 	print(errors)
