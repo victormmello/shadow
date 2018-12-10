@@ -1,7 +1,10 @@
 import sys
 
-c = open('/dev/hidraw0', 'rb' )
+fp = open('/dev/hidraw0', 'rb')
 
-code =c.read(12)
+while True:
+	buffer = fp.read(8)
+	for c in buffer:
+		if ord(c) > 0:
+			print ord(c)
 
-print(code)
