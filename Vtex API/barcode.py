@@ -1,12 +1,7 @@
-#!/usr/bin/python
+import sys
 
-import serial, string
+c = open('/dev/hidraw0', 'rb' )
 
-output = " "
-ser = serial.Serial('/dev/ttyUSB0', 4800, 8, 'N', 1, timeout=1)
-while True:
-  print "----"
-  while output != "":
-    output = ser.readline()
-    print output
-  output = " "
+code =c.read(12)
+
+print(code)
