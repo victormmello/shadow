@@ -9,6 +9,7 @@ year_month_index = 0
 year_month_dimension = 'anomes'
 # row[1] to row[len(dimensions)]:
 dimensions = [
+	'marca',
 	'faixa_de_custo',
 	'categoria',
 	'liso_estampado'
@@ -37,18 +38,25 @@ MULTIPLIERS = {
 	'avg_cogs':{
 		'inferior':0.9,
 		'superior':1.1,
-		'multiplier':0.97
+		'multiplier':{
+			'default':0.97
+		}
 	},
 	'avg_ticket':{
 		'inferior':0.9,
 		'superior':1.1,
-		'multiplier':1
+		'multiplier':{
+			'default':1
+		}
 	},
 	'itens':{
 		'inferior':0.7,
 		'superior':1.8,
 		'min_relevant':20,
-		'multiplier':1.03,
+		'multiplier':{
+			'default':1.03,
+			'201901':0.93
+		},
 		'factor':2.5
 	},
 	'pc1p':{
@@ -330,7 +338,8 @@ if result:
 						if metric == 'avg_ticket':
 							metric_value = max(row['avg_cogs'],metric_value)
 						last_metric_value = dimension_dict[add_months(year_month,-1)][metric]
-						row[metric] = min(max(metric_value,last_metric_value*MULTIPLIERS[metric]['inferior']),last_metric_value*MULTIPLIERS[metric]['superior']) * MULTIPLIERS[metric]['multiplier']
+						row[metric] = min(max(metric_value,last_metric_value*MULTIPLIERS[metric]['inferior']),last_metric_value*MULTIPLIERS[metric]['superior'])
+						row[metric] = row[metric] * MULTIPLIERS[metric]['multiplier'][str(year_month)] if str(year_month) in MULTIPLIERS[metric]['multiplier'] else row[metric] * MULTIPLIERS[metric]['multiplier']['default']
 						
 						if metric == 'itens':
 							row[metric] = int(row[metric])

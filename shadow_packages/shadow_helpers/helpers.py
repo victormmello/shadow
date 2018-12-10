@@ -161,3 +161,37 @@ def make_dict(queryset, dict_value_attr, dict_keys=[], normalize_keys=False, rep
 		set_in_dict(dictionary, value_to_add, keys=attrs, normalize_keys=normalize_keys, repeated_key=repeated_key, ordered=ordered)
 
 	return dictionary
+
+def for_each_leaf_aux_depth(dic, keys, depth):
+	if depth == 0:
+		yield keys, dic
+		return
+	for key in dic:
+		value = dic[key]
+		new_keys = keys + [key]
+		for y_keys, x in for_each_leaf_aux_depth(value, new_keys, depth-1):
+			yield y_keys, x
+
+def for_each_leaf_aux(dic, keys):
+	for key in dic:
+		value = dic[key]
+		new_keys = keys + [key]
+		if isinstance(value, dict):
+			for y_keys, x in for_each_leaf_aux(value,new_keys ):
+				yield y_keys, x
+		else:
+			yield new_keys, value
+
+def for_each_leaf(dic, depth=None, return_keys=True):
+	if depth is not None:
+		for keys, x in for_each_leaf_aux_depth(dic, [], depth):
+			if return_keys:
+				yield keys, x
+			else:
+				yield x
+	else:
+		for keys, x in for_each_leaf_aux(dic, []):
+			if return_keys:
+				yield keys, x
+			else:
+				yield x
