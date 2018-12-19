@@ -26,7 +26,7 @@ mandatory_keys = {
 	'colecao':'%s',
 	'cod_categoria':'%02d',
 	'cod_subcategoria':'%02d',
-	'idade':'%s',
+	'Idade':'%s',
 	'referencia':'%s',
 	'grade':'%s',
 	'tamanhos':'%s',
@@ -135,7 +135,7 @@ if product_dict:
 					product['colecao'],
 					product['grade'],
 					product['descricao'],
-					'' if product['idade'] == 'Infantil' else 'CASUAL',
+					'INFANTIL' if product['Idade'] == 'Infantil' else 'CASUAL',
 					product['griffe'],
 					'PC',
 					1,
@@ -259,4 +259,4 @@ if product_dict:
 		for group in product_dict:
 			for subgroup in product_dict[group]:
 				for product in product_dict[group][subgroup]['products']:
-					shadow_google_spreadsheet.update_cell(product['linha'],2,"'" + product['produto'])
+					shadow_google_spreadsheet.update_cell(worksheet,product['linha'],2,"'" + product['produto'])
