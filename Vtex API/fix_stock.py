@@ -91,7 +91,6 @@ def fix_stock(sku):
 	sku_id = sku['sku_id']
 	true_quantity = sku['true_quantity']
 
-
 	if true_quantity < 0:
 		print('Estoque negativo: %s (%s)' % (sku_id, true_quantity))
 		true_quantity = 0
@@ -104,20 +103,23 @@ def fix_stock(sku):
 	if not response:
 		print('ERROR: %s' % sku_id)
 
-
-	
 if __name__ == '__main__':
 	fixes_dict = Manager().dict()
+	import time
+	start_time = time.time()
 
 	different_stock_query = """
 		SELECT 
-			e.codigo_barra as ean,
+			ps.codigo_barra as ean,
 			vpi.item_id as sku_id,
-			e.estoque_disponivel as stock_linx,
-			vpi.stock_quantity as stock_vtex
-		from w_estoque_disponivel_sku e
-		LEFT JOIN bi_vtex_product_items vpi on e.codigo_barra = vpi.ean and e.filial = 'e-commerce'
-		where vpi.stock_quantity is null or vpi.stock_quantity != e.estoque_disponivel
+			case  
+				when COALESCE(e.estoque_disponivel, 0) - 2 <= 0 then 0 
+				else COALESCE(e.estoque_disponivel, 0) - 2
+			end	as stock_linx
+		from produtos_barra ps
+		LEFT JOIN w_estoque_disponivel_sku e on ps.codigo_barra = e.codigo_barra and e.filial = 'e-commerce'
+		LEFT JOIN bi_vtex_product_items vpi on ps.codigo_barra = vpi.ean
+		-- where e.produto = '24.04.0521'
 		;
 	"""
 	dc = DatabaseConnection()
@@ -127,6 +129,7 @@ if __name__ == '__main__':
 	with Pool(10) as p:
 		errors = p.map(get_stock_fix_from_linx, [(x, fixes_dict) for x in skus_with_different_stock])
 
+	dc = DatabaseConnection()
 	skus_to_reduce = dc.select("""
 		SELECT 
 			voi.vtex_sku as sku_id,
@@ -135,6 +138,7 @@ if __name__ == '__main__':
 		from dbo.bi_vtex_order_items voi 
 		where status not in ('Faturado', 'Cancelado')
 			and created_at > '2018-11-21'
+			-- and ean like '24040521%'
 		order by order_sequence
 		;
 	""", strip=True, dict_format=True)
@@ -150,7 +154,12 @@ if __name__ == '__main__':
 	with Pool(10) as p:
 		errors = p.map(fix_stock, [{'sku_id': sku_id, 'true_quantity': qnt} for sku_id, qnt in fixes_dict.items()])
 
+	# for x in [{'sku_id': sku_id, 'true_quantity': qnt} for sku_id, qnt in fixes_dict.items()]:
+	# 	errors = fix_stock(x)
+
+	end_time = time.time()
 	print(str(datetime.now()))
+	print(end_time-start_time)
 
 
 	# print('	vtex_stock_backup2')
