@@ -10,8 +10,8 @@ def try_to_request(*args, **kwargs):
 		try:
 			response = requests.request(*args, **kwargs)
 
-			print(response.status_code)
-			if response.status_code == 200:
+			# print(response.status_code)
+			if response.status_code in (200, 201):
 				break
 			elif response.status_code == 404:
 				return None

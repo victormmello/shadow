@@ -81,7 +81,7 @@ def get_orders_by_date_range(date_range):
 
 				for i in range(0,20):
 					try:
-						order_response = requests.request("GET", list_orders_url + '/' + order_id, headers=api_connection_config)
+						order_response = try_to_request("GET", list_orders_url + '/' + order_id, headers=api_connection_config)
 						order_json_response = json.loads(order_response.text)
 
 						if order_json_response.get('error'):
@@ -97,10 +97,30 @@ def get_orders_by_date_range(date_range):
 				created_at = created_at - timedelta(hours=2)
 				order_info.append(created_at) # created_at
 				order_info.append(order_json_response['clientProfileData']['firstName'] + ' ' + order_json_response['clientProfileData']['lastName']) # client_name
-
 				order_info.append(order_json_response['clientProfileData']['phone']) # client_phone_number
-				order_info.append(order_json_response['clientProfileData']['email']) # client_email
-				order_info.append(order_json_response['clientProfileData']['document']) # cpf
+
+				user_profile_id = order_json_response['clientProfileData']['userProfileId']
+				user_cpf = order_json_response['clientProfileData']['document']
+				client_email = ''
+				try:
+					get_email_by_user_id_url = 'http://marciamello.vtexcommercestable.com.br/api/dataentities/CL/search/?userId=%s&_fields=email' % user_profile_id
+					email_response = try_to_request("GET", get_email_by_user_id_url, headers=api_connection_config)
+					email_json_response = json.loads(email_response.text)
+					client_email = email_json_response[0]['email']
+
+					order_info.append(client_email) # client_email
+				except Exception as e:
+					try:
+						get_email_by_cpf_url = 'http://marciamello.vtexcommercestable.com.br/api/dataentities/CL/search/?document=%s&_fields=email' % user_cpf
+						email_response = try_to_request("GET", get_email_by_cpf_url, headers=api_connection_config)
+						email_json_response = json.loads(email_response.text)
+						client_email = email_json_response[0]['email']
+
+						order_info.append(client_email) # client_email
+					except Exception as e:
+						pass
+
+				order_info.append(user_cpf) # cpf
 				order_info.append(order_json_response['shippingData']['logisticsInfo'][0]['deliveryCompany']) # courier
 				order_info.append(order_json_response['shippingData']['address']['city']) # city
 				order_info.append(order_json_response['shippingData']['address']['neighborhood']) # neighborhood
@@ -110,9 +130,21 @@ def get_orders_by_date_range(date_range):
 				order_info.append(order_json_response['shippingData']['address']['number']) # number
 				order_info.append(order_json_response['shippingData']['address']['complement']) # complement
 
-				order_info.append(order_json_response['paymentData']['transactions'][0]['payments'][0]['group']) # payment_method_group
-				order_info.append(order_json_response['paymentData']['transactions'][0]['payments'][0]['tid']) # tid
+				transactions = order_json_response['paymentData']['transactions']
 
+				payment_method_groups = []
+				tids = []
+				for transaction in transactions:
+					payments = transaction['payments']
+
+					for payment in payments:
+						if payment['group']:
+							payment_method_groups.append(payment['group'])
+						if payment['tid']:
+							tids.append(payment['tid'])
+						
+				order_info.append(','.join(payment_method_groups)) # payment_method_group
+				order_info.append(','.join(tids)) # tid
 
 				# order_info.append(ORDER_STATUS[order_json_response['status']]) # status
 				order_info.append(order_json_response['statusDescription']) # status
@@ -169,8 +201,6 @@ def get_orders_by_date_range(date_range):
 
 				date_range_order_items.extend(this_order_items)
 
-
-
 			except Exception as e:
 				print('order error')
 				print(str(e))
@@ -189,6 +219,9 @@ if __name__ == '__main__':
 	end_date = datetime(year=tomorrow.year, month=tomorrow.month, day=tomorrow.day, hour=2, minute=0, second=0)
 	start_date = datetime(year=end_date.year, month=end_date.month, day=end_date.day, hour=2, minute=0, second=0) - days_delta
 
+	# end_date = datetime(year=tomorrow.year, month=11, day=29, hour=2, minute=0, second=0)
+	# start_date = datetime(year=tomorrow.year, month=11, day=28, hour=2, minute=0, second=0)
+
 	date_ranges = []
 	for i in range(0, DAYS_TO_FETCH):
 		date_ranges.append([start_date, end_date])
@@ -199,14 +232,14 @@ if __name__ == '__main__':
 	# 	[datetime(year=2018, month=11, day=1, hour=2, minute=0, second=0), datetime(year=2018, month=11, day=2, hour=2, minute=0, second=0),]
 	# ]
 
-	with Pool(len(date_ranges)) as p:
-		order_items_lists = p.map(get_orders_by_date_range, date_ranges)
+	# with Pool(len(date_ranges)) as p:
+	# 	order_items_lists = p.map(get_orders_by_date_range, date_ranges)
 
-	# order_items_lists = []
-	# for date_range in date_ranges:
-	# 	order_items_list = get_orders_by_date_range(date_range)
+	order_items_lists = []
+	for date_range in date_ranges:
+		order_items_list = get_orders_by_date_range(date_range)
 
-	# 	order_items_lists.append(order_items_list)
+		order_items_lists.append(order_items_list)
 
 	order_items = []
 	for x in order_items_lists:
