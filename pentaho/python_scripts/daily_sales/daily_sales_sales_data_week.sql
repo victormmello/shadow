@@ -5,11 +5,11 @@ WITH sales as (
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
 	LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))) as filial,
 	CASE
-		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
-		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
-		WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(%(date_to)s as DATE) THEN 'WEEK'
+		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(%(date_to)s4 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+		WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(%(date_to)s as DATE)) THEN 'LYW'
 	END as periodo,
-	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN vp.data_venda ELSE '' END as data_venda,
+	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN vp.data_venda ELSE '' END as data_venda,
 	SUM(vp.qtde) as itens,
 	CAST(SUM(vp.qtde*(vp.preco_liquido + vp.desconto_item)) as INT) as preco_original_total,
 	CAST(SUM(vp.qtde*(v.valor_pago/v.valor_venda_bruta*vp.preco_liquido)) as INT) as receita_total,
@@ -49,20 +49,20 @@ WITH sales as (
 	vp.qtde > 0 and
 	vp.preco_liquido > 0 and
 	(
-		CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) -- Semana Atual
-		OR CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
-		OR CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) -- Semana Ano Passado
+		CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(%(date_to)s as DATE) -- Semana Atual
+		OR CAST(vp.data_venda as DATE) BETWEEN CAST(%(date_to)s4 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
+		OR CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(%(date_to)s as DATE)) -- Semana Ano Passado
 	)
 	GROUP BY
 	p.colecao,
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
 	LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))),
 	CASE
-		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
-		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
-		WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(%(date_to)s as DATE) THEN 'WEEK'
+		WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(%(date_to)s4 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+		WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(%(date_to)s as DATE)) THEN 'LYW'
 	END,
-	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN vp.data_venda ELSE '' END
+	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN vp.data_venda ELSE '' END
 
 
 	UNION
@@ -73,11 +73,11 @@ WITH sales as (
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
 	'E-COMMERCE' as filial,
 	CASE
-		WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
-		WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
-		WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+		WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(%(date_to)s as DATE) THEN 'WEEK'
+		WHEN CAST(f.emissao as DATE) BETWEEN CAST(%(date_to)s4 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+		WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(%(date_to)s as DATE)) THEN 'LYW'
 	END as periodo,
-	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN f.emissao ELSE '' END as data_venda,
+	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN f.emissao ELSE '' END as data_venda,
 	SUM(fp.qtde) as itens,
 	CAST(SUM(fp.valor + fp.desconto_item) as INT) as preco_original_total,
 	CAST(SUM(f.valor_total/f.valor_sub_itens*fp.valor) as INT) as receita_total,
@@ -118,19 +118,19 @@ WITH sales as (
 	f.natureza_saida = '100.01' and
 	f.filial = 'e-commerce' and
 	(
-		CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) -- Semana Atual
-		OR CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
-		OR CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) -- Semana Ano Passado
+		CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(%(date_to)s as DATE) -- Semana Atual
+		OR CAST(f.emissao as DATE) BETWEEN CAST(%(date_to)s4 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
+		OR CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(%(date_to)s as DATE)) -- Semana Ano Passado
 	)
 	GROUP BY
 	p.colecao,
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
 	CASE
-		WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
-		WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
-		WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+		WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(%(date_to)s as DATE) THEN 'WEEK'
+		WHEN CAST(f.emissao as DATE) BETWEEN CAST(%(date_to)s4 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+		WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(%(date_to)s as DATE)) THEN 'LYW'
 	END,
-	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN f.emissao ELSE '' END
+	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN f.emissao ELSE '' END
 ), collections as (
 	SELECT TOP 4
 	s.colecao

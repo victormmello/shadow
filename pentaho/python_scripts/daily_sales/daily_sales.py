@@ -14,6 +14,7 @@ WORKSHEET_LIST = [
 	{'query_file':'daily_sales_receivings_data.sql','worksheet_name':'ReceivingsData'},
 	{'query_file':'daily_sales_receivings_data_wo_store.sql','worksheet_name':'ReceivingsDataWOStore'},
 ]
+DATE_TO = 'GETDATE()-1'
 
 workbook = shadow_google_spreadsheet.open(WORKBOOK_NAME)
 dc = DatabaseConnection()
@@ -21,7 +22,9 @@ dc = DatabaseConnection()
 def get_and_set_data(worksheet_dict):
 	print('Updating sheet: %s...' % worksheet_dict['worksheet_name'],end='')
 	worksheet = workbook.worksheet(worksheet_dict['worksheet_name'])
-	query = open(worksheet_dict['query_file']).read()
+	query = open(worksheet_dict['query_file']).read()  % {
+		'date_to':DATE_TO
+		}
 	query_result = dc.select(query,strip=True)
 	columns = [column[0] for column in dc.cursor.description]
 	shadow_google_spreadsheet.update_cells_with_dict(worksheet,columns,query_result)

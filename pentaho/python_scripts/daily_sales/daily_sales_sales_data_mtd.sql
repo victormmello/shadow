@@ -5,12 +5,12 @@ WITH sales as (
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
 	LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))) as filial,
 	CASE
-		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
-		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
-		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN 'MTD'
+		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,%(date_to)s), 112) THEN 'LM'
+		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,%(date_to)s), 112) THEN 'LY'
 	END as periodo,
-	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN vp.data_venda ELSE '' END as data_venda,
-	-- CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END as data_venda,
+	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN vp.data_venda ELSE '' END as data_venda,
+	-- CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END as data_venda,
 	SUM(vp.qtde) as itens,
 	CAST(SUM(vp.qtde*(vp.preco_liquido + vp.desconto_item)) as INT) as preco_original_total,
 	CAST(SUM(vp.qtde*(v.valor_pago/v.valor_venda_bruta*vp.preco_liquido)) as INT) as receita_total,
@@ -49,22 +49,22 @@ WITH sales as (
 	p.grupo_produto != 'GIFTCARD' and
 	vp.qtde > 0 and
 	vp.preco_liquido > 0 and
-	DAY(vp.data_venda) <= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), vp.data_venda, 112) IN (
-		CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
-		CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
-		CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+	DAY(vp.data_venda) <= DAY(%(date_to)s) and CONVERT(NVARCHAR(6), vp.data_venda, 112) IN (
+		CONVERT(NVARCHAR(6), %(date_to)s, 112), -- Mes Atual
+		CONVERT(NVARCHAR(6), DATEADD(m,-1,%(date_to)s), 112), -- Mes Passado
+		CONVERT(NVARCHAR(6), DATEADD(yy,-1,%(date_to)s), 112) -- Ano Passado
 	)
 	GROUP BY
 	p.colecao,
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
 	LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))),
 	CASE
-		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
-		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
-		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN 'MTD'
+		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,%(date_to)s), 112) THEN 'LM'
+		WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,%(date_to)s), 112) THEN 'LY'
 	END,
-	-- CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END
-	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN vp.data_venda ELSE '' END
+	-- CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END
+	CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN vp.data_venda ELSE '' END
 
 
 	UNION
@@ -75,12 +75,12 @@ WITH sales as (
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
 	'E-COMMERCE' as filial,
 	CASE
-		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
-		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
-		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN 'MTD'
+		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,%(date_to)s), 112) THEN 'LM'
+		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,%(date_to)s), 112) THEN 'LY'
 	END as periodo,
-	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN f.emissao ELSE '' END as data_venda,
-	-- CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END as data_venda,
+	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN f.emissao ELSE '' END as data_venda,
+	-- CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END as data_venda,
 	SUM(fp.qtde) as itens,
 	CAST(SUM(fp.valor + fp.desconto_item) as INT) as preco_original_total,
 	CAST(SUM(f.valor_total/f.valor_sub_itens*fp.valor) as INT) as receita_total,
@@ -120,21 +120,21 @@ WITH sales as (
 	fp.serie_nf IN (2,7) and
 	f.natureza_saida = '100.01' and
 	f.filial = 'e-commerce' and
-	DAY(f.emissao) <= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), f.emissao, 112) IN (
-		CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
-		CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
-		CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+	DAY(f.emissao) <= DAY(%(date_to)s) and CONVERT(NVARCHAR(6), f.emissao, 112) IN (
+		CONVERT(NVARCHAR(6), %(date_to)s, 112), -- Mes Atual
+		CONVERT(NVARCHAR(6), DATEADD(m,-1,%(date_to)s), 112), -- Mes Passado
+		CONVERT(NVARCHAR(6), DATEADD(yy,-1,%(date_to)s), 112) -- Ano Passado
 	)
 	GROUP BY
 	p.colecao,
 	COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
 	CASE
-		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
-		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
-		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN 'MTD'
+		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,%(date_to)s), 112) THEN 'LM'
+		WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,%(date_to)s), 112) THEN 'LY'
 	END,
-	-- CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END
-	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN f.emissao ELSE '' END
+	-- CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END
+	CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), %(date_to)s, 112) THEN f.emissao ELSE '' END
 ), collections as (
 	SELECT TOP 4
 	s.colecao

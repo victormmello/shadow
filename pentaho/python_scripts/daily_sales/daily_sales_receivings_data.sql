@@ -34,7 +34,7 @@ LEFT JOIN (
 ) gf on gf.grupo_filial = c.filial_a_entregar
 WHERE
 p.grupo_produto != 'GIFTCARD' and
-YEAR(cp.entrega)*100 + MONTH(cp.entrega) = YEAR(GETDATE()-1)*100 + MONTH(GETDATE()-1)
+YEAR(cp.entrega)*100 + MONTH(cp.entrega) = YEAR(%(date_to)s)*100 + MONTH(%(date_to)s)
 and cp.qtde_entregar > 0
 and cp.qtde_entregue = 0
 GROUP BY
