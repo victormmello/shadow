@@ -113,7 +113,7 @@ if __name__ == '__main__':
 	# 	result.append(get_product_info(x))
 
 	# Multi Threading:
-	with Pool(10) as p:
+	with Pool(200) as p:
 		result = p.map(get_product_info, product_ref_ids)
 
 	for result_thread in result:

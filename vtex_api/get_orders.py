@@ -232,14 +232,14 @@ if __name__ == '__main__':
 	# 	[datetime(year=2018, month=11, day=1, hour=2, minute=0, second=0), datetime(year=2018, month=11, day=2, hour=2, minute=0, second=0),]
 	# ]
 
-	# with Pool(len(date_ranges)) as p:
-	# 	order_items_lists = p.map(get_orders_by_date_range, date_ranges)
+	with Pool(len(date_ranges)) as p:
+		order_items_lists = p.map(get_orders_by_date_range, date_ranges)
 
-	order_items_lists = []
-	for date_range in date_ranges:
-		order_items_list = get_orders_by_date_range(date_range)
+	# order_items_lists = []
+	# for date_range in date_ranges:
+	# 	order_items_list = get_orders_by_date_range(date_range)
 
-		order_items_lists.append(order_items_list)
+	# 	order_items_lists.append(order_items_list)
 
 	order_items = []
 	for x in order_items_lists:
