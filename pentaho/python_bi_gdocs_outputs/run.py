@@ -19,7 +19,8 @@ def get_and_set_data(worksheet_tuple):
 		'date_to':DATE_TO
 		}
 	# query_result = dc.select(query,strip=True)
-	print("worksheet_tuple: %s" % worksheet_tuple)
+	print("worksheet_tuple[0]: %s" % worksheet_tuple[0])
+	print("worksheet_tuple[1]: %s" % worksheet_tuple[1])
 	print("query: %s" % query)
 	query_result = dc.select("SELECT top 3 created_at FROM bi_vtex_order_items;",strip=True)
 	columns = [column[0] for column in dc.cursor.description]
