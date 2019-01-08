@@ -60,7 +60,7 @@ LEFT JOIN (
 		cc.cod_categoria is null
 	LEFT JOIN bi_categorizacao_cor cor on cor.cor = pc.desc_cor_produto
 	WHERE
-	YEAR(cp.entrega)*100 + MONTH(cp.entrega) >= YEAR(GETDATE()-1)*100 + MONTH(GETDATE()-1)
+	YEAR(cp.entrega)*100 + MONTH(cp.entrega) >= YEAR(%(date_to)s)*100 + MONTH(%(date_to)s)
 	and cp.qtde_entregar > 0
 	and cp.qtde_entregue = 0
 	GROUP BY
@@ -91,7 +91,7 @@ LEFT JOIN (
 	pp.categoria = cart.categoria and
 	pp.liso_estampado = cart.liso_estampado
 WHERE
-pp.anomes >= YEAR(GETDATE()-1)*100+MONTH(GETDATE()-1)
+pp.anomes >= YEAR(%(date_to)s)*100+MONTH(%(date_to)s)
 GROUP BY
 pp.anomes,
 pp.categoria,
