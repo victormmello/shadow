@@ -45,6 +45,7 @@ if __name__ == '__main__':
 	dc = DatabaseConnection()
 
 	query_result = dc.select("SELECT top 3 created_at from bi_vtex_order_items;",strip=True)
+	print(query_result)
 	# if MULTI_THREAD == "true":
 	# 	thread_count = len(WORKSHEET_LIST) if MAX_THREADS == "0" else int(MAX_THREADS)
 	# 	with Pool(thread_count) as p:
