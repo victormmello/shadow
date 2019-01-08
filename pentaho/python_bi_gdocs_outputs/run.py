@@ -24,7 +24,7 @@ MULTI_THREAD = sys.argv[1]
 MAX_THREADS = sys.argv[2]
 DATE_TO = sys.argv[3]
 WORKBOOK_NAME = sys.argv[4]
-WORKSHEET_LIST = json.load(sys.argv[5])
+WORKSHEET_LIST = json.loads(sys.argv[5])
 
 def get_and_set_data(worksheet_tuple):
 	print('Updating sheet: %s...' % worksheet_tuple[1],end='')
