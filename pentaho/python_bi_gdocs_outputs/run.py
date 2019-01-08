@@ -44,12 +44,13 @@ if __name__ == '__main__':
 	workbook = shadow_google_spreadsheet.open(WORKBOOK_NAME)
 	dc = DatabaseConnection()
 
-	if MULTI_THREAD == "true":
-		thread_count = len(WORKSHEET_LIST) if MAX_THREADS == "0" else int(MAX_THREADS)
-		with Pool(thread_count) as p:
-			result = p.map(get_and_set_data, WORKSHEET_LIST.items())
-	else:
-		for worksheet_tuple in WORKSHEET_LIST.items():
-			get_and_set_data(worksheet_tuple)
+	query_result = dc.select("SELECT top 3 created_at from bi_vtex_order_items;",strip=True)
+	# if MULTI_THREAD == "true":
+	# 	thread_count = len(WORKSHEET_LIST) if MAX_THREADS == "0" else int(MAX_THREADS)
+	# 	with Pool(thread_count) as p:
+	# 		result = p.map(get_and_set_data, WORKSHEET_LIST.items())
+	# else:
+	# 	for worksheet_tuple in WORKSHEET_LIST.items():
+	# 		get_and_set_data(worksheet_tuple)
 
 	print("Done!")
