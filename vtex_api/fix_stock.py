@@ -46,7 +46,7 @@ def get_stock_fix_from_linx(x):
 	sku = x[0] 
 	fixes_dict = x[1]
 
-	print(sku)
+	# print(sku)
 	if sku['sku_id']:
 		sku_id = sku['sku_id']
 	else:
@@ -126,53 +126,53 @@ if __name__ == '__main__':
 				vpi.stock_quantity as vtex,
 				case when vpi.ean in (
 					SELECT distinct
-								ps.codigo_barra
-							FROM loja_saidas ls
-							INNER JOIN loja_saidas_produto lsp on lsp.ROMANEIO_PRODUTO = ls.ROMANEIO_PRODUTO
-							inner join produtos_barra ps on ps.produto = lsp.produto and ps.COR_PRODUTO = lsp.COR_PRODUTO
-							where 1=1
-								and ls.filial = 'e-commerce'
-								and case 
-									when lsp.DATA_PARA_TRANSFERENCIA > ls.DATA_PARA_TRANSFERENCIA then lsp.DATA_PARA_TRANSFERENCIA
-									else ls.DATA_PARA_TRANSFERENCIA 
-								end >= DATEADD(day, -7, GETDATE())
-							UNION
-							SELECT distinct
-								ps.codigo_barra
-							FROM loja_entradas le
-							INNER JOIN loja_entradas_produto lep on lep.ROMANEIO_PRODUTO = le.ROMANEIO_PRODUTO
-							inner join produtos_barra ps on ps.produto = lep.produto and ps.COR_PRODUTO = lep.COR_PRODUTO
-							where 1=1
-								and le.filial = 'e-commerce'
-								and case 
-									when lep.DATA_PARA_TRANSFERENCIA > le.DATA_PARA_TRANSFERENCIA then lep.DATA_PARA_TRANSFERENCIA
-									else le.DATA_PARA_TRANSFERENCIA 
-								end >= DATEADD(day, -7, GETDATE())
-							UNION
-							SELECT distinct
-								lvp.CODIGO_BARRA
-							FROM dbo.LOJA_VENDA_PRODUTO lvp
-							inner join dbo.FILIAIS fil on fil.cod_filial = lvp.codigo_filial
-							INNER JOIN produtos p on lvp.produto = p.produto
-							where 1=1
-								and fil.filial = 'e-commerce' 
-								and data_venda >= DATEADD(day, -7, GETDATE())
-								and p.grupo_produto != 'GIFTCARD'
-								and lvp.qtde > 0
-							UNION
-							SELECT
-								voi.ean
-							FROM dbo.bi_vtex_order_items voi 
-							WHERE status not in ('Faturado', 'Cancelado')
-							UNION
-							SELECT distinct
-								vp.CODIGO_BARRA
-							FROM loja_venda_produto vp
-							INNER JOIN filiais f on f.cod_filial = vp.codigo_filial
-							where 1=1
-								and f.filial = 'MM DOM PEDRO'
-								and vp.DATA_VENDA >= '2018-12-21'
-				) then 1 end as mudanca_detectada
+						ps.codigo_barra
+					FROM loja_saidas ls
+					INNER JOIN loja_saidas_produto lsp on lsp.ROMANEIO_PRODUTO = ls.ROMANEIO_PRODUTO
+					inner join produtos_barra ps on ps.produto = lsp.produto and ps.COR_PRODUTO = lsp.COR_PRODUTO
+					where 1=1
+						and ls.filial = 'e-commerce'
+						and case 
+							when lsp.DATA_PARA_TRANSFERENCIA > ls.DATA_PARA_TRANSFERENCIA then lsp.DATA_PARA_TRANSFERENCIA
+							else ls.DATA_PARA_TRANSFERENCIA 
+						end >= DATEADD(day, -7, GETDATE())
+					UNION
+					SELECT distinct
+						ps.codigo_barra
+					FROM loja_entradas le
+					INNER JOIN loja_entradas_produto lep on lep.ROMANEIO_PRODUTO = le.ROMANEIO_PRODUTO
+					inner join produtos_barra ps on ps.produto = lep.produto and ps.COR_PRODUTO = lep.COR_PRODUTO
+					where 1=1
+						and le.filial = 'e-commerce'
+						and case 
+							when lep.DATA_PARA_TRANSFERENCIA > le.DATA_PARA_TRANSFERENCIA then lep.DATA_PARA_TRANSFERENCIA
+							else le.DATA_PARA_TRANSFERENCIA 
+						end >= DATEADD(day, -7, GETDATE())
+					UNION
+					SELECT distinct
+						lvp.CODIGO_BARRA
+					FROM dbo.LOJA_VENDA_PRODUTO lvp
+					inner join dbo.FILIAIS fil on fil.cod_filial = lvp.codigo_filial
+					INNER JOIN produtos p on lvp.produto = p.produto
+					where 1=1
+						and fil.filial = 'e-commerce' 
+						and data_venda >= DATEADD(day, -7, GETDATE())
+						and p.grupo_produto != 'GIFTCARD'
+						and lvp.qtde > 0
+					UNION
+					SELECT
+						voi.ean
+					FROM dbo.bi_vtex_order_items voi 
+					WHERE status not in ('Faturado', 'Cancelado')
+					UNION
+					SELECT distinct
+						vp.CODIGO_BARRA
+					FROM loja_venda_produto vp
+					INNER JOIN filiais f on f.cod_filial = vp.codigo_filial
+					where 1=1
+						and f.filial = 'MM DOM PEDRO'
+						and vp.DATA_VENDA >= '2018-12-21'
+				) then 1 else 0 end as mudanca_detectada
 			from (
 				SELECT * 
 				FROM w_estoque_disponivel_sku
@@ -180,7 +180,7 @@ if __name__ == '__main__':
 			) e
 			full outer join bi_vtex_product_items vpi on vpi.ean = e.codigo_barra
 			where 1=1
-				and vpi.stock_quantity > case when e.estoque_disponivel - 2 < 0 then 0 else e.estoque_disponivel - 2 end
+				and vpi.stock_quantity != case when COALESCE(e.estoque_disponivel,0) - 2 < 0 then 0 else COALESCE(e.estoque_disponivel, 0) - 2 end
 				-- and vpi.ean = '0810001026339'
 		) t
 	;
@@ -367,7 +367,6 @@ if __name__ == '__main__':
 	# 	errors = fix_stock(x)
 
 	end_time = time.time()
-	print(str(datetime.now()))
 	print(end_time-start_time)
 
 
