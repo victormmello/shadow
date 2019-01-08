@@ -16,7 +16,8 @@ class DatabaseConnection(object):
 		# database_connection_file = open("database_connection.json", 'rb')
 		# database_connection_config = json.load(database_connection_file)
 
-		self.cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER=%s;DATABASE=%s;UID=%s;PWD=%s' % (
+		self.cnxn = pyodbc.connect('DRIVER=%s;SERVER=%s;DATABASE=%s;UID=%s;PWD=%s' % (
+			database_config.driver,
 			database_config.server,
 			database_config.database,
 			database_config.username,
