@@ -19,7 +19,8 @@ def get_and_set_data(worksheet_tuple):
 		'date_to':DATE_TO
 		}
 	# query_result = dc.select(query,strip=True)
-	print(query)
+	print("worksheet_tuple: %s" % worksheet_tuple)
+	print("query: %s" % query)
 	query_result = dc.select("SELECT top 3 created_at FROM bi_vtex_order_items;",strip=True)
 	columns = [column[0] for column in dc.cursor.description]
 	shadow_google_spreadsheet.update_cells_with_dict(worksheet,columns,query_result)
