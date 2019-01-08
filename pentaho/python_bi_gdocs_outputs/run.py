@@ -44,7 +44,7 @@ if __name__ == '__main__':
 	workbook = shadow_google_spreadsheet.open(WORKBOOK_NAME)
 	dc = DatabaseConnection()
 
-	if MULTI_THREAD == "True":
+	if MULTI_THREAD == "true":
 		thread_count = len(WORKSHEET_LIST) if MAX_THREADS == "0" else int(MAX_THREADS)
 		with Pool(thread_count) as p:
 			result = p.map(get_and_set_data, WORKSHEET_LIST.items())
