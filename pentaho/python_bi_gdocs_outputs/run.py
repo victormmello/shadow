@@ -19,6 +19,7 @@ def get_and_set_data(worksheet_tuple):
 		'date_to':DATE_TO
 		}
 	# query_result = dc.select(query,strip=True)
+	print(query)
 	query_result = dc.select("SELECT top 3 created_at FROM bi_vtex_order_items;",strip=True)
 	columns = [column[0] for column in dc.cursor.description]
 	shadow_google_spreadsheet.update_cells_with_dict(worksheet,columns,query_result)
@@ -26,7 +27,7 @@ def get_and_set_data(worksheet_tuple):
 
 
 if __name__ == '__main__':
-	print("Running %s..." % WORKBOOK_NAME,end='')
+	print("Running %s:" % WORKBOOK_NAME)
 
 	if MULTI_THREAD == "true":
 		thread_count = len(WORKSHEET_LIST) if MAX_THREADS == "0" else int(MAX_THREADS)
