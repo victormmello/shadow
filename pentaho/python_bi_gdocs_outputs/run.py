@@ -10,10 +10,10 @@ WORKBOOK_NAME = sys.argv[4]
 WORKSHEET_LIST = json.loads(sys.argv[5])
 
 workbook = shadow_google_spreadsheet.open(WORKBOOK_NAME)
-dc = DatabaseConnection()
 
 def get_and_set_data(worksheet_tuple):
 	print('Updating sheet: %s...' % worksheet_tuple[1],end='')
+	dc = DatabaseConnection()
 	worksheet = workbook.worksheet(worksheet_tuple[1])
 	query = open(worksheet_tuple[0]).read()  % {
 		'date_to':DATE_TO
