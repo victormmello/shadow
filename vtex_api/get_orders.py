@@ -95,6 +95,9 @@ def get_orders_by_date_range(date_range):
 				order_info.append(int(order_json_response['sequence'])) # sequence
 				created_at = datetime.strptime(order_json_response['creationDate'][:-14], '%Y-%m-%dT%H:%M:%S')
 				created_at = created_at - timedelta(hours=2)
+				invoiced_at = datetime.strptime(order_json_response['invoicedDate'][:-14], '%Y-%m-%dT%H:%M:%S')
+				invoiced_at = created_at - timedelta(hours=2)
+
 				order_info.append(created_at) # created_at
 				order_info.append(order_json_response['clientProfileData']['firstName'] + ' ' + order_json_response['clientProfileData']['lastName']) # client_name
 				order_info.append(order_json_response['clientProfileData']['phone']) # client_phone_number
@@ -232,14 +235,14 @@ if __name__ == '__main__':
 	# 	[datetime(year=2018, month=11, day=1, hour=2, minute=0, second=0), datetime(year=2018, month=11, day=2, hour=2, minute=0, second=0),]
 	# ]
 
-	with Pool(len(date_ranges)) as p:
-		order_items_lists = p.map(get_orders_by_date_range, date_ranges)
+	# with Pool(len(date_ranges)) as p:
+	# 	order_items_lists = p.map(get_orders_by_date_range, date_ranges)
 
-	# order_items_lists = []
-	# for date_range in date_ranges:
-	# 	order_items_list = get_orders_by_date_range(date_range)
+	order_items_lists = []
+	for date_range in date_ranges:
+		order_items_list = get_orders_by_date_range(date_range)
 
-	# 	order_items_lists.append(order_items_list)
+		order_items_lists.append(order_items_list)
 
 	order_items = []
 	for x in order_items_lists:
