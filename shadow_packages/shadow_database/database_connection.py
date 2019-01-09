@@ -63,8 +63,15 @@ class DatabaseConnection(object):
 		column_query = "(%s)" % ','.join(columns) if columns else ''
 		for query_values_list in chunks(values,999):
 			insert_list = []
-			for value in query_values_list:
-				query_row = '(%s)' % ','.join('\'%s\'' % self.sanitize(cell) for cell in value)
+			for values in query_values_list:
+				sanitized_values = []
+				for value in values:
+					if value is None:
+						sanitized_values.append('null')
+					else:
+						sanitized_values.append('\'%s\'' % self.sanitize(value))
+
+				query_row = '(%s)' % ','.join(sanitized_values)
 				insert_list.append(query_row)
 			query = """INSERT INTO %s %s VALUES
 			%s
