@@ -2,13 +2,19 @@ from django.core.management.base import BaseCommand
 from django.db.transaction import atomic
 
 from shadow_database import DatabaseConnection
-from shadow_helpers.helpers import make_dict
+from shadow_helpers.helpers import make_dict, get_from_dict, set_in_dict
 
 from stock_system.models import Order, OrderItem
 
 
 class Command(BaseCommand):
 	def handle(self, *args, **kwargs):
+		db_order_items = OrderItem.objects.all().prefetch_related('order')
+		db_orders = Order.objects.all()
+
+		existing_order_items_dict = make_dict(db_order_items, None, ['order__vtex_id', 'ean'])
+		existing_orders_dict = make_dict(db_orders, None, ['vtex_id'])
+
 		dc = DatabaseConnection()
 
 		order_item_infos = dc.select("""
@@ -22,10 +28,14 @@ class Command(BaseCommand):
 		order_infos = make_dict(order_item_infos, None, ['order_id'])
 		order_dict = {}
 		for order_info in order_infos.values():
-			order = Order()
 
-			order.vtex_id = order_info['order_id']
+			order = get_from_dict(existing_orders_dict, [order_info['order_id']])
+			if not order:
+				order = Order()
+				order.vtex_id = order_info['order_id']
+			
 			order.vtex_created_at = order_info['created_at']
+			order.vtex_invoiced_at = order_info['invoiced_at']
 			order.sequence = order_info['order_sequence']
 			order.client_name = order_info['client_name']
 			order.cpf = order_info['cpf']
@@ -43,19 +53,26 @@ class Command(BaseCommand):
 			order_dict[order.vtex_id] = order
 
 		with atomic():
-			OrderItem.objects.all().delete()
-			Order.objects.all().delete()
+			# OrderItem.objects.all().delete()
+			# Order.objects.all().delete()
 
 			for order in order_dict.values():
 				order.save()
 
-			order_items = []
+			order_items_to_create = []
+			order_items_to_update = []
 			for order_item_info in order_item_infos:
-				order_item = OrderItem()
+				existing_order_items_dict
+				order_item = get_from_dict(existing_order_items_dict, [order_item_info['order_id'], order_item_info['ean']])
+				if order_item:
+					order_items_to_update.append(order_item)
+				else:
+					order_item = OrderItem()
+					order = order_dict[order_item_info['order_id']]
+					order_item.order_id = order.id
 
-				order = order_dict[order_item_info['order_id']]
+					order_items_to_create.append(order_item)
 
-				order_item.order_id = order.id
 				order_item.ean = order_item_info['ean']
 				order_item.vtex_sku = order_item_info['vtex_sku']
 				order_item.vtex_product_id = order_item_info['vtex_product_id']
@@ -63,6 +80,7 @@ class Command(BaseCommand):
 				order_item.product_name = order_item_info['name']
 				order_item.unit_sale_price = order_item_info['price']
 
-				order_items.append(order_item)
+			OrderItem.objects.bulk_create(order_items_to_create, batch_size=99)
 
-			OrderItem.objects.bulk_create(order_items, batch_size=99)
+			for order_item in order_items_to_update:
+				order_item.save()

@@ -3,6 +3,7 @@ from django.db import models
 class Order(models.Model):
 	vtex_id = models.CharField(max_length=30)
 	vtex_created_at = models.DateTimeField()
+	vtex_invoiced_at = models.DateTimeField(null=True)
 	sequence = models.CharField(max_length=20)
 	client_name = models.TextField()
 	cpf = models.CharField(max_length=20)
