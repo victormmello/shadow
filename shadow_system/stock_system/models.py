@@ -30,7 +30,7 @@ class OrderItem(models.Model):
 	product_name = models.TextField()
 	unit_sale_price = models.FloatField()
 
-	order = models.ForeignKey(Order, on_delete=models.PROTECT)
+	order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='order_items')
 
 	class Meta:
 		app_label = 'stock_system'

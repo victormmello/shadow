@@ -15,6 +15,7 @@ class Command(BaseCommand):
 			SELECT 
 				*
 			from dbo.bi_vtex_order_items voi
+			where voi.created_at > '2018-12-26 10:03:33'
 			;
 		""", strip=True, dict_format=True)
 
