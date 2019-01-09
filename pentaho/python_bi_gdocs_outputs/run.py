@@ -15,10 +15,7 @@ def get_and_set_data(worksheet_tuple):
 	print('Updating sheet: %s...' % worksheet_tuple[1],end='')
 	dc = DatabaseConnection()
 	worksheet = workbook.worksheet(worksheet_tuple[1])
-	query = open(worksheet_tuple[0]).read() % {
-		'date_to':DATE_TO
-		}
-	print(query)
+	query = open(worksheet_tuple[0]).read().replace('%','%%').replace('%%(','%(') % {'date_to':DATE_TO}
 	query_result = dc.select(query,strip=True)
 	columns = [column[0] for column in dc.cursor.description]
 	shadow_google_spreadsheet.update_cells_with_dict(worksheet,columns,query_result)
