@@ -97,10 +97,12 @@ def get_orders_by_date_range(date_range):
 				created_at = created_at - timedelta(hours=2)
 				order_info.append(created_at) # created_at
 
-				invoiced_at = datetime.strptime(order_json_response['invoicedDate'][:-14], '%Y-%m-%dT%H:%M:%S')
-				invoiced_at = created_at - timedelta(hours=2)
+				invoiced_at = order_json_response['invoicedDate']
+				if invoiced_at:
+					invoiced_at = datetime.strptime(invoiced_at[:-14], '%Y-%m-%dT%H:%M:%S')
+					invoiced_at = invoiced_at - timedelta(hours=2)
 				order_info.append(invoiced_at) # invoiced_at
-				
+
 				order_info.append(order_json_response['clientProfileData']['firstName'] + ' ' + order_json_response['clientProfileData']['lastName']) # client_name
 				order_info.append(order_json_response['clientProfileData']['phone']) # client_phone_number
 
