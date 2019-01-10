@@ -12,19 +12,21 @@
 				<table class="table table-bordered text-center">
 					<thead>
 						<tr>
+							<th colspan="2">Pendentes: {{total}}</th>
+							<th colspan="2">Faturados</th>
+						</tr>
+						<tr>
 							<th>Pagos</th>
 							<th>Não Pagos</th>
-							<th>Total Pendentes</th>
 
-							<th>Faturados (1d)</th>
-							<th>Faturados (7d)</th>
+							<th>(1d)</th>
+							<th>(7d)</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
 							<td style="vertical-align: middle;">{{paid}}</td>
 							<td style="vertical-align: middle;">{{not_paid}}</td>
-							<td style="vertical-align: middle;">{{total}}</td>
 
 							<td style="vertical-align: middle;">{{invoiced_1d}}</td>
 							<td style="vertical-align: middle;">{{invoiced_7d}}</td>
