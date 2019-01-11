@@ -8,7 +8,7 @@ class OrderList(ListView):
 	template_name = 'stock_system/order_list.html'
 
 	def get_queryset(self):
-		return Order.objects.all().prefetch_related('order_items')
+		return Order.objects.all().order_by('-vtex_created_at').prefetch_related('order_items')
 
 	# def get_context_data(self, **kwargs):
 	# 	context = super(OrderList, self).get_context_data(**kwargs)

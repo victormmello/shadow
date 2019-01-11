@@ -220,7 +220,7 @@ def get_orders_by_date_range(date_range):
 	return date_range_order_items
 
 if __name__ == '__main__':
-	DAYS_TO_FETCH = 33
+	DAYS_TO_FETCH = 90
 	# DAYS_TO_FETCH = 2
 
 	tomorrow = datetime.now() + timedelta(days=1)
@@ -260,9 +260,9 @@ if __name__ == '__main__':
 
 	print('Inserting into tables...')
 
-	print('	bi_vtex_order_items')
-	dc.execute('TRUNCATE TABLE bi_vtex_order_items;')
-	dc.insert('bi_vtex_order_items', order_items, print_only=False)
+	print('	bi_vtex_order_items2')
+	dc.execute('TRUNCATE TABLE bi_vtex_order_items2;')
+	dc.insert('bi_vtex_order_items2', order_items, print_only=False)
 
 	# skus_to_reduce = dc.select("""
 	# 	SELECT 
