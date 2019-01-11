@@ -220,7 +220,7 @@ def get_orders_by_date_range(date_range):
 	return date_range_order_items
 
 if __name__ == '__main__':
-	DAYS_TO_FETCH = 90
+	DAYS_TO_FETCH = 30
 	# DAYS_TO_FETCH = 2
 
 	tomorrow = datetime.now() + timedelta(days=1)
@@ -241,7 +241,8 @@ if __name__ == '__main__':
 	# 	[datetime(year=2018, month=11, day=1, hour=2, minute=0, second=0), datetime(year=2018, month=11, day=2, hour=2, minute=0, second=0),]
 	# ]
 
-	with Pool(len(date_ranges)) as p:
+	number_threads = min(len(date_ranges), 20)
+	with Pool(number_threads) as p:
 		order_items_lists = p.map(get_orders_by_date_range, date_ranges)
 
 	# order_items_lists = []
