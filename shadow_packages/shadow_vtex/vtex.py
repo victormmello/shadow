@@ -31,6 +31,16 @@ def try_to_request(*args, **kwargs):
 	
 	return response
 
+def authenticated_request(*args, **kwargs):
+	base_headers = vtex_config.api_connection_header
+	if kwargs.get('headers'):
+		headers = base_headers.copy()
+		headers.update(kwargs['headers'])
+	else:
+		headers = base_headers
+
+	return try_to_request(headers=headers, *args, **kwargs)
+
 
 def post_to_webservice(soap_action, soap_message, retry=3):
 	vtex_config.params["SOAPAction"] = soap_action

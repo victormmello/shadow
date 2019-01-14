@@ -28,7 +28,6 @@ class Command(BaseCommand):
 		order_infos = make_dict(order_item_infos, None, ['order_id'])
 		order_dict = {}
 		for order_info in order_infos.values():
-
 			order = get_from_dict(existing_orders_dict, [order_info['order_id']])
 			if not order:
 				order = Order()

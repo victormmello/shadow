@@ -261,9 +261,9 @@ if __name__ == '__main__':
 
 	print('Inserting into tables...')
 
-	print('	bi_vtex_order_items2')
-	dc.execute('TRUNCATE TABLE bi_vtex_order_items2;')
-	dc.insert('bi_vtex_order_items2', order_items, print_only=False)
+	print('	bi_vtex_order_items')
+	dc.execute('TRUNCATE TABLE bi_vtex_order_items;')
+	dc.insert('bi_vtex_order_items', order_items, print_only=False)
 
 	# skus_to_reduce = dc.select("""
 	# 	SELECT 
