@@ -130,6 +130,8 @@ def update_vtex_product(product_id, update_dict, dafiti_store=False):
 
 		if isinstance(v, str):
 			product_dict[k] = (v % product_dict)
+		elif hasattr(v, '__call__'):
+			product_dict[k] = v(product_dict)
 
 	dafiti_store_str = ''
 	if dafiti_store:
@@ -181,6 +183,8 @@ def update_vtex_product(product_id, update_dict, dafiti_store=False):
 			</soapenv:Body>
 		</soapenv:Envelope>""" % product_dict
 
+
+	# print(soap_productupdate)
 
 	soup = post_to_webservice("http://tempuri.org/IService/ProductInsertUpdate", soap_productupdate)
 	if not soup:

@@ -10,7 +10,7 @@ from multiprocessing import Pool, Manager
 # --------------------------------------------------------------------------------------------------------------------------------
 
 program_params = {
-	'remove_sku_photos': True,
+	'remove_sku_photos': False,
 	'skip_active_skus': False,
 	'dafiti_store': True,
 }

@@ -5,10 +5,13 @@ from shadow_database import DatabaseConnection
 from shadow_helpers.helpers import make_dict, get_from_dict, set_in_dict
 
 from stock_system.models import Order, OrderItem
+from django.utils import timezone
 
 
 class Command(BaseCommand):
 	def handle(self, *args, **kwargs):
+		current_tz = timezone.get_current_timezone()
+
 		db_order_items = OrderItem.objects.all().prefetch_related('order')
 		db_orders = Order.objects.all()
 
@@ -33,8 +36,9 @@ class Command(BaseCommand):
 				order = Order()
 				order.vtex_id = order_info['order_id']
 			
-			order.vtex_created_at = order_info['created_at']
-			order.vtex_invoiced_at = order_info['invoiced_at']
+			order.vtex_created_at = current_tz.normalize(order_info['created_at'].astimezone(current_tz))
+			if order_info['invoiced_at']:
+				order.vtex_invoiced_at = current_tz.normalize(order_info['invoiced_at'].astimezone(current_tz))
 			order.sequence = order_info['order_sequence']
 			order.client_name = order_info['client_name']
 			order.cpf = order_info['cpf']
