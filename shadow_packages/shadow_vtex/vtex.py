@@ -22,7 +22,7 @@ def try_to_request(*args, **kwargs):
 
 		except Exception as e:
 			if i == retry-1:
-				print(response.text)
+				print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), response.text))
 				# import pdb; pdb.set_trace()
 				if response:
 					print('desistindo')
