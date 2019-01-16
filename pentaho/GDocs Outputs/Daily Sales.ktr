@@ -1,0 +1,1769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>Daily Sales</name>
+    <description />
+    <extended_description />
+    <trans_version />
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters>
+    </parameters>
+    <log>
+      <trans-log-table>
+        <connection />
+        <schema />
+        <table />
+        <size_limit_lines />
+        <interval />
+        <timeout_days />
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STATUS</id>
+          <enabled>Y</enabled>
+          <name>STATUS</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+          <subject />
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+          <subject />
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+          <subject />
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+          <subject />
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+          <subject />
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+          <subject />
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>STARTDATE</id>
+          <enabled>Y</enabled>
+          <name>STARTDATE</name>
+        </field>
+        <field>
+          <id>ENDDATE</id>
+          <enabled>Y</enabled>
+          <name>ENDDATE</name>
+        </field>
+        <field>
+          <id>LOGDATE</id>
+          <enabled>Y</enabled>
+          <name>LOGDATE</name>
+        </field>
+        <field>
+          <id>DEPDATE</id>
+          <enabled>Y</enabled>
+          <name>DEPDATE</name>
+        </field>
+        <field>
+          <id>REPLAYDATE</id>
+          <enabled>Y</enabled>
+          <name>REPLAYDATE</name>
+        </field>
+        <field>
+          <id>LOG_FIELD</id>
+          <enabled>Y</enabled>
+          <name>LOG_FIELD</name>
+        </field>
+        <field>
+          <id>EXECUTING_SERVER</id>
+          <enabled>N</enabled>
+          <name>EXECUTING_SERVER</name>
+        </field>
+        <field>
+          <id>EXECUTING_USER</id>
+          <enabled>N</enabled>
+          <name>EXECUTING_USER</name>
+        </field>
+        <field>
+          <id>CLIENT</id>
+          <enabled>N</enabled>
+          <name>CLIENT</name>
+        </field>
+      </trans-log-table>
+      <perf-log-table>
+        <connection />
+        <schema />
+        <table />
+        <interval />
+        <timeout_days />
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>SEQ_NR</id>
+          <enabled>Y</enabled>
+          <name>SEQ_NR</name>
+        </field>
+        <field>
+          <id>LOGDATE</id>
+          <enabled>Y</enabled>
+          <name>LOGDATE</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STEPNAME</id>
+          <enabled>Y</enabled>
+          <name>STEPNAME</name>
+        </field>
+        <field>
+          <id>STEP_COPY</id>
+          <enabled>Y</enabled>
+          <name>STEP_COPY</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>INPUT_BUFFER_ROWS</id>
+          <enabled>Y</enabled>
+          <name>INPUT_BUFFER_ROWS</name>
+        </field>
+        <field>
+          <id>OUTPUT_BUFFER_ROWS</id>
+          <enabled>Y</enabled>
+          <name>OUTPUT_BUFFER_ROWS</name>
+        </field>
+      </perf-log-table>
+      <channel-log-table>
+        <connection />
+        <schema />
+        <table />
+        <timeout_days />
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>LOGGING_OBJECT_TYPE</id>
+          <enabled>Y</enabled>
+          <name>LOGGING_OBJECT_TYPE</name>
+        </field>
+        <field>
+          <id>OBJECT_NAME</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_NAME</name>
+        </field>
+        <field>
+          <id>OBJECT_COPY</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_COPY</name>
+        </field>
+        <field>
+          <id>REPOSITORY_DIRECTORY</id>
+          <enabled>Y</enabled>
+          <name>REPOSITORY_DIRECTORY</name>
+        </field>
+        <field>
+          <id>FILENAME</id>
+          <enabled>Y</enabled>
+          <name>FILENAME</name>
+        </field>
+        <field>
+          <id>OBJECT_ID</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_ID</name>
+        </field>
+        <field>
+          <id>OBJECT_REVISION</id>
+          <enabled>Y</enabled>
+          <name>OBJECT_REVISION</name>
+        </field>
+        <field>
+          <id>PARENT_CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>PARENT_CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>ROOT_CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>ROOT_CHANNEL_ID</name>
+        </field>
+      </channel-log-table>
+      <step-log-table>
+        <connection />
+        <schema />
+        <table />
+        <timeout_days />
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>TRANSNAME</id>
+          <enabled>Y</enabled>
+          <name>TRANSNAME</name>
+        </field>
+        <field>
+          <id>STEPNAME</id>
+          <enabled>Y</enabled>
+          <name>STEPNAME</name>
+        </field>
+        <field>
+          <id>STEP_COPY</id>
+          <enabled>Y</enabled>
+          <name>STEP_COPY</name>
+        </field>
+        <field>
+          <id>LINES_READ</id>
+          <enabled>Y</enabled>
+          <name>LINES_READ</name>
+        </field>
+        <field>
+          <id>LINES_WRITTEN</id>
+          <enabled>Y</enabled>
+          <name>LINES_WRITTEN</name>
+        </field>
+        <field>
+          <id>LINES_UPDATED</id>
+          <enabled>Y</enabled>
+          <name>LINES_UPDATED</name>
+        </field>
+        <field>
+          <id>LINES_INPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_INPUT</name>
+        </field>
+        <field>
+          <id>LINES_OUTPUT</id>
+          <enabled>Y</enabled>
+          <name>LINES_OUTPUT</name>
+        </field>
+        <field>
+          <id>LINES_REJECTED</id>
+          <enabled>Y</enabled>
+          <name>LINES_REJECTED</name>
+        </field>
+        <field>
+          <id>ERRORS</id>
+          <enabled>Y</enabled>
+          <name>ERRORS</name>
+        </field>
+        <field>
+          <id>LOG_FIELD</id>
+          <enabled>N</enabled>
+          <name>LOG_FIELD</name>
+        </field>
+      </step-log-table>
+      <metrics-log-table>
+        <connection />
+        <schema />
+        <table />
+        <timeout_days />
+        <field>
+          <id>ID_BATCH</id>
+          <enabled>Y</enabled>
+          <name>ID_BATCH</name>
+        </field>
+        <field>
+          <id>CHANNEL_ID</id>
+          <enabled>Y</enabled>
+          <name>CHANNEL_ID</name>
+        </field>
+        <field>
+          <id>LOG_DATE</id>
+          <enabled>Y</enabled>
+          <name>LOG_DATE</name>
+        </field>
+        <field>
+          <id>METRICS_DATE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_DATE</name>
+        </field>
+        <field>
+          <id>METRICS_CODE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_CODE</name>
+        </field>
+        <field>
+          <id>METRICS_DESCRIPTION</id>
+          <enabled>Y</enabled>
+          <name>METRICS_DESCRIPTION</name>
+        </field>
+        <field>
+          <id>METRICS_SUBJECT</id>
+          <enabled>Y</enabled>
+          <name>METRICS_SUBJECT</name>
+        </field>
+        <field>
+          <id>METRICS_TYPE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_TYPE</name>
+        </field>
+        <field>
+          <id>METRICS_VALUE</id>
+          <enabled>Y</enabled>
+          <name>METRICS_VALUE</name>
+        </field>
+      </metrics-log-table>
+    </log>
+    <maxdate>
+      <connection />
+      <table />
+      <field />
+      <offset>0.0</offset>
+      <maxdiff>0.0</maxdiff>
+    </maxdate>
+    <size_rowset>10000</size_rowset>
+    <sleep_time_empty>50</sleep_time_empty>
+    <sleep_time_full>50</sleep_time_full>
+    <unique_connections>N</unique_connections>
+    <feedback_shown>Y</feedback_shown>
+    <feedback_size>50000</feedback_size>
+    <using_thread_priorities>Y</using_thread_priorities>
+    <shared_objects_file />
+    <capture_step_performance>N</capture_step_performance>
+    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
+    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
+    <dependencies>
+    </dependencies>
+    <partitionschemas>
+    </partitionschemas>
+    <slaveservers>
+    </slaveservers>
+    <clusterschemas>
+    </clusterschemas>
+    <created_user>-</created_user>
+    <created_date>2018/08/03 16:28:52.032</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2018/08/03 16:28:52.032</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <is_key_private>N</is_key_private>
+  </info>
+  <notepads>
+  </notepads>
+  <connection>
+    <name>Linx</name>
+    <server>${LINX_HOST}</server>
+    <type>MSSQLNATIVE</type>
+    <access>Native</access>
+    <database>${LINX_DATABASE}</database>
+    <port>1433</port>
+    <username>${LINX_USERNAME}</username>
+    <password>${LINX_PASSWORD}</password>
+    <servername />
+    <data_tablespace />
+    <index_tablespace />
+    <attributes>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>IS_CLUSTERED</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>MSSQLUseIntegratedSecurity</code>
+        <attribute>false</attribute>
+      </attribute>
+      <attribute>
+        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1433</attribute>
+      </attribute>
+      <attribute>
+        <code>PRESERVE_RESERVED_WORD_CASE</code>
+        <attribute>Y</attribute>
+      </attribute>
+      <attribute>
+        <code>QUOTE_ALL_FIELDS</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
+        <attribute>N</attribute>
+      </attribute>
+      <attribute>
+        <code>USE_POOLING</code>
+        <attribute>N</attribute>
+      </attribute>
+    </attributes>
+  </connection>
+  <order>
+    <hop>
+      <from>Daily Sales</from>
+      <to>Daily Sales Output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stock</from>
+      <to>Stock Output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stock Without Store</from>
+      <to>Stock Output WO Store</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Receivings</from>
+      <to>Receivings Output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Receivings Without Store</from>
+      <to>Receivings Output WO Store</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Daily Sales Week</from>
+      <to>Daily Sales Week Output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Daily Sales Sellers</from>
+      <to>Daily Sales Sellers Output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Daily Sales Sellers WEEK</from>
+      <to>Daily Sales Sellers Output 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Daily Sales Orders</from>
+      <to>Daily Sales Orders Output</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <step>
+    <name>Daily Sales</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))) as filial,
+CASE
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END as periodo,
+-- CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END as data_venda,
+SUM(vp.qtde) as itens,
+CAST(SUM(vp.qtde*(vp.preco_liquido + vp.desconto_item)) as INT) as preco_original_total,
+CAST(SUM(vp.qtde*(v.valor_pago/v.valor_venda_bruta*vp.preco_liquido)) as INT) as receita_total,
+CAST(SUM(c.preco1*vp.qtde) as INT) as custo_total
+FROM loja_venda_produto vp
+INNER JOIN loja_venda v on
+	v.ticket = vp.ticket and
+	vp.codigo_filial = v.codigo_filial and
+	v.data_venda = vp.data_venda
+INNER JOIN filiais f on f.cod_filial = vp.codigo_filial
+INNER JOIN produtos p on p.produto = vp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+vp.qtde > 0 and
+vp.preco_liquido > 0 and
+DAY(vp.data_venda) &lt;= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), vp.data_venda, 112) IN (
+	CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
+	CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
+	CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+)
+GROUP BY
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))),
+CASE
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END
+--,CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END
+
+
+UNION
+
+SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+'E-COMMERCE' as filial,
+CASE
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END as periodo,
+--CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END as data_venda,
+SUM(fp.qtde) as itens,
+CAST(SUM(fp.valor + fp.desconto_item) as INT) as preco_original_total,
+CAST(SUM(f.valor_total/f.valor_sub_itens*fp.valor) as INT) as receita_total,
+CAST(SUM(c.preco1*fp.qtde) as INT) as custo_total
+FROM faturamento_prod fp
+INNER JOIN faturamento f on
+	f.nf_saida = fp.NF_SAIDA and
+	fp.filial = f.filial
+INNER JOIN produtos p on p.produto = fp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+fp.qtde > 0 and
+f.valor_sub_itens > 0 and
+fp.serie_nf IN (2,7) and
+f.natureza_saida = '100.01' and
+f.filial = 'e-commerce' and
+DAY(f.emissao) &lt;= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), f.emissao, 112) IN (
+	CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
+	CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
+	CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+)
+GROUP BY
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
+CASE
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END
+--,CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>96</xloc>
+      <yloc>176</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Orders</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))) as filial,
+CASE
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END as periodo,
+COUNT(DISTINCT CAST(v.data_venda as varchar) + v.codigo_filial + v.ticket) as orders
+FROM loja_venda_produto vp
+INNER JOIN loja_venda v on
+	v.ticket = vp.ticket and
+	vp.codigo_filial = v.codigo_filial and
+	v.data_venda = vp.data_venda
+INNER JOIN filiais f on f.cod_filial = vp.codigo_filial
+INNER JOIN produtos p on p.produto = vp.produto
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+vp.qtde > 0 and
+vp.preco_liquido > 0 and
+DAY(vp.data_venda) &lt;= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), vp.data_venda, 112) IN (
+	CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
+	CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
+	CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+)
+GROUP BY
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))),
+CASE
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END
+
+UNION
+
+SELECT
+'E-COMMERCE' as filial,
+CASE
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END as periodo,
+COUNT(DISTINCT f.nf_saida) as orders
+FROM faturamento_prod fp
+INNER JOIN faturamento f on
+	f.nf_saida = fp.NF_SAIDA and
+	fp.filial = f.filial
+INNER JOIN produtos p on p.produto = fp.produto
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+fp.qtde > 0 and
+f.valor_sub_itens > 0 and
+fp.serie_nf IN (2,7) and
+f.natureza_saida = '100.01' and
+f.filial = 'e-commerce' and
+DAY(f.emissao) &lt;= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), f.emissao, 112) IN (
+	CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
+	CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
+	CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+)
+GROUP BY
+CASE
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>720</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Orders Output</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>ogwxmkd</worksheetId>
+    <privateKeyStore>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</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Output</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>okhov0b</worksheetId>
+    <privateKeyStore>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</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>256</xloc>
+      <yloc>176</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Sellers</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+COALESCE(lmd.desc_motivo_desconto,'VAZIO') as cupom,
+sf.sigla_filial + ' - ' + SUBSTRING(lv.vendedor_apelido, 1, CHARINDEX(' ', lv.vendedor_apelido, 1) - 1) as vendedor,
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))) as filial,
+CASE
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END as periodo,
+CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END as data_venda,
+SUM(vp.qtde) as itens,
+CAST(SUM(vp.qtde*(vp.preco_liquido + vp.desconto_item)) as INT) as preco_original_total,
+CAST(SUM(vp.qtde*(v.valor_pago/v.valor_venda_bruta*vp.preco_liquido)) as INT) as receita_total,
+CAST(SUM(c.preco1*vp.qtde) as INT) as custo_total
+FROM loja_venda_produto vp
+INNER JOIN loja_venda v on
+	v.ticket = vp.ticket and
+	vp.codigo_filial = v.codigo_filial and
+	v.data_venda = vp.data_venda
+INNER JOIN loja_vendedores lv on
+	lv.codigo_filial = v.codigo_filial and
+	lv.vendedor = v.vendedor
+INNER JOIN filiais f on f.cod_filial = vp.codigo_filial
+INNER JOIN (
+	SELECT 'IGUATEMI CAMPINAS' as filial, 'IGUATEMI' as sigla_filial UNION
+	SELECT 'MM DOM PEDRO' as filial, 'DOM PEDRO' as sigla_filial UNION
+	SELECT 'PREMIUM OUTLET ITUPEVA' as filial, 'OUTLET' as sigla_filial UNION
+	SELECT 'SANTA URSULA' as filial, 'RIBEIRÃO' as sigla_filial UNION
+	SELECT 'JUNDIAI SHOPPING' as filial, 'JUNDIAÍ' as sigla_filial UNION
+	SELECT 'SANTOS PRAIAMAR' as filial, 'SANTOS' as sigla_filial UNION
+	SELECT 'PIRACICABA SHOPPING' as filial, 'PIRACICABA' as sigla_filial UNION
+	SELECT 'CAMBUI' as filial, 'CAMBUÍ' as sigla_filial UNION
+	SELECT 'E-COMMERCE' as filial, 'E-COMMERCE' as sigla_filial
+) sf on sf.filial = COALESCE(NULLIF(LTRIM(RTRIM(f.filial)),'e-commerce'),'CAMBUI')
+INNER JOIN produtos p on p.produto = vp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN loja_motivos_desconto lmd on lmd.codigo_desconto = v.codigo_desconto
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+vp.qtde > 0 and
+vp.preco_liquido > 0 and
+DAY(vp.data_venda) &lt;= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), vp.data_venda, 112) IN (
+	CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
+	CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
+	CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+)
+GROUP BY
+COALESCE(lmd.desc_motivo_desconto,'VAZIO'),
+sf.sigla_filial + ' - ' + SUBSTRING(lv.vendedor_apelido, 1, CHARINDEX(' ', lv.vendedor_apelido, 1) - 1),
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))),
+CASE
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END,
+CASE WHEN CONVERT(NVARCHAR(6), vp.data_venda, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,vp.data_venda,103) ELSE '' END
+
+
+UNION
+
+SELECT
+'VAZIO' as cupom,
+'' as vendedor,
+'E-COMMERCE' as filial,
+CASE
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END as periodo,
+CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END as data_venda,
+SUM(fp.qtde) as itens,
+CAST(SUM(fp.valor + fp.desconto_item) as INT) as preco_original_total,
+CAST(SUM(f.valor_total/f.valor_sub_itens*fp.valor) as INT) as receita_total,
+CAST(SUM(c.preco1*fp.qtde) as INT) as custo_total
+FROM faturamento_prod fp
+INNER JOIN faturamento f on
+	f.nf_saida = fp.NF_SAIDA and
+	fp.filial = f.filial
+INNER JOIN produtos p on p.produto = fp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+fp.qtde > 0 and
+f.valor_sub_itens > 0 and
+fp.serie_nf IN (2,7) and
+f.natureza_saida = '100.01' and
+f.filial = 'e-commerce' and
+DAY(f.emissao) &lt;= DAY(GETDATE()-1) and CONVERT(NVARCHAR(6), f.emissao, 112) IN (
+	CONVERT(NVARCHAR(6), GETDATE()-1, 112), -- Mes Atual
+	CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112), -- Mes Passado
+	CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) -- Ano Passado
+)
+GROUP BY
+CASE
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN 'MTD'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(m,-1,GETDATE()-1), 112) THEN 'LM'
+	WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), DATEADD(yy,-1,GETDATE()-1), 112) THEN 'LY'
+END,
+CASE WHEN CONVERT(NVARCHAR(6), f.emissao, 112) = CONVERT(NVARCHAR(6), GETDATE()-1, 112) THEN CONVERT(NVARCHAR,f.emissao,103) ELSE '' END</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>96</xloc>
+      <yloc>256</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Sellers Output</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>of6w86y</worksheetId>
+    <privateKeyStore>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</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>256</xloc>
+      <yloc>256</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Sellers Output 2</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>ouzctw0</worksheetId>
+    <privateKeyStore>MIIJqwIBAzCCCWQGCSqGSIb3DQEHAaCCCVUEgglRMIIJTTCCBXEGCSqGSIb3DQEHAaCCBWIEggVeMIIFWjCCBVYGCyqGSIb3DQEMCgECoIIE+zCCBPcwKQYKKoZIhvcNAQwBAzAbBBTm0HVktWITkNfGXhQ6ZFhRTb1IeAIDAMNQBIIEyDmDLkUNm9tKEqm7hj+i7lq+CEmKdYndA/OCaSyEtJ0HoBqs1JX3nqurFm9Xp7aHI75s7ZPCdx5oc31ny2zsZmp9LZxK+Bw/bPw4+O8L6fPyMifbSWHy7qhfwt7C+qEvTJIARfVSFE8L7jitL7ihVjhhdvH6JDTpgwVitH2/RmyOu/Eia8bTfxi9dEZaR2JlYKglTF8d74LS5OZgqjAEKPW7qsHZOq952ScFxsVP+BZwtaB4gQ6npeX/lzGlHPpR93QxUTxgUCVZzTmiDq0tCqHwHCCgolJZnTMdKTPIdey8wq/dQ2QAl7r/RIGioQ2PODjfY3hVEgS+Tb9i4l2ANGUvRs1ApA2E+A7yaQciNuK68i2XAcydfwsv3WWPezJV1MkuSe8CYxCyUsFn4XFtthzb6W7+xuFHnxtoMTjWSJMfBx8Xsw+kHD4TBKLlXHuiStmbjna8gvpIYHN12sHqEIrFmkuODZvO5zpDny4SnZcxTruotuoc8CDaz/PCowD04H54td1hjmEMaJJ/2Zt1gOEeOiw0SV1k3CvMZ7uVQdjBtnimosc1NX+wvnqD/FMJNDKQSzKvzOn/wjTmchwNjam437LTwKe7nQQqM++24lxvRPzoAQWC6Zo/VSif4ZBwaRMPexAd9S2pi2HWKQP1c9vyflqY3IGuY5Ll5WyQp8L/hQpfRR7tDHoNyZJUv4GBUxOCOIZ3Zwz014X6oZtUM5Ohu1w3rikjEIZ8len28LyyrSgRZFn77Zn99x54nTm9hCzn8MlQ2nzoFl5FexXbYmasnmMVxMm4lBHNEOHzefxxQoo/K9NT28GHU//WYJRq2uOznf5rstPX6pVTq4/yIct2lYulN4c4yBtXb1MkhGcQ3M6aPVFAAQr9cQov0wNwhWwhugWW0wsoyr9kS5NUqlMcasrjhnXCizI1shrGClJvQ8gm60zMjqx5qea+G4pAnSJIxx+MEdY7daRe2xsYjP8F8fq3K70DQC5TeipbsVTU6HAFrH7Q6hhPwxWPuzLMkTNmElbTsGIH5uylDXMt3ZNWnKBIZaBwpcqPJv/toDTS5rkl29LAPIJfamSvXAhJtbdcayCtu+QSJ4aKvENLJUvsXQn1H/4SZt4PLfEeKF/PSuw4Xaf1/wT7YZuvFglSVJpjRRNZJvuBCWdFnUlwpxTp2sWnEAX6+LLe06SwUWXm8+Uje4bXIhm4fY77pHlPFIVVVDg8QLb5n095vyrehojTHXIbwGxixwePhgBVSd9+jpi3ydXXJInbdOsGKZko9TQMrt8b/fbM3ACAxweVzKXMu6LJzsfBMxs4uZUytuwhQZ+jjdfyWepT/k/QOtoQATJLqREtY0Sw1Eph5leMVDtlxaGGle9iAKa5rAblnsNujZsTh4kbAthj7l3t5WLKoUuERnM9rU3zMy3bJQOP+ePV0kjheDEwlsVPJZTQ1duoddTWnRSwaUAZEmPzcZoGIkxDHfAgMvYTaPrzbZ9p5cn54mNvJrydEPtHOl9Y4dUsmgxk1k3BohM3i0pm4itEG4bxMgiTmgZax13zNIzRfIjulmdgKqnN5DUq/d6tdzJy3Y1kLstzzoDJf/MK/yg5q5M4Z7toCEok6rJMOiMaRFXiQMT4wblgLzFIMCMGCSqGSIb3DQEJFDEWHhQAcAByAGkAdgBhAHQAZQBrAGUAeTAhBgkqhkiG9w0BCRUxFAQSVGltZSAxNTMzMzIxMzg0Mzk2MIID1AYJKoZIhvcNAQcGoIIDxTCCA8ECAQAwggO6BgkqhkiG9w0BBwEwKQYKKoZIhvcNAQwBBjAbBBSluvPGccENmxg/sPM8k37boNx6OQIDAMNQgIIDgGbDwyUir53OKCEQtsBnwJRpB6/OZMfeR/L+lIhuRJQhZ3d5NqCgxSeAqlgUcr/4B296VUJl6Dt4mboE2DX2ts+ORMmtlvCHkiWJ3E5nBKNcNy1nBnaXRIpUAI9ViJX9uvlOjsc9L6T8I1WdhHqk/P3L12zZouj8Mu6rh4nWOD3ehWVyyUqXi1L3OLVZb4K/hBs1lFc5Xi4YlsnEOR7DcsC9uY1QZZ05zGRbQqUefnb6WKUjqkOZGLtyKtjN5zU/xbaxoZhD6SSK3kSTitoOdhhQLMPAfAaT4i8k+59LIWuKWuMsWccmWC7lopp0h+duWHNoZd+Iv8fNvmDio/4+SOiiEm3r+CpDCxXPDrF6LcztFZJotlXkWPgLx9OEFmk5tKwsRq4s8k/APjIb/oTFfl73pu2Aa+pG3MTgcPZvgr/YW2HdqI9mThxNmBTyYvLiSdd9xzLmY1GNdjRTGK9WBu3veccYIzyuh6bCGu36/JadGaMperYlRGkyhuaZY3nqia1M7NTNHmRMKuP83jcU2WDU/9QkkyVGlT5N9tCTzYo0s/yBFPR+FMP/DzBfITVpkIXi/Tl6OWp9P0SWwSlo4OgFiblf87G2D/iNjiIe6Tl/+D8ypQ/Ll1diuPp8t6uxmmnrXjhrwPlkEdLbVvejB2NudOvValg5OHVKgepyp3MfVsk1JD/AFJuQ0ONLoM2K+1raQCQ+h4WyyTHqshV1aN0+wB1QtK6RAdmToNlYom5lvSjzq0UDheFfM5TH23bgdz2RlGDBIqbRe5d+Bf/SWQK/CzJPsZ/mh1Wksyz2uipCNNicGyuY1KIC6QPZRjxlxNMAHwBdHMOROhTecXeVtV9G67WrSrvlZ4tTIYj7Ucvw2RWpEIRmNl4Kxpwoe2pnDYiAkA89pEen4Ab45vq0pyMW/TU2viIwaV4M3Sb9Zl35BlNgtXfytsEazCpzQXTpGWmp6zI9woNOWyvACDZuUaMabb0s7N1KCa1KJKHNjw2q/6CqiAGcN0mx6/AecNKrNlY1A7DWsK7e2WNC2lwlWciOxNCi4yfbC/1QEBRLkeXHG/t/jP7zaRNteNypPj++4FGIsQPIPx74h/w8UxTYv92ksd+2DKsHmRNQprCVwMuQ3AyNurebGhywJ4jSxLgs/J1cALVk8lnY7PU0FnHdXnUZqkHMvnhab56jaMwbTCpcMD4wITAJBgUrDgMCGgUABBQGIv4Uwx4voH9lsjS6cfa9wUsjoAQUpOMG1ol1QM9A6Nh55mr8+AIPfY4CAwGGoA==</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>256</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Sellers WEEK</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+COALESCE(lmd.desc_motivo_desconto,'VAZIO') as cupom,
+sf.sigla_filial + ' - ' + SUBSTRING(lv.vendedor_apelido, 1, CHARINDEX(' ', lv.vendedor_apelido, 1) - 1) as vendedor,
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))) as filial,
+CASE
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END as periodo,
+'' as data_venda,
+SUM(vp.qtde) as itens,
+CAST(SUM(vp.qtde*(vp.preco_liquido + vp.desconto_item)) as INT) as preco_original_total,
+CAST(SUM(vp.qtde*(v.valor_pago/v.valor_venda_bruta*vp.preco_liquido)) as INT) as receita_total,
+CAST(SUM(c.preco1*vp.qtde) as INT) as custo_total
+FROM loja_venda_produto vp
+INNER JOIN loja_venda v on
+	v.ticket = vp.ticket and
+	vp.codigo_filial = v.codigo_filial and
+	v.data_venda = vp.data_venda
+INNER JOIN loja_vendedores lv on
+	lv.codigo_filial = v.codigo_filial and
+	lv.vendedor = v.vendedor
+INNER JOIN filiais f on f.cod_filial = vp.codigo_filial
+INNER JOIN (
+	SELECT 'IGUATEMI CAMPINAS' as filial, 'IGUATEMI' as sigla_filial UNION
+	SELECT 'MM DOM PEDRO' as filial, 'DOM PEDRO' as sigla_filial UNION
+	SELECT 'PREMIUM OUTLET ITUPEVA' as filial, 'OUTLET' as sigla_filial UNION
+	SELECT 'SANTA URSULA' as filial, 'RIBEIRÃO' as sigla_filial UNION
+	SELECT 'JUNDIAI SHOPPING' as filial, 'JUNDIAÍ' as sigla_filial UNION
+	SELECT 'SANTOS PRAIAMAR' as filial, 'SANTOS' as sigla_filial UNION
+	SELECT 'PIRACICABA SHOPPING' as filial, 'PIRACICABA' as sigla_filial UNION
+	SELECT 'CAMBUI' as filial, 'CAMBUÍ' as sigla_filial UNION
+	SELECT 'E-COMMERCE' as filial, 'E-COMMERCE' as sigla_filial
+) sf on sf.filial = COALESCE(NULLIF(LTRIM(RTRIM(f.filial)),'e-commerce'),'CAMBUI')
+INNER JOIN produtos p on p.produto = vp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN loja_motivos_desconto lmd on lmd.codigo_desconto = v.codigo_desconto
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+vp.qtde > 0 and
+vp.preco_liquido > 0 and
+(
+	CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) -- Semana Atual
+	OR CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
+	OR CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) -- Semana Ano Passado
+)
+GROUP BY
+COALESCE(lmd.desc_motivo_desconto,'VAZIO'),
+sf.sigla_filial + ' - ' + SUBSTRING(lv.vendedor_apelido, 1, CHARINDEX(' ', lv.vendedor_apelido, 1) - 1),
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))),
+CASE
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END
+
+
+UNION
+
+SELECT
+'VAZIO' as cupom,
+'' as vendedor,
+'E-COMMERCE' as filial,
+CASE
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END as periodo,
+'' as data_venda,
+SUM(fp.qtde) as itens,
+CAST(SUM(fp.valor + fp.desconto_item) as INT) as preco_original_total,
+CAST(SUM(f.valor_total/f.valor_sub_itens*fp.valor) as INT) as receita_total,
+CAST(SUM(c.preco1*fp.qtde) as INT) as custo_total
+FROM faturamento_prod fp
+INNER JOIN faturamento f on
+	f.nf_saida = fp.NF_SAIDA and
+	fp.filial = f.filial
+INNER JOIN produtos p on p.produto = fp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+fp.qtde > 0 and
+f.valor_sub_itens > 0 and
+fp.serie_nf IN (2,7) and
+f.natureza_saida = '100.01' and
+f.filial = 'e-commerce' and
+(
+	CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) -- Semana Atual
+	OR CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
+	OR CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) -- Semana Ano Passado
+)
+GROUP BY
+CASE
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>256</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Week</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))) as filial,
+CASE
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END as periodo,
+'' as data_venda,
+SUM(vp.qtde) as itens,
+CAST(SUM(vp.qtde*(vp.preco_liquido + vp.desconto_item)) as INT) as preco_original_total,
+CAST(SUM(vp.qtde*(v.valor_pago/v.valor_venda_bruta*vp.preco_liquido)) as INT) as receita_total,
+CAST(SUM(c.preco1*vp.qtde) as INT) as custo_total
+FROM loja_venda_produto vp
+INNER JOIN loja_venda v on
+	v.ticket = vp.ticket and
+	vp.codigo_filial = v.codigo_filial and
+	v.data_venda = vp.data_venda
+INNER JOIN filiais f on f.cod_filial = vp.codigo_filial
+INNER JOIN produtos p on p.produto = vp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+vp.qtde > 0 and
+vp.preco_liquido > 0 and
+(
+	CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) -- Semana Atual
+	OR CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
+	OR CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) -- Semana Ano Passado
+)
+GROUP BY
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
+LTRIM(RTRIM(COALESCE(NULLIF(f.filial,'E-COMMERCE'),'CAMBUI'))),
+CASE
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(vp.data_venda as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END
+
+
+UNION
+
+SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+'E-COMMERCE' as filial,
+CASE
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END as periodo,
+'' as data_venda,
+SUM(fp.qtde) as itens,
+CAST(SUM(fp.valor + fp.desconto_item) as INT) as preco_original_total,
+CAST(SUM(f.valor_total/f.valor_sub_itens*fp.valor) as INT) as receita_total,
+CAST(SUM(c.preco1*fp.qtde) as INT) as custo_total
+FROM faturamento_prod fp
+INNER JOIN faturamento f on
+	f.nf_saida = fp.NF_SAIDA and
+	fp.filial = f.filial
+INNER JOIN produtos p on p.produto = fp.produto
+INNER JOIN produtos_precos c on
+	p.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+fp.qtde > 0 and
+f.valor_sub_itens > 0 and
+fp.serie_nf IN (2,7) and
+f.natureza_saida = '100.01' and
+f.filial = 'e-commerce' and
+(
+	CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) -- Semana Atual
+	OR CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) -- Semana Passada
+	OR CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) -- Semana Ano Passado
+)
+GROUP BY
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
+CASE
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-7 as DATE) AND CAST(GETDATE()-1 as DATE) THEN 'WEEK'
+	WHEN CAST(f.emissao as DATE) BETWEEN CAST(GETDATE()-14 as DATE) AND CAST(GETDATE()-8 as DATE) THEN 'LW'
+	WHEN CAST(f.emissao as DATE) BETWEEN DATEADD(week,-52,CAST(GETDATE()-7 as DATE)) AND DATEADD(week,-52,CAST(GETDATE()-1 as DATE)) THEN 'LYW'
+END</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>176</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Daily Sales Week Output</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>o973wjv</worksheetId>
+    <privateKeyStore>MIIJqwIBAzCCCWQGCSqGSIb3DQEHAaCCCVUEgglRMIIJTTCCBXEGCSqGSIb3DQEHAaCCBWIEggVeMIIFWjCCBVYGCyqGSIb3DQEMCgECoIIE+zCCBPcwKQYKKoZIhvcNAQwBAzAbBBTm0HVktWITkNfGXhQ6ZFhRTb1IeAIDAMNQBIIEyDmDLkUNm9tKEqm7hj+i7lq+CEmKdYndA/OCaSyEtJ0HoBqs1JX3nqurFm9Xp7aHI75s7ZPCdx5oc31ny2zsZmp9LZxK+Bw/bPw4+O8L6fPyMifbSWHy7qhfwt7C+qEvTJIARfVSFE8L7jitL7ihVjhhdvH6JDTpgwVitH2/RmyOu/Eia8bTfxi9dEZaR2JlYKglTF8d74LS5OZgqjAEKPW7qsHZOq952ScFxsVP+BZwtaB4gQ6npeX/lzGlHPpR93QxUTxgUCVZzTmiDq0tCqHwHCCgolJZnTMdKTPIdey8wq/dQ2QAl7r/RIGioQ2PODjfY3hVEgS+Tb9i4l2ANGUvRs1ApA2E+A7yaQciNuK68i2XAcydfwsv3WWPezJV1MkuSe8CYxCyUsFn4XFtthzb6W7+xuFHnxtoMTjWSJMfBx8Xsw+kHD4TBKLlXHuiStmbjna8gvpIYHN12sHqEIrFmkuODZvO5zpDny4SnZcxTruotuoc8CDaz/PCowD04H54td1hjmEMaJJ/2Zt1gOEeOiw0SV1k3CvMZ7uVQdjBtnimosc1NX+wvnqD/FMJNDKQSzKvzOn/wjTmchwNjam437LTwKe7nQQqM++24lxvRPzoAQWC6Zo/VSif4ZBwaRMPexAd9S2pi2HWKQP1c9vyflqY3IGuY5Ll5WyQp8L/hQpfRR7tDHoNyZJUv4GBUxOCOIZ3Zwz014X6oZtUM5Ohu1w3rikjEIZ8len28LyyrSgRZFn77Zn99x54nTm9hCzn8MlQ2nzoFl5FexXbYmasnmMVxMm4lBHNEOHzefxxQoo/K9NT28GHU//WYJRq2uOznf5rstPX6pVTq4/yIct2lYulN4c4yBtXb1MkhGcQ3M6aPVFAAQr9cQov0wNwhWwhugWW0wsoyr9kS5NUqlMcasrjhnXCizI1shrGClJvQ8gm60zMjqx5qea+G4pAnSJIxx+MEdY7daRe2xsYjP8F8fq3K70DQC5TeipbsVTU6HAFrH7Q6hhPwxWPuzLMkTNmElbTsGIH5uylDXMt3ZNWnKBIZaBwpcqPJv/toDTS5rkl29LAPIJfamSvXAhJtbdcayCtu+QSJ4aKvENLJUvsXQn1H/4SZt4PLfEeKF/PSuw4Xaf1/wT7YZuvFglSVJpjRRNZJvuBCWdFnUlwpxTp2sWnEAX6+LLe06SwUWXm8+Uje4bXIhm4fY77pHlPFIVVVDg8QLb5n095vyrehojTHXIbwGxixwePhgBVSd9+jpi3ydXXJInbdOsGKZko9TQMrt8b/fbM3ACAxweVzKXMu6LJzsfBMxs4uZUytuwhQZ+jjdfyWepT/k/QOtoQATJLqREtY0Sw1Eph5leMVDtlxaGGle9iAKa5rAblnsNujZsTh4kbAthj7l3t5WLKoUuERnM9rU3zMy3bJQOP+ePV0kjheDEwlsVPJZTQ1duoddTWnRSwaUAZEmPzcZoGIkxDHfAgMvYTaPrzbZ9p5cn54mNvJrydEPtHOl9Y4dUsmgxk1k3BohM3i0pm4itEG4bxMgiTmgZax13zNIzRfIjulmdgKqnN5DUq/d6tdzJy3Y1kLstzzoDJf/MK/yg5q5M4Z7toCEok6rJMOiMaRFXiQMT4wblgLzFIMCMGCSqGSIb3DQEJFDEWHhQAcAByAGkAdgBhAHQAZQBrAGUAeTAhBgkqhkiG9w0BCRUxFAQSVGltZSAxNTMzMzIxMzg0Mzk2MIID1AYJKoZIhvcNAQcGoIIDxTCCA8ECAQAwggO6BgkqhkiG9w0BBwEwKQYKKoZIhvcNAQwBBjAbBBQiKrhh+mGrGdggt+2BEt4LhrJ8NgIDAMNQgIIDgKMbIGbn/nGJ4uwb+SXD1jsW2YUv2AHjcMAGxvne0TSvWe9NA3bwRjPBiJrzUiGhdIxraQAklM5uYMJF8WnPHgOS9RoFMYG3RPKMjvCt9Tf3Y9rK5zox80KbBcOHPXVuCNB4n4k9DOaP9s1AOdeIgJemxg76lzGa8i5Kelkxzefsknf69RVFGyooWnO9HLXVd/pdAYTMoTBcztIpa3LQNp1/bSOfNAuhrhqlNecthvw6jbI5+gjlQTowTrnsC149DqE7MxsCYpHPsSKY+2Zs+eP99ixGwZy2DeQiJxEyuBh7kTzjq1aroXNmKszj/WC7T+EZrwawRyfc6uPupUNfgSgiSLHey9JJfYtgNcPAvvHWEHn2V47rL2G/NkALphFVx/uoR3ey0cB2QhChQ/QhtvhHTL+aSYHU88H7WdkVF+3Y1lfsUHbvn+bHq24c/c3x+OiEtavMjN869aD99nSZsiPvBZByr2Hf1rj1tSJ0GnIz9Y+CeVS8p+orI08FS3vec4zg1yrKxcIN+jHubOBsNQS45uA2i8Bp2zlZ/A72lBdZxFDrnR1jWeBGqqNeAL0p96J6IxwO/FnpZ+NHa/v9g6xxDFjzKGiMgMBBJm9VyPA7xKz4ZehJ1DXgSpfxjabkM8rRq9rD6Ylk8dtd+t76DOvWGDSelPC0K70Ucp/StP9j5W89MIpvZ4mcOdtFvPyfbRA+n8dtc0ILyeSDwRLVQVFcISlND4acm+nXGZdixqavSwcCwZy76xjjYQ2jmvqKfEtI27bUZrh5hLivtQajIv56hK9rpzgM/hlTJWa93aolthAOoCu7d4H5mV3f3XfOrn/wq66BCcU101MUg4oEkww9hRWoXgsPsiQuQlI+J16liFSEidBg6BLrJW2pt+5kSLuJtW/pXeMPPMprPGa2oEQ2fAZF36TByv+JEIWLXO8rlFUT7+BlOi/eSlXPstZZosIW5zOv1olH4XTa8Fvuf82rlU5YqI1bJUr6bb83sLbzn1va0mPLDTnpPRlwWhamrTnT+iZuXBwWacpG/YB20SvBVmWFQKH9NqmOVZfTKpoMDpNexMYIsI+vatAHEIHMStSQQ++nIkKHykMpvHGdihvt2/mIY5xsNmEZxhmqSsYO3GAblG8TSpCPfa2OpNQWFp6eGXHM7F5+Xd0bAVP7urI+2JYozdaLRBdzobGSeWKQMD4wITAJBgUrDgMCGgUABBS5y53uOQhOcusJXh4AfwA+KxsB8wQUve9i8/rOFQAYFDk9W7QN+9kAzyoCAwGGoA==</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>176</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Receivings</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>N</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+COALESCE(gf.filial,LTRIM(RTRIM(c.filial_a_entregar))) as filial,
+SUM(cp.qtde_entregar) as quantidade_a_receber,
+REPLACE(SUM(cp.valor_entregar),'.',',') as custo_a_receber,
+COUNT(DISTINCT cp.produto + cp.cor_produto) as produtos_a_receber
+FROM compras_produto cp
+INNER JOIN compras c on cp.pedido = c.pedido
+INNER JOIN produtos p on cp.produto = p.produto
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+LEFT JOIN (
+	SELECT 'E-COMMERCE' as filial, 'E-COMMERCE' as grupo_filial UNION
+	SELECT 'CAMBUI' as filial, 'E-COMMERCE' as grupo_filial
+) gf on gf.grupo_filial = c.filial_a_entregar
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+YEAR(cp.entrega)*100 + MONTH(cp.entrega) = YEAR(GETDATE()-1)*100 + MONTH(GETDATE()-1)
+and cp.qtde_entregar > 0
+and cp.qtde_entregue = 0
+GROUP BY
+COALESCE(gf.filial,LTRIM(RTRIM(c.filial_a_entregar))),
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros')</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>96</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Receivings Output</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>oo19bh8</worksheetId>
+    <privateKeyStore>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</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>96</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Receivings Output WO Store</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>o48h762</worksheetId>
+    <privateKeyStore>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</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Receivings Without Store</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>N</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+'' as aux1,
+'' as aux2,
+'' as aux3,
+COUNT(DISTINCT cp.produto + cp.cor_produto) as produtos_a_receber
+FROM compras_produto cp
+INNER JOIN compras c on cp.pedido = c.pedido
+INNER JOIN produtos p on cp.produto = p.produto
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+YEAR(cp.entrega)*100 + MONTH(cp.entrega) = YEAR(GETDATE()-1)*100 + MONTH(GETDATE()-1)
+and cp.qtde_entregar > 0
+and cp.qtde_entregue = 0
+GROUP BY
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros')</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>416</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stock</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>N</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+COALESCE(gf.filial,LTRIM(RTRIM(e.filial))) as filial,
+SUM(CASE WHEN COALESCE(gf.filial,LTRIM(RTRIM(e.filial))) != 'E-COMMERCE' OR vpi.produto IS NOT NULL THEN e.estoque_disponivel END) as quantidade_estoque,
+REPLACE(SUM(CASE WHEN COALESCE(gf.filial,LTRIM(RTRIM(e.filial))) != 'E-COMMERCE' OR vpi.produto IS NOT NULL THEN e.estoque_disponivel * c.preco1 END),'.',',') as custo_estoque,
+COUNT(DISTINCT CASE WHEN COALESCE(gf.filial,LTRIM(RTRIM(e.filial))) != 'E-COMMERCE' OR vpi.produto IS NOT NULL THEN e.produto + e.cor_produto END) as produtos
+FROM w_estoque_produtos_transito e
+INNER JOIN produtos p on e.produto = p.produto
+INNER JOIN produtos_precos c on
+	e.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+LEFT JOIN (
+	SELECT 'E-COMMERCE' as filial, 'E-COMMERCE' as grupo_filial UNION
+	SELECT 'CAMBUI' as filial, 'E-COMMERCE' as grupo_filial
+) gf on gf.grupo_filial = e.filial
+LEFT JOIN bi_vtex_product_images vpi on
+	vpi.produto = e.produto and
+	vpi.cor_produto = e.cor_produto and
+	vpi.numero = 1 and
+	gf.filial = 'E-COMMERCE'
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+c.codigo_tab_preco = 02 and
+e.estoque_disponivel > 0 and
+e.filial in ('iguatemi campinas','santa ursula','mm dom pedro','premium outlet itupeva','santos praiamar','piracicaba shopping','jundiai shopping','e-commerce')
+GROUP BY
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros'),
+COALESCE(gf.filial,LTRIM(RTRIM(e.filial)))</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>96</xloc>
+      <yloc>96</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stock Output</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>o3tk3sc</worksheetId>
+    <privateKeyStore>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</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>256</xloc>
+      <yloc>96</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stock Output WO Store</name>
+    <type>GoogleSpreadsheetOutput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <serviceEmail>spreadsheets@marcia-mello.iam.gserviceaccount.com</serviceEmail>
+    <spreadsheetKey>17S5r8m700DAiTUKwXELXIjFqDhFGAIEw5zSccXXDBKY</spreadsheetKey>
+    <worksheetId>obc5g81</worksheetId>
+    <privateKeyStore>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</privateKeyStore>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>256</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Stock Without Store</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>N</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>Linx</connection>
+    <sql>SELECT
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros') as categoria,
+'' as aux1,
+'' as aux2,
+'' as aux3,
+COUNT(DISTINCT e.produto + e.cor_produto) as produtos
+FROM w_estoque_produtos_transito e
+INNER JOIN produtos p on e.produto = p.produto
+INNER JOIN produtos_precos c on
+	e.produto = c.produto and
+	c.codigo_tab_preco = 02 -- 02 custo
+LEFT JOIN bi_categorizacao_categoria ccc on
+	ccc.grupo_produto = p.grupo_produto and
+	ccc.cod_categoria = p.cod_categoria and
+	ccc.subgrupo_produto is null and
+	ccc.tipo_produto is null
+LEFT JOIN bi_categorizacao_categoria cct on
+	cct.grupo_produto = p.grupo_produto and
+	cct.tipo_produto = p.tipo_produto and
+	cct.subgrupo_produto is null and
+	cct.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria ccs on
+	ccs.grupo_produto = p.grupo_produto and
+	ccs.subgrupo_produto = p.subgrupo_produto and
+	ccs.tipo_produto is null and
+	ccs.cod_categoria is null
+LEFT JOIN bi_categorizacao_categoria cc on
+	cc.grupo_produto = p.grupo_produto and
+	cc.subgrupo_produto is null and
+	cc.tipo_produto is null and
+	cc.cod_categoria is null
+WHERE
+p.grupo_produto != 'GIFTCARD' and
+c.codigo_tab_preco = 02 and
+e.estoque_disponivel > 0 and
+e.filial in ('iguatemi campinas','santa ursula','mm dom pedro','premium outlet itupeva','santos praiamar','piracicaba shopping','jundiai shopping','e-commerce')
+GROUP BY
+p.colecao,
+COALESCE(ccc.categoria,cct.categoria,ccs.categoria,cc.categoria,'Outros')</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>96</xloc>
+      <yloc>16</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step_error_handling>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <slave_transformation>N</slave_transformation>
+</transformation>

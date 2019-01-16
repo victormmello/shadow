@@ -30,8 +30,8 @@
 # Logs, databases and outputs #
 ######################
 *.log
-*.sql
 *.sqlite
+*.sqlite3
 *.csv
 *.xlsx
 *.xls

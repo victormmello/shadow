@@ -2,33 +2,10 @@ import os, shutil, csv, requests, time, json
 from bs4 import BeautifulSoup as Soup
 from shadow_database import DatabaseConnection
 from shadow_helpers.helpers import set_in_dict, get_from_dict, make_dict, for_each_leaf
+from shadow_vtex.vtex import try_to_request, post_to_webservice
 
 api_connection_file = open("api_connection.json", 'rb')
 api_connection_config = json.load(api_connection_file)
-
-def try_to_request(*args, **kwargs):
-	retry = 3
-	for i in range(0, retry):
-		response = None
-		try:
-			response = requests.request(*args, **kwargs)
-
-			if response.status_code == 200:
-				break
-			elif response.status_code == 429:
-				import time
-				time.sleep(10)
-			else:
-				raise Exception()
-
-		except Exception as e:
-			if i == retry-1:
-				if response:
-					print(response.text)
-
-				return None
-	
-	return response
 
 def check_vtex(ean):
 	check_result = {
@@ -138,7 +115,7 @@ def check_stock_and_online(product_info):
 
 	return check_result
 
-def f(product_info):
+def waterfall(product_info):
 	check_result = {
 		'produto': product_info['prod_code'],
 		'cor_produto': product_info['cod_color'],
@@ -170,47 +147,11 @@ def f(product_info):
 
 	return check_result
 
-
-webserviceURL = "http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl"
-
-params = {
-	"Content-Type": "text/xml",
-	"Authorization": "Basic dnRleGFwcGtleS1tYXJjaWFtZWxsby1YTlpGVVg6SEpHVkdVUFVTTVpTRllJSFZQTEpQRkJaUFlCTkxDRkhSWVRUVVRQWlNZVFlDSFRJT1BUSktBQUJISEZIVENJUEdTQUhGT01CWkxSUk1DWEhGU1lXSlZXUlhSTE5PSUdQUERTSkhMRFpDUktaSklQRktZQkJETUZMVklLT0RaTlE=",
-}
-
-auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
-def post_to_webservice(soap_action, soap_message, retry=3):
-	params["SOAPAction"] = soap_action
-	request_type = soap_action.split('/')[-1]
-
-	for i in range(0, retry):
-		response = None
-		try:
-			response = requests.post("http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl", auth=auth, headers=params, data=soap_message.encode(), timeout=10)
-
-			print("%s %s" % (request_type, response.status_code))
-			if response.status_code == 200:
-				break
-			elif response.status_code == 429:
-				import time
-				time.sleep(15)
-			else:
-				raise Exception()
-
-		except Exception as e:
-			if i == retry-1:
-				if response:
-					print(response.text)
-
-				return None
-
-	return Soup(response.text, "xml")
-
 def search_directory(products_to_search):
 	filename_to_product = {}
 	already_found_images = set()
 	found_products = {}
-	paths = ["C:\\Users\\victo\\git\\shadow\\fotos\\fotos_para_renomear"]
+	paths = ["C:\\Users\\Felipe\\Projetos\\shadow\\fotos\\fotos_para_renomear"]
 
 	for product in products_to_search:
 		for n in range(1,5):
@@ -273,7 +214,7 @@ if __name__ == '__main__':
 
 	product_checks = []
 	with Pool(10) as p:
-		product_checks = p.map(f, products_to_check)
+		product_checks = p.map(waterfall, products_to_check)
 
 	# for x in products_to_check:
 	# 	product_checks.append(f(x))
@@ -287,8 +228,11 @@ if __name__ == '__main__':
 
 	found_products = search_directory(products_to_search)
 	product_check_dict = make_dict(product_checks, None, ['produto', 'cor_produto'])
-	for found_product in found_products:
-		set_in_dict(product_check_dict, True, [found_product['produto'], found_product['cor_produto'], 'imagem_hd'])
+	try:
+		for found_product in found_products:
+			set_in_dict(product_check_dict, True, [found_product['produto'], found_product['cor_produto'], 'imagem_hd'])
+	except Exception as e:
+		pass
 
 	dc.execute('TRUNCATE TABLE bi_vtex_product_waterfall;')
 	dc.insert_dict('bi_vtex_product_waterfall', list(for_each_leaf(product_check_dict, depth=2, return_keys=False)))

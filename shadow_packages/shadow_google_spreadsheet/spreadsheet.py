@@ -43,24 +43,29 @@ def excel_date(date1):
 	return float(delta.days) + (float(delta.seconds) / 86400)
 
 def update_cells_with_dict(worksheet,columns,query_result):
-	worksheet_rows = len(query_result)+1
-	worksheet_cols = len(query_result[0])
-	last_col_name = get_column_name(worksheet_cols)
-	worksheet.resize(rows=worksheet_rows, cols=worksheet_cols)
+	if query_result:
+		worksheet_rows = len(query_result)+1
+		worksheet_cols = len(query_result[0])
+		last_col_name = get_column_name(worksheet_cols)
+	
+		worksheet.resize(rows=worksheet_rows, cols=worksheet_cols)
 
-	concat_list = columns
-	for l in query_result:
-		concat_list += l
+		concat_list = columns
+		for l in query_result:
+			concat_list += l
 
-	cell_list = worksheet.range('A1:%s%d' % (last_col_name,worksheet_rows))
-	i = 0
-	for cell in cell_list:
-		if isinstance(concat_list[i], datetime):
-			cell.value = excel_date(concat_list[i])
-		elif isinstance(concat_list[i],numbers.Number):
-			cell.value = int(round(concat_list[i],0))
-		else:
-			cell.value = str(concat_list[i])
-		i += 1
+		cell_list = worksheet.range('A1:%s%d' % (last_col_name,worksheet_rows))
+		i = 0
+		for cell in cell_list:
+			if isinstance(concat_list[i], datetime):
+				cell.value = excel_date(concat_list[i])
+			elif isinstance(concat_list[i],numbers.Number):
+				cell.value = int(round(concat_list[i],0))
+			else:
+				cell.value = str(concat_list[i])
+			i += 1
 
-	worksheet.update_cells(cell_list)
+		worksheet.update_cells(cell_list)
+	
+	else:
+		worksheet.resize(rows=1)
