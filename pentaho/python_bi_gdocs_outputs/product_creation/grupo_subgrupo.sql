@@ -11,7 +11,7 @@ FROM (
 	RTRIM(p.subgrupo_produto) as subgrupo_produto
 	FROM produtos p
 	WHERE
-	(p.grupo_produto like '[_]%' or p.grupo_produto = 'CALCADOS')
+	(p.grupo_produto like '[_]%' or p.grupo_produto IN ('CALCADOS','_CALCADOS'))
 	and p.data_cadastramento >= GETDATE()-360
 	
 	UNION
@@ -45,7 +45,7 @@ LEFT JOIN (
 	UNION SELECT '_VESTIDO' as grupo_produto, 'Top+Bottom' as classificacao, 4 as tipo_cod_barras
 	UNION SELECT '_MACACAO' as grupo_produto, 'Top+Bottom' as classificacao, 4 as tipo_cod_barras
 	UNION SELECT 'VESTIDO' as grupo_produto, 'Top+Bottom' as classificacao, 4 as tipo_cod_barras
-	UNION SELECT 'CALCADOS' as grupo_produto, 'Calcados' as classificacao, 4 as tipo_cod_barras
+	UNION SELECT '_CALCADOS' as grupo_produto, 'Calcados' as classificacao, 4 as tipo_cod_barras
 	UNION SELECT 'ACESSORIOS' as grupo_produto, 'Outros' as classificacao, 3 as tipo_cod_barras
 	UNION SELECT 'BIJUTERIA' as grupo_produto, 'Outros' as classificacao, 3 as tipo_cod_barras
 	UNION SELECT 'MM HOME' as grupo_produto, 'Outros' as classificacao, 3 as tipo_cod_barras

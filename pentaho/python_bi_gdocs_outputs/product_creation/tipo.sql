@@ -6,7 +6,7 @@ FROM (
 	RTRIM(p.tipo_produto) as tipo_produto
 	FROM produtos p
 	WHERE
-	(p.grupo_produto like '[_]%' or p.grupo_produto = 'CALCADOS')
+	(p.grupo_produto like '[_]%' or p.grupo_produto IN ('CALCADOS','_CALCADOS'))
 	and p.data_cadastramento >= GETDATE()-360
 	
 	UNION

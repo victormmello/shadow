@@ -14,7 +14,7 @@ FROM (
 	INNER JOIN produtos p on p.produto = pc.produto
 	WHERE
 	(
-		(p.grupo_produto like '[_]%' or p.grupo_produto = 'CALCADOS')
+		(p.grupo_produto like '[_]%' or p.grupo_produto IN ('CALCADOS','_CALCADOS'))
 		and p.data_cadastramento >= GETDATE()-360
 		and pc.desc_cor_produto not like '%cancelad%'
 	) OR pc.desc_cor_produto IN ('ESTAMPADO ROSE')

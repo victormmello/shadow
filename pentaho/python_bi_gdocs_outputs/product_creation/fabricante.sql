@@ -3,7 +3,7 @@ SELECT DISTINCT fabricante FROM (
 	RTRIM(p.fabricante) as fabricante
 	FROM produtos p
 	WHERE
-	(p.grupo_produto like '[_]%' or p.grupo_produto = 'CALCADOS')
+	(p.grupo_produto like '[_]%' or p.grupo_produto IN ('CALCADOS','_CALCADOS'))
 	and p.data_cadastramento >= GETDATE()-360
 	
 	UNION
@@ -13,7 +13,7 @@ SELECT DISTINCT fabricante FROM (
 	FROM fornecedores f
 	WHERE
 	f.inativo = 0 and
-	(f.data_para_transferencia >= GETDATE()-360 OR f.fornecedor IN ('MORINA','Love It'))
+	(f.data_para_transferencia >= GETDATE()-360)
 	and f.tipo = 'PRODUTOS ACABADOS'
 ) t
 ORDER BY t.fabricante
