@@ -23,9 +23,6 @@ class DatabaseConnection(object):
 			database_config.username,
 			database_config.password
 			))
-		self.cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='latin1')
-		self.cnxn.setdecoding(pyodbc.SQL_WCHAR, encoding='latin1')
-		self.cnxn.setencoding(encoding='latin1')
 		self.cursor = self.cnxn.cursor()
 
 	def select(self, query, strip=False, dict_format=False):
