@@ -62,7 +62,7 @@ def update_cells_with_dict(worksheet,columns,query_result):
 			elif isinstance(concat_list[i],numbers.Number):
 				cell.value = int(round(concat_list[i],0))
 			else:
-				cell.value = str(concat_list[i])
+				cell.value = str(concat_list[i]).encode()
 			i += 1
 
 		worksheet.update_cells(cell_list)
