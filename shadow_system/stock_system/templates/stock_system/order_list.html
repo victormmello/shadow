@@ -10,9 +10,35 @@
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 		crossorigin="anonymous">
 	</script>
+
+	<style type="text/css">
+		.order_first_row td {
+			border-top: 2px black solid;
+		}
+		#yay td {
+			vertical-align: middle;
+		}
+	</style>
 </head>
 <body>
 	<div class="container-fluid">
+		{% if filter_fields %}
+			<form method="get">
+				<div class="form-row">
+					{% for filter_field in filter_fields %}
+						<div class="col-auto">
+							<label for="filter_{{filter_field.field}}">{{filter_field.name}}</label>
+							<input type="text" class="form-control" id="filter_{{filter_field.field}}" name="{{filter_field.field}}" value="{{filter_field.value}}">
+						</div>
+					{% endfor %}
+				</div>
+				<button type="submit" style="display: none;"></button>
+			</form>
+		{% endif %}
+
+		<br>
+		<br>
+	
 		<div class="row">
 			<div class="col-12">
 				<table id="yay" class="table table-bordered" style="text-align: center;">
@@ -29,7 +55,7 @@
 							<th>cpf</th>
 							<th>total_product_price</th>
 							<th>total_shipping_price</th>
- 							<th>city</th>
+							<th>city</th>
 							<th>neighborhood</th>
 							<th>state</th>
 							<th>postal_code</th>
@@ -42,23 +68,42 @@
 
 							<th>Cod. Barra</th>
 							<th>Qnt</th>
+							<th>Est</th>
 							<th>Produto</th>
+							<th>Imagem</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for order in object_list %}
 							{% for order_item in order.order_items.all %}
-								<tr>
+								{% if forloop.first %}
+									<tr class="order_first_row">
+								{% else %}
+									<tr>
+								{% endif %}
 									{% if forloop.first %}
-										<td style="vertical-align: middle;" rowspan="{{order.order_items.all|length}}">{{order.vtex_created_at|date:"d/m/y"}}</td>
-										<td style="vertical-align: middle;" rowspan="{{order.order_items.all|length}}">{{order.sequence}}</td>
-										<td style="vertical-align: middle;" rowspan="{{order.order_items.all|length}}">{{order.client_name}}</td>
-										<td style="vertical-align: middle;" rowspan="{{order.order_items.all|length}}">{{order.status}}</td>
-										<td style="vertical-align: middle;" rowspan="{{order.order_items.all|length}}">{{order.courier}}</td>
+										<td rowspan="{{order.order_items.all|length}}">{{order.vtex_created_at|date:"d/m/y H:i"}}</td>
+										<td rowspan="{{order.order_items.all|length}}">{{order.sequence}}</td>
+										<td rowspan="{{order.order_items.all|length}}">{{order.client_name}}</td>
+										<td rowspan="{{order.order_items.all|length}}">{{order.status}}</td>
+										<td rowspan="{{order.order_items.all|length}}">{{order.courier}}</td>
 									{% endif %}
-										<td style="vertical-align: middle;">{{order_item.ean}}</td>
-										<td style="vertical-align: middle;">{{order_item.quantity}}</td>
-										<td style="vertical-align: middle;">{{order_item.product_name}}</td>
+										<td>{{order_item.ean}}</td>
+										
+										{% if order_item.quantity == order_item.stock_warehouse %}
+											<td>{{order_item.quantity}}</td>
+											<td>{{order_item.stock_warehouse}}</td>
+										{% elif order_item.quantity > order_item.stock_warehouse %}
+											<td style="color: red;">{{order_item.quantity}}</td>
+											<td style="color: red;">{{order_item.stock_warehouse}}</td>
+										{% else %}
+											<td style="color: blue;">{{order_item.quantity}}</td>
+											<td style="color: blue;">{{order_item.stock_warehouse}}</td>
+										{% endif %}
+										<td>{{order_item.product_name}}</td>
+										<td>
+											<img src="{{order_item.image_link}}">
+										</td>
 
 										<!-- 
 										<td rowspan="">{{order_item.order.vtex_id}}</td>

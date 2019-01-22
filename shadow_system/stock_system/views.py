@@ -2,10 +2,20 @@ from django.views.generic import ListView, TemplateView
 from stock_system.models import OrderItem, Order
 
 from django.db.models import Sum, Case, Value as V, When, IntegerField, Q
-import datetime
+import datetime, copy
 
 class OrderList(ListView):
 	template_name = 'stock_system/order_list.html'
+	filter_fields = [
+		{
+			'name': 'Pedido',
+			'field': 'sequence',
+		},
+		{
+			'name': 'EAN',
+			'field': 'order_items__ean',
+		},
+	]
 
 	def get_queryset(self):
 		orders = Order.objects.order_by('-vtex_created_at').prefetch_related('order_items')
@@ -13,15 +23,26 @@ class OrderList(ListView):
 		get_params = dict(self.request.GET)
 		if get_params:
 			for field, values in get_params.items():
-				field = field + '__in'
-				orders = orders.filter(**{field: values})
+				if any(values):
+					field = field + '__in'
+					orders = orders.filter(**{field: values})
+
+					print({field: values})
 
 		return orders
 
-	# def get_context_data(self, **kwargs):
-	# 	context = super(OrderList, self).get_context_data(**kwargs)
+	def get_context_data(self, **kwargs):
+		context = super(OrderList, self).get_context_data(**kwargs)
 
-	# 	return context
+		filter_fields = copy.deepcopy(self.filter_fields)
+		for filter_field in filter_fields:
+			value = self.request.GET.get(filter_field['field'])
+			if value:
+				filter_field['value'] = value
+
+		context['filter_fields'] = filter_fields
+
+		return context
 
 class OrderDashboard(TemplateView):
 	template_name = 'stock_system/order_dashboard.html'

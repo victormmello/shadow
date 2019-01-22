@@ -20,9 +20,11 @@ class Command(BaseCommand):
 		dc = DatabaseConnection()
 
 		order_item_infos = dc.select("""
-			SELECT 
-				*
+			SELECT
+				voi.*,
+				coalesce(e.estoque_disponivel, 0) as stock_warehouse
 			from dbo.bi_vtex_order_items voi
+			left join w_estoque_disponivel_sku e on e.codigo_barra = voi.ean and e.filial = 'e-commerce'
 			where voi.created_at > '2018-12-26 10:03:33'
 			;
 		""", strip=True, dict_format=True)
@@ -52,7 +54,7 @@ class Command(BaseCommand):
 			order.street_number = order_info['street_number']
 			order.number = order_info['street_number']
 
-			order.payment_method_group = order_info['payment_method_group']
+			# order.payment_method_group = order_info['payment_method_group']
 
 			order_dict[order.vtex_id] = order
 
@@ -83,6 +85,8 @@ class Command(BaseCommand):
 				order_item.quantity = order_item_info['quantity']
 				order_item.product_name = order_item_info['name']
 				order_item.unit_sale_price = order_item_info['price']
+				order_item.image_link = order_item_info['image_link']
+				order_item.stock_warehouse = order_item_info['stock_warehouse']
 
 			OrderItem.objects.bulk_create(order_items_to_create, batch_size=99)
 

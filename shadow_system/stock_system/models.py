@@ -19,6 +19,7 @@ class Order(models.Model):
 	postal_code = models.TextField()
 	street_number = models.TextField()
 	number = models.TextField()
+	payment_method_group = models.TextField()
 
 	class Meta:
 		app_label = 'stock_system'
@@ -30,6 +31,8 @@ class OrderItem(models.Model):
 	quantity = models.IntegerField()
 	product_name = models.TextField()
 	unit_sale_price = models.FloatField()
+	image_link = models.TextField()
+	stock_warehouse = models.IntegerField()
 
 	order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='order_items')
 
