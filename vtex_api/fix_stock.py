@@ -176,13 +176,13 @@ if __name__ == '__main__':
 			from (
 				SELECT 
 					codigo_barra,
-					estoque_disponivel
+					estoque_disponivel - 1 as estoque_disponivel
 				FROM w_estoque_disponivel_sku
-				where filial = 'e-commerce'
+				where filial = 'e-commerce' and (estoque_disponivel - 1) > 0
 			) e
 			full outer join bi_vtex_product_items vpi on vpi.ean = e.codigo_barra
 			where 1=1
-				and COALESCE(vpi.stock_quantity, 0) != COALESCE(e.estoque_disponivel,0)
+				and COALESCE(vpi.stock_quantity, 0) != COALESCE(e.estoque_disponivel, 0)
 				-- and vpi.ean = '0810001026339'
 		) t
 	;
@@ -196,9 +196,9 @@ if __name__ == '__main__':
 		SELECT 
 			ps.codigo_barra as ean,
 			vpi.item_id as sku_id,
-			COALESCE(e.estoque_disponivel, 0)  as stock_linx
+			COALESCE(e.estoque_disponivel-1, 0)  as stock_linx
 		from produtos_barra ps
-		LEFT JOIN w_estoque_disponivel_sku e on ps.codigo_barra = e.codigo_barra and e.filial = 'e-commerce'
+		LEFT JOIN w_estoque_disponivel_sku e on ps.codigo_barra = e.codigo_barra and e.filial = 'e-commerce' and e.estoque_disponivel > 1
 		LEFT JOIN bi_vtex_product_items vpi on ps.codigo_barra = vpi.ean
 		where 1=1 
 			and ps.codigo_barra in (
@@ -248,9 +248,9 @@ if __name__ == '__main__':
 				from (
 					SELECT 
 						codigo_barra,
-						estoque_disponivel
+						estoque_disponivel - 1 as estoque_disponivel
 					FROM w_estoque_disponivel_sku
-					where filial = 'e-commerce'
+					where filial = 'e-commerce' and (estoque_disponivel - 1) > 0
 				) e
 				full outer join bi_vtex_product_items vpi on vpi.ean = e.codigo_barra
 				where 1=1
