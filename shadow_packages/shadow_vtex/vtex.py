@@ -16,16 +16,18 @@ def try_to_request(*args, **kwargs):
 			elif response.status_code == 404:
 				return None
 			elif response.status_code == 429:
+				print('too fast... waiting')
 				time.sleep(10)
 			else:
 				raise Exception()
 
 		except Exception as e:
 			if i == retry-1:
-				print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), response.text))
 				# import pdb; pdb.set_trace()
 				if response:
-					print('desistindo')
+					print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), response.text))
+				else:
+					print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), 'desistindo'))
 
 				return None
 	

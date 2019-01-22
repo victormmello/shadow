@@ -1,5 +1,5 @@
 import requests, json, dateutil.relativedelta
-from shadow_vtex.vtex import try_to_request
+from shadow_vtex.vtex import authenticated_request
 from datetime import datetime, timedelta
 from shadow_database import DatabaseConnection
 from multiprocessing import Pool, Manager
@@ -39,9 +39,6 @@ ORDER_STATUS = {
 	'canceled': 'Cancelado',
 }
 
-api_connection_file = open("api_connection.json", 'rb')
-api_connection_config = json.load(api_connection_file)
-
 list_orders_url = 'http://marciamello.vtexcommercestable.com.br/api/oms/pvt/orders'
 
 def get_orders_by_date_range(date_range):
@@ -68,7 +65,7 @@ def get_orders_by_date_range(date_range):
 	while (c*15) < total_items:
 		c+=1
 		params["page"] = c
-		response = try_to_request("GET", list_orders_url, headers=api_connection_config, params=params)
+		response = authenticated_request("GET", list_orders_url, params=params)
 
 		response_status_code = response.status_code
 
@@ -81,7 +78,7 @@ def get_orders_by_date_range(date_range):
 
 				for i in range(0,20):
 					try:
-						order_response = try_to_request("GET", list_orders_url + '/' + order_id, headers=api_connection_config)
+						order_response = authenticated_request("GET", list_orders_url + '/' + order_id)
 						order_json_response = json.loads(order_response.text)
 
 						if order_json_response.get('error'):
@@ -90,12 +87,12 @@ def get_orders_by_date_range(date_range):
 					except Exception as e:
 						pass
 
-				order_info = []
-				order_info.append(order_id) # order_id
-				order_info.append(int(order_json_response['sequence'])) # sequence
+				order_info = {}
+				order_info['order_id'] = order_id
+				order_info['order_sequence'] = int(order_json_response['sequence'])
 				created_at = datetime.strptime(order_json_response['creationDate'][:-14], '%Y-%m-%dT%H:%M:%S')
 				created_at = created_at - timedelta(hours=2)
-				order_info.append(created_at) # created_at
+				order_info['created_at'] = created_at
 
 				invoiced_at = order_json_response['invoicedDate']
 				if invoiced_at:
@@ -103,41 +100,41 @@ def get_orders_by_date_range(date_range):
 					invoiced_at = invoiced_at - timedelta(hours=2)
 				else:
 					invoiced_at = None
-				order_info.append(invoiced_at) # invoiced_at
+				order_info['invoiced_at'] = invoiced_at
 
-				order_info.append(order_json_response['clientProfileData']['firstName'] + ' ' + order_json_response['clientProfileData']['lastName']) # client_name
-				order_info.append(order_json_response['clientProfileData']['phone']) # client_phone_number
+				order_info['client_name'] = order_json_response['clientProfileData']['firstName'] + ' ' + order_json_response['clientProfileData']['lastName']
+				order_info['client_phone_number'] = order_json_response['clientProfileData']['phone']
 
 				user_profile_id = order_json_response['clientProfileData']['userProfileId']
 				user_cpf = order_json_response['clientProfileData']['document']
 				client_email = ''
 				try:
 					get_email_by_user_id_url = 'http://marciamello.vtexcommercestable.com.br/api/dataentities/CL/search/?userId=%s&_fields=email' % user_profile_id
-					email_response = try_to_request("GET", get_email_by_user_id_url, headers=api_connection_config)
+					email_response = authenticated_request("GET", get_email_by_user_id_url)
 					email_json_response = json.loads(email_response.text)
 					client_email = email_json_response[0]['email']
 
-					order_info.append(client_email) # client_email
+					order_info['client_email'] = client_email
 				except Exception as e:
 					try:
 						get_email_by_cpf_url = 'http://marciamello.vtexcommercestable.com.br/api/dataentities/CL/search/?document=%s&_fields=email' % user_cpf
-						email_response = try_to_request("GET", get_email_by_cpf_url, headers=api_connection_config)
+						email_response = authenticated_request("GET", get_email_by_cpf_url)
 						email_json_response = json.loads(email_response.text)
 						client_email = email_json_response[0]['email']
 
-						order_info.append(client_email) # client_email
+						order_info['client_email'] = client_email
 					except Exception as e:
 						pass
 
-				order_info.append(user_cpf) # cpf
-				order_info.append(order_json_response['shippingData']['logisticsInfo'][0]['deliveryCompany']) # courier
-				order_info.append(order_json_response['shippingData']['address']['city']) # city
-				order_info.append(order_json_response['shippingData']['address']['neighborhood']) # neighborhood
-				order_info.append(order_json_response['shippingData']['address']['state']) # state
-				order_info.append(order_json_response['shippingData']['address']['postalCode']) # postal_code
-				order_info.append(order_json_response['shippingData']['address']['street']) # street_number
-				order_info.append(order_json_response['shippingData']['address']['number']) # number
-				order_info.append(order_json_response['shippingData']['address']['complement']) # complement
+				order_info['cpf'] = user_cpf
+				order_info['courier'] = order_json_response['shippingData']['logisticsInfo'][0]['deliveryCompany']
+				order_info['city'] = order_json_response['shippingData']['address']['city']
+				order_info['neighborhood'] = order_json_response['shippingData']['address']['neighborhood']
+				order_info['state'] = order_json_response['shippingData']['address']['state']
+				order_info['postal_code'] = order_json_response['shippingData']['address']['postalCode']
+				order_info['street'] = order_json_response['shippingData']['address']['street']
+				order_info['street_number'] = order_json_response['shippingData']['address']['number']
+				order_info['complement'] = order_json_response['shippingData']['address']['complement']
 
 				transactions = order_json_response['paymentData']['transactions']
 
@@ -152,28 +149,29 @@ def get_orders_by_date_range(date_range):
 						if payment['tid']:
 							tids.append(payment['tid'])
 						
-				order_info.append(','.join(payment_method_groups)) # payment_method_group
-				order_info.append(','.join(tids)) # tid
+				order_info['payment_method_group'] = ','.join(payment_method_groups)
+				order_info['tid'] = ','.join(tids)
 
 				# order_info.append(ORDER_STATUS[order_json_response['status']]) # status
-				order_info.append(order_json_response['statusDescription']) # status
+				order_info['status'] = order_json_response['statusDescription']
 				total_product_price = format_int_to_float(order_json_response['totals'][0]['value'] + order_json_response['totals'][1]['value'])
 				total_shipping_price = format_int_to_float(order_json_response['totals'][2]['value'])
 
-				order_info.append(total_product_price) # total_product_price
-				order_info.append(total_shipping_price) # total_shipping_price
-				order_info.append(total_product_price + total_shipping_price) # total_order_price
+				order_info['total_product_price'] = total_product_price
+				order_info['total_shipping_price'] = total_shipping_price
+				order_info['total_order_price'] = total_product_price + total_shipping_price
 
 				this_order_items = []
 				for item in order_json_response['items']:
 					try:
 						order_item = order_info.copy()
-						order_item.append(item['ean']) # ean
-						order_item.append(int(item['id'])) # vtex_sku
-						order_item.append(int(item['productId'])) # vtex_product_id
-						order_item.append(item['quantity']) # quantity
-						order_item.append(item['name']) # name
-						order_item.append(format_int_to_float(item['price'])) # tb tem sellingPrice # price
+						order_item['ean'] = item['ean']
+						order_item['vtex_sku'] = int(item['id'])
+						order_item['vtex_product_id'] = int(item['productId'])
+						order_item['quantity'] = item['quantity']
+						order_item['name'] = item['name']
+						order_item['price'] = format_int_to_float(item['price'])
+						order_item['image_link'] = item['imageUrl']
 
 						this_order_items.append(order_item)
 					except Exception as e:
@@ -202,11 +200,8 @@ def get_orders_by_date_range(date_range):
 						invoiced_quantity = invoice_info_by_index[i]['invoiced_quantity']
 						invoiced_price = invoice_info_by_index[i]['invoiced_price']
 
-					order_item.append(invoiced_quantity)
-					order_item.append(invoiced_price)
-
-				# order_item.append(invoiced_quantity)
-				# order_item.append(invoiced_price)
+					order_item['invoiced_quantity'] = invoiced_quantity
+					order_item['invoiced_price'] = invoiced_price
 
 				date_range_order_items.extend(this_order_items)
 
@@ -221,7 +216,7 @@ def get_orders_by_date_range(date_range):
 
 if __name__ == '__main__':
 	DAYS_TO_FETCH = 30
-	# DAYS_TO_FETCH = 2
+	# DAYS_TO_FETCH = 1
 
 	tomorrow = datetime.now() + timedelta(days=1)
 	days_delta = timedelta(days=1)
@@ -263,7 +258,7 @@ if __name__ == '__main__':
 
 	print('	bi_vtex_order_items')
 	dc.execute('TRUNCATE TABLE bi_vtex_order_items;')
-	dc.insert('bi_vtex_order_items', order_items, print_only=False)
+	dc.insert_dict('bi_vtex_order_items', order_items, print_only=True)
 
 	# skus_to_reduce = dc.select("""
 	# 	SELECT 

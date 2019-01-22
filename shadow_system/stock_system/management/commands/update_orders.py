@@ -7,7 +7,6 @@ from shadow_helpers.helpers import make_dict, get_from_dict, set_in_dict
 from stock_system.models import Order, OrderItem
 from django.utils import timezone
 
-
 class Command(BaseCommand):
 	def handle(self, *args, **kwargs):
 		current_tz = timezone.get_current_timezone()
@@ -52,6 +51,8 @@ class Command(BaseCommand):
 			order.postal_code = order_info['postal_code']
 			order.street_number = order_info['street_number']
 			order.number = order_info['street_number']
+
+			order.payment_method_group = order_info['payment_method_group']
 
 			order_dict[order.vtex_id] = order
 
