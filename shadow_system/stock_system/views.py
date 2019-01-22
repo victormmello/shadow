@@ -25,7 +25,7 @@ class OrderList(ListView):
 			for field, values in get_params.items():
 				if any(values):
 					field = field + '__in'
-					orders = orders.filter(**{field: values})
+					orders = orders.filter(**{field: [x.upper() for x in values]})
 
 					print({field: values})
 
@@ -38,7 +38,7 @@ class OrderList(ListView):
 		for filter_field in filter_fields:
 			value = self.request.GET.get(filter_field['field'])
 			if value:
-				filter_field['value'] = value
+				filter_field['value'] = value.upper()
 
 		context['filter_fields'] = filter_fields
 
@@ -68,5 +68,16 @@ class OrderDashboard(TemplateView):
 		order_current_summary['total'] = order_current_summary['paid'] + order_current_summary['not_paid']
 
 		context['order_current_summary'] = order_current_summary
+
+
+
+		# order_current_summary = Order.objects.all().aggregate(
+		# 	paid=Sum(Case(When(status="Preparando Entrega", then=V(1)), default=0, output_field=IntegerField())),
+		# 	not_paid=Sum(Case(When(status="Pagamento Pendente", then=V(1)), default=0, output_field=IntegerField())),
+
+		# 	invoiced_1d=Sum(Case(When(filter_1d, then=V(1)), default=0, output_field=IntegerField())),
+		# 	invoiced_7d=Sum(Case(When(filter_7d, then=V(1)), default=0, output_field=IntegerField())),
+		# )		
+
 
 		return context
