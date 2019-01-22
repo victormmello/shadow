@@ -19,11 +19,6 @@ def open(workbook_name):
 
 	return workbook
 
-def get_all_recods(workbook,worksheet_name):
-	# Extract all of the values
-	list_of_hashes = workbook.worksheet(worksheet_name).get_all_records()
-	return list_of_hashes
-
 def update_cell(worksheet,row,column,value,max_tries=3,try_number=1):
 	try:
 		worksheet.update_cell(row,column,value)
