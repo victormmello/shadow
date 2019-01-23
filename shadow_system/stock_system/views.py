@@ -15,6 +15,10 @@ class OrderList(ListView):
 			'name': 'EAN',
 			'field': 'order_items__ean',
 		},
+		{
+			'name': 'Cliente',
+			'field': 'client_name',
+		},
 	]
 
 	def get_queryset(self):
@@ -23,11 +27,17 @@ class OrderList(ListView):
 		get_params = dict(self.request.GET)
 		if get_params:
 			for field, values in get_params.items():
-				if any(values):
+				values = [x for x in values if x]
+
+				if len(values) > 1:
 					field = field + '__in'
 					orders = orders.filter(**{field: [x.upper() for x in values]})
 
-					print({field: values})
+				elif len(values) == 1:
+					field = field + '__icontains'
+					orders = orders.filter(**{field: values[0]})
+
+				print({field: values})
 
 		return orders
 
