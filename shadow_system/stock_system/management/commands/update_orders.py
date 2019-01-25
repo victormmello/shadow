@@ -68,7 +68,6 @@ class Command(BaseCommand):
 			order_items_to_create = []
 			order_items_to_update = []
 			for order_item_info in order_item_infos:
-				existing_order_items_dict
 				order_item = get_from_dict(existing_order_items_dict, [order_item_info['order_id'], order_item_info['ean']])
 				if order_item:
 					order_items_to_update.append(order_item)
@@ -87,6 +86,7 @@ class Command(BaseCommand):
 				order_item.unit_sale_price = order_item_info['price']
 				order_item.image_link = order_item_info['image_link']
 				order_item.stock_warehouse = order_item_info['stock_warehouse']
+				order_item.invoiced_quantity = order_item_info['invoiced_quantity']
 
 			OrderItem.objects.bulk_create(order_items_to_create, batch_size=99)
 

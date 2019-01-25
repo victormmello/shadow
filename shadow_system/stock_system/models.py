@@ -21,6 +21,9 @@ class Order(models.Model):
 	number = models.TextField()
 	payment_method_group = models.TextField()
 
+	def invoiced_quantity(self):
+		return sum([x.invoiced_quantity for x in self.order_items.all()])
+
 	class Meta:
 		app_label = 'stock_system'
 
@@ -33,6 +36,7 @@ class OrderItem(models.Model):
 	unit_sale_price = models.FloatField()
 	image_link = models.TextField()
 	stock_warehouse = models.IntegerField()
+	invoiced_quantity = models.IntegerField()
 
 	order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='order_items')
 

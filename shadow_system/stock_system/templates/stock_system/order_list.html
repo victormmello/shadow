@@ -85,7 +85,12 @@
 										<td rowspan="{{order.order_items.all|length}}">{{order.vtex_created_at|date:"d/m/y H:i"}}</td>
 										<td rowspan="{{order.order_items.all|length}}">{{order.sequence}}</td>
 										<td rowspan="{{order.order_items.all|length}}">{{order.client_name}}</td>
-										<td rowspan="{{order.order_items.all|length}}">{{order.status}}</td>
+										<td rowspan="{{order.order_items.all|length}}">
+											{{order.status}}
+											{% if order.status != 'Faturado' and order.invoiced_quantity %}
+												<br>(Faturado: {{order.invoiced_quantity}})
+											{% endif %}
+										</td>
 										<td rowspan="{{order.order_items.all|length}}">{{order.courier}}</td>
 									{% endif %}
 										<td>{{order_item.ean}}</td>
