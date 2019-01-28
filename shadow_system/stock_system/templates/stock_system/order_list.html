@@ -82,7 +82,12 @@
 									<tr>
 								{% endif %}
 									{% if forloop.first %}
-										<td rowspan="{{order.order_items.all|length}}">{{order.vtex_created_at|date:"d/m/y H:i"}}</td>
+										<td rowspan="{{order.order_items.all|length}}">
+											{{order.vtex_created_at|date:"d/m/y H:i"}}
+											{% if order.payment_method_group == 'bankInvoice' %}
+												<br><span style="color: green;">{{order.vtex_paid_at|date:"d/m/y H:i"}}</span>
+											{% endif %}
+										</td>
 										<td rowspan="{{order.order_items.all|length}}">{{order.sequence}}</td>
 										<td rowspan="{{order.order_items.all|length}}">{{order.client_name}}</td>
 										<td rowspan="{{order.order_items.all|length}}">

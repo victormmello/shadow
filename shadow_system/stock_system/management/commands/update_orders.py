@@ -40,6 +40,9 @@ class Command(BaseCommand):
 			order.vtex_created_at = current_tz.normalize(order_info['created_at'].astimezone(current_tz))
 			if order_info['invoiced_at']:
 				order.vtex_invoiced_at = current_tz.normalize(order_info['invoiced_at'].astimezone(current_tz))
+			if order_info['paid_at']:
+				order.vtex_paid_at = current_tz.normalize(order_info['paid_at'].astimezone(current_tz))
+
 			order.sequence = order_info['order_sequence']
 			order.client_name = order_info['client_name']
 			order.cpf = order_info['cpf']
@@ -54,7 +57,7 @@ class Command(BaseCommand):
 			order.street_number = order_info['street_number']
 			order.number = order_info['street_number']
 
-			# order.payment_method_group = order_info['payment_method_group']
+			order.payment_method_group = order_info['payment_method_group']
 
 			order_dict[order.vtex_id] = order
 

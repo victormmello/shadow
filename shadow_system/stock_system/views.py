@@ -44,8 +44,11 @@ class OrderList(ListView):
 					orders = orders.filter(**{field: [x.upper() for x in values]})
 
 				elif len(values) == 1:
-					if field != 'order_items__ean':
+					if field == 'order_items__ean':
+						field = field + '__iexact'
+					else:
 						field = field + '__icontains'
+
 					orders = orders.filter(**{field: values[0]})
 
 				print({field: values})
