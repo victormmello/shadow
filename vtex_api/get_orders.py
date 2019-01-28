@@ -10,6 +10,12 @@ def format_int_to_float(int_value):
 	str_value = str(int_value)
 	return float(str_value[:-2] + '.' + str_value[-2:])
 
+def parse_datetime(datetime_str):
+	datetime_obj = datetime.strptime(datetime_str[:-14], '%Y-%m-%dT%H:%M:%S')
+	datetime_obj = datetime_obj - timedelta(hours=2)
+
+	return datetime_obj
+
 ORDER_STATUS = {
 	'waiting-for-seller-confirmation': 'Aguardando confirmação do Seller',
 	'order-created': 'Processando',
@@ -90,17 +96,22 @@ def get_orders_by_date_range(date_range):
 				order_info = {}
 				order_info['order_id'] = order_id
 				order_info['order_sequence'] = int(order_json_response['sequence'])
-				created_at = datetime.strptime(order_json_response['creationDate'][:-14], '%Y-%m-%dT%H:%M:%S')
-				created_at = created_at - timedelta(hours=2)
-				order_info['created_at'] = created_at
+				order_info['created_at'] = parse_datetime(order_json_response['creationDate'])
+
+				paid_at = order_json_response['authorizedDate']
+				if paid_at:
+					paid_at = parse_datetime(paid_at)
+				else:
+					paid_at = None
+				order_info['paid_at'] = paid_at
 
 				invoiced_at = order_json_response['invoicedDate']
 				if invoiced_at:
-					invoiced_at = datetime.strptime(invoiced_at[:-14], '%Y-%m-%dT%H:%M:%S')
-					invoiced_at = invoiced_at - timedelta(hours=2)
+					invoiced_at = parse_datetime(invoiced_at)
 				else:
 					invoiced_at = None
 				order_info['invoiced_at'] = invoiced_at
+				
 
 				order_info['client_name'] = order_json_response['clientProfileData']['firstName'] + ' ' + order_json_response['clientProfileData']['lastName']
 				order_info['client_phone_number'] = order_json_response['clientProfileData']['phone']
