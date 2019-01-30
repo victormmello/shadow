@@ -72,8 +72,8 @@ keyname = urllib2.quote(keyname, '')
 pk11_uri = 'pkcs11://%s/%s?pin=%s' % (module, keyname, pin)
 
 # Assinando a NFe com A3
-xmlsec.sign(xml, pk11_uri)
-
+a,cert, chave = xmlsec.sign(xml, pk11_uri)
+print(chave)
 # Salvando a NFe assinada
 import pdb; pdb.set_trace()
 xml.write(nfe[:-3] + '-assinada.xml',
