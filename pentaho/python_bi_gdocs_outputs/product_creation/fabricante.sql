@@ -13,7 +13,7 @@ SELECT DISTINCT fabricante FROM (
 	FROM fornecedores f
 	WHERE
 	f.inativo = 0 and
-	(f.data_para_transferencia >= GETDATE()-360 OR f.fornecedor IN ('MORINA','Love It'))
+	(f.data_para_transferencia >= GETDATE()-360)
 	and f.tipo = 'PRODUTOS ACABADOS'
 ) t
 ORDER BY t.fabricante

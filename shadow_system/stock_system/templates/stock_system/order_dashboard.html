@@ -12,7 +12,7 @@
 				<table class="table table-bordered text-center">
 					<thead>
 						<tr>
-							<th colspan="2">Pendentes: {{total}}</th>
+							<th colspan="2">Pendentes: {{order_current_summary.total}}</th>
 							<th colspan="2">Faturados</th>
 						</tr>
 						<tr>
@@ -25,11 +25,11 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td style="vertical-align: middle;">{{paid}}</td>
-							<td style="vertical-align: middle;">{{not_paid}}</td>
+							<td style="vertical-align: middle;">{{order_current_summary.paid}}</td>
+							<td style="vertical-align: middle;">{{order_current_summary.not_paid}}</td>
 
-							<td style="vertical-align: middle;">{{invoiced_1d}}</td>
-							<td style="vertical-align: middle;">{{invoiced_7d}}</td>
+							<td style="vertical-align: middle;">{{order_current_summary.invoiced_1d}}</td>
+							<td style="vertical-align: middle;">{{order_current_summary.invoiced_7d}}</td>
 						</tr>
 					</tbody>
 				</table>		

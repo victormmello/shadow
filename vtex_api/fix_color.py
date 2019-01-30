@@ -1,5 +1,6 @@
 from shadow_database import DatabaseConnection
 from shadow_helpers.helpers import set_in_dict
+from shadow_vtex.vtex import post_to_webservice
 dc = DatabaseConnection()
 import os, fnmatch, shutil, requests, csv
 import requests
@@ -7,39 +8,6 @@ from bs4 import BeautifulSoup as Soup
 from multiprocessing import Pool, Manager
 
 # --------------------------------------------------------------------------------------------------------------------------------
-
-webserviceURL = "http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl"
-
-params = {
-	"Content-Type": "text/xml",
-	"Authorization": "Basic dnRleGFwcGtleS1tYXJjaWFtZWxsby1YTlpGVVg6SEpHVkdVUFVTTVpTRllJSFZQTEpQRkJaUFlCTkxDRkhSWVRUVVRQWlNZVFlDSFRJT1BUSktBQUJISEZIVENJUEdTQUhGT01CWkxSUk1DWEhGU1lXSlZXUlhSTE5PSUdQUERTSkhMRFpDUktaSklQRktZQkJETUZMVklLT0RaTlE=",
-}
-
-auth = ("vtexappkey-marciamello-XNZFUX","HJGVGUPUSMZSFYIHVPLJPFBZPYBNLCFHRYTTUTPZSYTYCHTIOPTJKAABHHFHTCIPGSAHFOMBZLRRMCXHFSYWJVWRXRLNOIGPPDSJHLDZCRKZJIPFKYBBDMFLVIKODZNQ")
-
-def post_to_webservice(soap_action, soap_message, retry=3):
-	params["SOAPAction"] = soap_action
-	request_type = soap_action.split('/')[-1]
-
-	for i in range(0, retry):
-		try:
-			response = requests.post("http://webservice-marciamello.vtexcommerce.com.br/Service.svc?singleWsdl", auth=auth, headers=params, data=soap_message.encode(), timeout=10)
-			print("%s %s" % (request_type, response.status_code))
-			if response.status_code == 200:
-				break
-			elif response.status_code == 429:
-				import time
-				time.sleep(10)
-				raise Exception()
-			else:
-				raise Exception()
-
-		except Exception as e:
-			if i == retry-1:
-				print('desistindo')
-				return None
-
-	return Soup(response.text, "xml")
 
 def f(product_info):
 	ean = product_info['ean']
@@ -116,10 +84,10 @@ def f(product_info):
 
 
 if __name__ == '__main__':
-	filter_str = """p.produto in ('22.05.0473','22.05.0473','22.05.0560','22.05.0560','22.05.0555','22.05.0555','22.03.0249','22.03.0249','22.02.0246','22.02.0246','35.02.0834','35.02.0834','35.02.0830','35.02.0830','22.07.0267','22.07.0267','22.07.0279','22.07.0279','35.02.0833','35.02.0833','22.05.0512','22.05.0512','22.07.0276','22.07.0276','23.11.0206','23.11.0206','22.06.0457','22.06.0457','35.01.0734','35.01.0734','22.05.0368','22.05.0368','22.12.0541','22.12.0541','35.01.0748','35.01.0748','35.09.1044','35.09.1044','35.01.0735','35.01.0735','35.01.0840','35.01.0840','22.05.0565','22.05.0565','22.03.0243','22.03.0243','22.07.0285','22.07.0285','22.05.0572','22.05.0572','37.01.0018','37.01.0018','31.02.0070','31.02.0070','22.12.0378')"""
+	# filter_str = """p.produto in ('20.02.0005','22.02.0238','22.03.0188','22.03.0248','22.05.0577','22.06.0333','22.06.0457','22.12.0483','22.15.0007','23.11.0206','31.02.0070','32.06.0051','33.02.0232','35.01.0748','35.02.0785','35.09.1000','35.09.1044')"""
 
 	query = """
-		SELECT 
+		SELECT
 			p.produto as prod_code,
 			ps.grade as size, 
 			ps.COR_PRODUTO as cod_color, 
@@ -144,22 +112,29 @@ if __name__ == '__main__':
 		left join bi_vtex_categorizacao_categoria cat2 on cat2.grupo_produto = p.GRUPO_PRODUTO and cat2.subgrupo_produto is null
 		left join bi_vtex_categorizacao_cor color on color.linx_color = pc.DESC_COR_PRODUTO
 		where 1=1
-			and (%s)
+			-- and p.produto in (
+			-- 	select distinct
+			-- 		vp.produto
+			-- 	from bi_vtex_product_items vpi
+			-- 	inner join bi_vtex_products vp on vpi.product_id = vp.product_id
+			-- 	where vpi.vtex_color = 'None'
+			-- )
+			and p.produto = '22.05.0577'
 		order by ps.CODIGO_BARRA
 		;
-	""" % filter_str
+	"""
 	# print(query)
 	products_to_register = dc.select(query, strip=True, dict_format=True)
 	# print(products_to_register)
 
 	errors = []
 	# Rodar sem thread:
-	for product_to_register in products_to_register:
-		errors.append(f(product_to_register))
+	# for product_to_register in products_to_register:
+	# 	errors.append(f(product_to_register))
 
 	# ============== nao rodar com threads ainda
-	# with Pool(5) as p:
-	# 	errors = p.map(f, [(x, image_dict) for x in products_to_register])
+	with Pool(20) as p:
+		errors = p.map(f, products_to_register)
 
 	errors = [x for x in errors if x]
 	print(errors)

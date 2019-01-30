@@ -17,12 +17,13 @@ product_price = {}
 with open('repricing.csv', encoding='latin-1') as csvfile:
 	reader = csv.DictReader(csvfile, delimiter=';')
 	for row in reader:
-		prod_code = row['produto'].strip()
+		if row.get('produto'):
+			prod_code = row['produto'].strip()
 
-		# set_in_dict(product_price, float(row['preco_de'].strip().replace(',', '.')), [prod_code, 'original_price'])
+			# set_in_dict(product_price, float(row['preco_de'].strip().replace(',', '.')), [prod_code, 'original_price'])
 
-		# set_in_dict(product_price, clean_float_str(row['preco_por']), [prod_code, 'sale_price'])
-		set_in_dict(product_price, float(str(row['desconto_perc']).replace('%', '').strip().replace(',', '.'))/100, [prod_code, 'discount_perc'])
+			# set_in_dict(product_price, clean_float_str(row['preco_por']), [prod_code, 'sale_price'])
+			set_in_dict(product_price, float(str(row['desconto_perc']).replace('%', '').strip().replace(',', '.'))/100, [prod_code, 'discount_perc'])
 
 product_filter = ','.join(["'%s'" % x for x in product_price])
 
@@ -31,7 +32,7 @@ def update_price_linx(product):
 		UPDATE produtos_precos 
 		set promocao_desconto = %(discount)s*100, 
 		preco_liquido1 = preco1*(1-%(discount)s) 
-		where produto = '%(product)s' and codigo_tab_preco = 11
+		where produto = '%(product)s' and codigo_tab_preco in (1,10, 11)
 	""" % {
 		'discount': product_price[product]['discount_perc'],
 		'product': product,
@@ -108,7 +109,7 @@ if __name__ == '__main__':
 	print(query)
 	skus_to_update = dc.select(query, strip=True, dict_format=True)
 
-	with Pool(10) as p:
+	with Pool(1) as p:
 		integration_check = p.map(update_price_linx, product_price)
 	
 	with Pool(10) as p:

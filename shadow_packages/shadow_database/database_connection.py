@@ -16,6 +16,8 @@ class DatabaseConnection(object):
 		# database_connection_file = open("database_connection.json", 'rb')
 		# database_connection_config = json.load(database_connection_file)
 
+
+
 		self.cnxn = pyodbc.connect('DRIVER=%s;SERVER=%s;DATABASE=%s;UID=%s;PWD=%s' % (
 			database_config.driver,
 			database_config.server,
@@ -23,9 +25,6 @@ class DatabaseConnection(object):
 			database_config.username,
 			database_config.password
 			))
-		self.cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='latin1')
-		self.cnxn.setdecoding(pyodbc.SQL_WCHAR, encoding='latin1')
-		self.cnxn.setencoding(encoding='latin1')
 		self.cursor = self.cnxn.cursor()
 
 	def select(self, query, strip=False, dict_format=False):
@@ -52,7 +51,7 @@ class DatabaseConnection(object):
 			return result_dicts
 
 	
-	def execute(self,query):
+	def execute(self, query):
 		self.cursor.execute(query)
 		self.cnxn.commit()
 
@@ -87,7 +86,15 @@ class DatabaseConnection(object):
 		for query_values_dicts in chunks(value_dicts, 999):
 			insert_list = []
 			for query_values_dict in query_values_dicts:
-				query_row = '(%s)' % ','.join('\'%s\'' % self.sanitize(query_values_dict[col]) for col in columns)
+				sanitized_values = []
+				for col in columns:
+					value = query_values_dict[col]
+					if value is None:
+						sanitized_values.append('null')
+					else:
+						sanitized_values.append('\'%s\'' % self.sanitize(value))
+
+				query_row = '(%s)' % ','.join(sanitized_values)
 				insert_list.append(query_row)
 			query = """INSERT INTO %s %s VALUES
 			%s
