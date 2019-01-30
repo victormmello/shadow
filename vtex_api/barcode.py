@@ -2,6 +2,10 @@ import sys
 from shadow_database import DatabaseConnection
 from shadow_helpers.helpers import set_in_dict
 dc = DatabaseConnection()
+yay = dc.select('select top 1 * from produtos;', strip=True)
+if yay:
+	print('database connection OK')
+
 
 fp = open('/dev/hidraw0', 'rb')
 
@@ -26,27 +30,30 @@ def barcode_reader():
 
 		buffer = fp.read(8)
 		for c in buffer:
-			if ord(c) > 0:
+			int_value = c
+			if not isinstance(c, int):
+				int_value = ord(c)
+			if int_value > 0:
 
-				if int(ord(c)) == 40:
+				if int_value == 40:
 					done = True
 					break;
 
 				if shift:
 
-					if int(ord(c)) == 2:
+					if int_value == 2:
 						shift = True
 
 					else:
-						ss += hid2[int(ord(c))]
+						ss += hid2[int_value]
 						shift = False
 
 				else:
-					if int(ord(c)) == 2:
+					if int_value == 2:
 						shift = True
 
 					else:
-						ss += hid[int(ord(c))]
+						ss += hid[int_value]
 	return ss
 
 if __name__ == '__main__':
@@ -55,6 +62,7 @@ if __name__ == '__main__':
 	try:
 		while True:
 			barcode = barcode_reader()
+			print(barcode)
 			if (len(barcode)==4):
 				position = barcode
 				flag_position = True
@@ -69,11 +77,12 @@ if __name__ == '__main__':
 
 				query = """
 					INSERT INTO bi_estoque_localizacao (filial, codigo_barra, posicao)
-					VALUES ('E-COMMERCE', %(codigo_barra)s, %(posicao)s) 
+					VALUES ('E-COMMERCE', '%(codigo_barra)s', '%(posicao)s') 
 					""" % {
 						"codigo_barra": ean,
 						"posicao": position
 					}
+				dc.execute(query)
 	except KeyboardInterrupt:
 		pass
 
