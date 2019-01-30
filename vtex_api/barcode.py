@@ -10,7 +10,7 @@ if yay:
 fp = open('/dev/hidraw0', 'rb')
 
 def ean_to_product_color(ean):
-	sizes = ['xxgg','xgg','xpp','10','12','14','15','16','17','18','19','20','21','22','32','33','34','35','36','37','38','39','40','42','44','45','46','48','50','60','70','gg','pp','1','2','3','4','5','6','7','8','g','m','p','u']
+	sizes = ['XXGG','XGG','XPP','10','12','14','15','16','17','18','19','20','21','22','32','33','34','35','36','37','38','39','40','42','44','45','46','48','50','60','70','GG','PP','1','2','3','4','5','6','7','8','G','M','P','U']
 
 	for size in sizes:
 		if barcode[:-len(size)] == size:
@@ -82,16 +82,29 @@ if __name__ == '__main__':
 				product_color = ean_to_product_color(ean)
 				flag_position = False
 				flag_ean = False
-				# print(product_color)
 				query = """
-					INSERT INTO bi_estoque_localizacao (filial, codigo_barra, posicao)
-					VALUES ('%(produto_cor)s','E-COMMERCE', '%(posicao)s') 
+					SELECT *
+					FROM bi_estoque_localizacao bel 
+					where bel.produto_cor = %(produto_cor)s
 					""" % {
-						"produto_cor": product_color,
-						"posicao": position
+						"produto_cor": product_color
 					}
-				print(query)
-				# dc.execute(query)
+				product_search = dc.select(query, dict_format = True, strip = True)
+				if product_search:
+					if product_search['posicao'] = position:
+						print("Position ok")
+					else:
+						print("Wrong position")
+				else:
+					print("Adicionando posicao")
+					query = """
+						INSERT INTO bi_estoque_localizacao (filial, codigo_barra, posicao)
+						VALUES ('%(produto_cor)s','E-COMMERCE', '%(posicao)s') 
+						""" % {
+							"produto_cor": product_color,
+							"posicao": position
+						}
+					dc.execute(query)
 	except KeyboardInterrupt:
 		pass
 
