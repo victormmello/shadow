@@ -10,26 +10,38 @@ def try_to_request(*args, **kwargs):
 		try:
 			response = requests.request(*args, **kwargs)
 
-			print(response.status_code)
-			if response.status_code == 200:
+			# print(response.status_code)
+			if response.status_code in (200, 201):
 				break
 			elif response.status_code == 404:
 				return None
 			elif response.status_code == 429:
+				print('too fast... waiting')
 				time.sleep(10)
 			else:
 				raise Exception()
 
 		except Exception as e:
 			if i == retry-1:
-				print(response.text)
 				# import pdb; pdb.set_trace()
 				if response:
-					print('desistindo')
+					print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), response.text))
+				else:
+					print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), 'desistindo'))
 
 				return None
 	
 	return response
+
+def authenticated_request(*args, **kwargs):
+	base_headers = vtex_config.api_connection_header
+	if kwargs.get('headers'):
+		headers = base_headers.copy()
+		headers.update(kwargs['headers'])
+	else:
+		headers = base_headers
+
+	return try_to_request(headers=headers, *args, **kwargs)
 
 
 def post_to_webservice(soap_action, soap_message, retry=3):
@@ -120,6 +132,8 @@ def update_vtex_product(product_id, update_dict, dafiti_store=False):
 
 		if isinstance(v, str):
 			product_dict[k] = (v % product_dict)
+		elif hasattr(v, '__call__'):
+			product_dict[k] = v(product_dict)
 
 	dafiti_store_str = ''
 	if dafiti_store:
@@ -171,6 +185,8 @@ def update_vtex_product(product_id, update_dict, dafiti_store=False):
 			</soapenv:Body>
 		</soapenv:Envelope>""" % product_dict
 
+
+	# print(soap_productupdate)
 
 	soup = post_to_webservice("http://tempuri.org/IService/ProductInsertUpdate", soap_productupdate)
 	if not soup:

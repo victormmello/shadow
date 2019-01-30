@@ -16,9 +16,17 @@ def get_product_info(product_ref_id):
 
 	url = "https://marciamello.vtexcommercestable.com.br/api/catalog_system/pub/products/search"
 	params = {"fq":"alternateIds_RefId:%s" % product_ref_id['produto']}
-	response = requests.request("GET", url, headers=api_connection_config, params=params)
-	print('.', end='')
-	json_response = json.loads(response.text)
+
+	for i in range(0,20):
+		try:
+			response = requests.request("GET", url, headers=api_connection_config, params=params)
+			json_response = json.loads(response.text)
+			print('.', end='')
+
+			break
+		except Exception as e:
+			pass
+
 	for product in json_response:
 		product_id = product["productId"]
 		produto = product["productReference"]
@@ -80,17 +88,18 @@ if __name__ == '__main__':
 		p.grupo_produto != 'GIFTCARD' and
 		e.estoque_disponivel > 0 and
 		e.filial = 'E-COMMERCE'
+		order by e.produto
 	"""
 
-	print('Connecting to database...',end='')
+	print('Connecting to database...', end='')
 	dc = DatabaseConnection()
 	print('Done!')
 
-	print('Getting products from database...',end='')
-	product_ref_ids = dc.select(query,dict_format=True,strip=True)
+	print('Getting products from database...', end='')
+	product_ref_ids = dc.select(query, dict_format=True, strip=True)
 	print('Done!')
 
-	print('Getting product info from vtex...',end='')
+	print('Getting product info from vtex...', end='')
 
 	product_info = {
 		"product_categories":[],
@@ -104,7 +113,7 @@ if __name__ == '__main__':
 	# 	result.append(get_product_info(x))
 
 	# Multi Threading:
-	with Pool(200) as p:
+	with Pool(20) as p:
 		result = p.map(get_product_info, product_ref_ids)
 
 	for result_thread in result:

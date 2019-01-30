@@ -1,6 +1,8 @@
 import gspread
 from shadow_google_spreadsheet.client_secret import client_secret_data
 from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
+import numbers
 
 def open(workbook_name):
 	# use creds to create a client to interact with the Google Drive API
@@ -17,11 +19,6 @@ def open(workbook_name):
 
 	return workbook
 
-def get_all_recods(workbook,worksheet_name):
-	# Extract all of the values
-	list_of_hashes = workbook.worksheet(worksheet_name).get_all_records()
-	return list_of_hashes
-
 def update_cell(worksheet,row,column,value,max_tries=3,try_number=1):
 	try:
 		worksheet.update_cell(row,column,value)
@@ -30,3 +27,40 @@ def update_cell(worksheet,row,column,value,max_tries=3,try_number=1):
 			time.sleep(try_number)
 			try_number += 1
 			update_cell(worksheet,row,column,value,try_number=try_number)
+
+def get_column_name(col_number):
+	col_names = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ']
+	return col_names[col_number-1]
+
+def excel_date(date1):
+	temp = datetime(1899, 12, 30)    # Note, not 31st Dec but 30th!
+	delta = date1 - temp
+	return float(delta.days) + (float(delta.seconds) / 86400)
+
+def update_cells_with_dict(worksheet,columns,query_result):
+	if query_result:
+		worksheet_rows = len(query_result)+1
+		worksheet_cols = len(query_result[0])
+		last_col_name = get_column_name(worksheet_cols)
+	
+		worksheet.resize(rows=worksheet_rows, cols=worksheet_cols)
+
+		concat_list = columns
+		for l in query_result:
+			concat_list += l
+
+		cell_list = worksheet.range('A1:%s%d' % (last_col_name,worksheet_rows))
+		i = 0
+		for cell in cell_list:
+			if isinstance(concat_list[i], datetime):
+				cell.value = excel_date(concat_list[i])
+			elif isinstance(concat_list[i],numbers.Number):
+				cell.value = int(round(concat_list[i],0))
+			else:
+				cell.value = str(concat_list[i])
+			i += 1
+
+		worksheet.update_cells(cell_list)
+	
+	else:
+		worksheet.resize(rows=1)
