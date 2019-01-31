@@ -164,4 +164,14 @@ if __name__ == '__main__':
 		) t;
 	""")
 
-	print('Done!')
+	catalog_summary = dc.select("""
+		SELECT
+			count(distinct product_id) as product,
+			count(distinct (CAST(product_id AS varchar) + vtex_color)) as product_color,
+			count(*) as skus,
+			sum(vpi.stock_quantity) as total_stock
+		from bi_vtex_product_items vpi
+		where vpi.stock_quantity > 0""", dict_format=True, strip=True)
+
+	print('')
+	print(catalog_summary[0])
