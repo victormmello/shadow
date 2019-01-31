@@ -32,7 +32,7 @@ class OrderList(ListView):
 		{
 			'name': 'Status',
 			'field': 'status',
-			'choices': ['Preparando Entrega', 'Pagamento Pendente', 'Faturado', 'Cancelado'],
+			'choices': ['Tudo', 'Preparando Entrega', 'Pagamento Pendente', 'Faturado', 'Cancelado'],
 		},
 	]
 
@@ -49,6 +49,9 @@ class OrderList(ListView):
 					orders = orders.filter(**{field: [x.upper() for x in values]})
 
 				elif len(values) == 1:
+					if field == 'status' and values[0] == 'Tudo':
+						continue
+						
 					if field == 'order_items__ean':
 						field = field + '__iexact'
 					else:

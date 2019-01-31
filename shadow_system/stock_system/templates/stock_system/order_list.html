@@ -31,7 +31,7 @@
 							{% if filter_field.choices %}
 								<select class="form-control" id="filter_{{filter_field.field}}" name="{{filter_field.field}}">
 									{% for choice in filter_field.choices %}
-										<option value="{{choice}}">{{choice}}</option>
+										<option value="{{choice}}" {% if choice == filter_field.value%}selected{% endif %}>{{choice}}</option>
 									{% endfor %}
 								</select>
 							{% else %}
