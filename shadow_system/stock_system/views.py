@@ -29,6 +29,11 @@ class OrderList(ListView):
 			'name': 'Cliente',
 			'field': 'client_name',
 		},
+		{
+			'name': 'Status',
+			'field': 'status',
+			'choices': ['Tudo', 'Preparando Entrega', 'Pagamento Pendente', 'Faturado', 'Cancelado'],
+		},
 	]
 
 	def get_queryset(self):
@@ -44,6 +49,9 @@ class OrderList(ListView):
 					orders = orders.filter(**{field: [x.upper() for x in values]})
 
 				elif len(values) == 1:
+					if field == 'status' and values[0] == 'Tudo':
+						continue
+						
 					if field == 'order_items__ean':
 						field = field + '__iexact'
 					else:

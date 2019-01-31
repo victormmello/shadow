@@ -28,7 +28,15 @@
 					{% for filter_field in filter_fields %}
 						<div class="col-auto">
 							<label for="filter_{{filter_field.field}}">{{filter_field.name}}</label>
-							<input type="text" class="form-control" id="filter_{{filter_field.field}}" name="{{filter_field.field}}" value="{{filter_field.value}}">
+							{% if filter_field.choices %}
+								<select class="form-control" id="filter_{{filter_field.field}}" name="{{filter_field.field}}">
+									{% for choice in filter_field.choices %}
+										<option value="{{choice}}" {% if choice == filter_field.value%}selected{% endif %}>{{choice}}</option>
+									{% endfor %}
+								</select>
+							{% else %}
+								<input type="text" class="form-control" id="filter_{{filter_field.field}}" name="{{filter_field.field}}" value="{{filter_field.value}}">
+							{% endif %}
 						</div>
 					{% endfor %}
 				</div>
