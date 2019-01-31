@@ -29,6 +29,11 @@ class OrderList(ListView):
 			'name': 'Cliente',
 			'field': 'client_name',
 		},
+		{
+			'name': 'Status',
+			'field': 'status',
+			'choices': ['Preparando Entrega', 'Pagamento Pendente', 'Faturado', 'Cancelado'],
+		},
 	]
 
 	def get_queryset(self):
