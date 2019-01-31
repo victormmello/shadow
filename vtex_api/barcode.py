@@ -13,8 +13,8 @@ def ean_to_product_color(ean):
 	sizes = ['XXGG','XGG','XPP','10','12','14','15','16','17','18','19','20','21','22','32','33','34','35','36','37','38','39','40','42','44','45','46','48','50','60','70','GG','PP','1','2','3','4','5','6','7','8','G','M','P','U']
 
 	for size in sizes:
-		if barcode[:-len(size)] == size:
-			produto_cor = barcode[-len(size):]
+		if barcode[-len(size):] == size:
+			produto_cor = barcode[:-len(size)]
 			return produto_cor
 
 def barcode_reader():
@@ -98,7 +98,7 @@ if __name__ == '__main__':
 				else:
 					print("Adicionando posicao")
 					query = """
-						INSERT INTO bi_estoque_localizacao (filial, codigo_barra, posicao)
+						INSERT INTO bi_estoque_localizacao (produto_cor, filial, posicao)
 						VALUES ('%(produto_cor)s','E-COMMERCE', '%(posicao)s') 
 						""" % {
 							"produto_cor": product_color,
