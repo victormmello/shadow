@@ -2,8 +2,20 @@ import sys
 from shadow_database import DatabaseConnection
 from shadow_helpers.helpers import set_in_dict
 dc = DatabaseConnection()
+yay = dc.select('select top 1 * from produtos;', strip=True)
+if yay:
+	print('database connection OK')
+
 
 fp = open('/dev/hidraw0', 'rb')
+
+def ean_to_product_color(ean):
+	sizes = ['XXGG','XGG','XPP','10','12','14','15','16','17','18','19','20','21','22','32','33','34','35','36','37','38','39','40','42','44','45','46','48','50','60','70','GG','PP','1','2','3','4','5','6','7','8','G','M','P','U']
+
+	for size in sizes:
+		if barcode[:-len(size)] == size:
+			produto_cor = barcode[-len(size):]
+			return produto_cor
 
 def barcode_reader():
 	hid = {4: 'a', 5: 'b', 6: 'c', 7: 'd', 8: 'e', 9: 'f', 10: 'g', 11: 'h', 12: 'i', 13: 'j', 14: 'k', 15: 'l', 16: 'm',
@@ -26,27 +38,30 @@ def barcode_reader():
 
 		buffer = fp.read(8)
 		for c in buffer:
-			if ord(c) > 0:
+			int_value = c
+			if not isinstance(c, int):
+				int_value = ord(c)
+			if int_value > 0:
 
-				if int(ord(c)) == 40:
+				if int_value == 40:
 					done = True
 					break;
 
 				if shift:
 
-					if int(ord(c)) == 2:
+					if int_value == 2:
 						shift = True
 
 					else:
-						ss += hid2[int(ord(c))]
+						ss += hid2[int_value]
 						shift = False
 
 				else:
-					if int(ord(c)) == 2:
+					if int_value == 2:
 						shift = True
 
 					else:
-						ss += hid[int(ord(c))]
+						ss += hid[int_value]
 	return ss
 
 if __name__ == '__main__':
@@ -55,6 +70,7 @@ if __name__ == '__main__':
 	try:
 		while True:
 			barcode = barcode_reader()
+			print(barcode)
 			if (len(barcode)==4):
 				position = barcode
 				flag_position = True
@@ -63,17 +79,32 @@ if __name__ == '__main__':
 				flag_ean = True
 				
 			if flag_ean and flag_position:
-
+				product_color = ean_to_product_color(ean)
 				flag_position = False
 				flag_ean = False
-
 				query = """
-					INSERT INTO bi_estoque_localizacao (filial, codigo_barra, posicao)
-					VALUES ('E-COMMERCE', %(codigo_barra)s, %(posicao)s) 
+					SELECT *
+					FROM bi_estoque_localizacao bel 
+					where bel.produto_cor = %(produto_cor)s
 					""" % {
-						"codigo_barra": ean,
-						"posicao": position
+						"produto_cor": product_color
 					}
+				product_search = dc.select(query, dict_format = True, strip = True)
+				if product_search:
+					if product_search['posicao'] = position:
+						print("Position ok")
+					else:
+						print("Wrong position")
+				else:
+					print("Adicionando posicao")
+					query = """
+						INSERT INTO bi_estoque_localizacao (filial, codigo_barra, posicao)
+						VALUES ('%(produto_cor)s','E-COMMERCE', '%(posicao)s') 
+						""" % {
+							"produto_cor": product_color,
+							"posicao": position
+						}
+					dc.execute(query)
 	except KeyboardInterrupt:
 		pass
 
