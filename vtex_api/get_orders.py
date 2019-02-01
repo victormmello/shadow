@@ -125,7 +125,6 @@ def get_orders_by_date_range(date_range):
 					email_json_response = json.loads(email_response.text)
 					client_email = email_json_response[0]['email']
 
-					order_info['client_email'] = client_email
 				except Exception as e:
 					try:
 						get_email_by_cpf_url = 'http://marciamello.vtexcommercestable.com.br/api/dataentities/CL/search/?document=%s&_fields=email' % user_cpf
@@ -133,9 +132,9 @@ def get_orders_by_date_range(date_range):
 						email_json_response = json.loads(email_response.text)
 						client_email = email_json_response[0]['email']
 
-						order_info['client_email'] = client_email
 					except Exception as e:
 						pass
+				order_info['client_email'] = client_email
 
 				order_info['cpf'] = user_cpf
 				order_info['courier'] = order_json_response['shippingData']['logisticsInfo'][0]['deliveryCompany']
