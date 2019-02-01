@@ -295,10 +295,10 @@ if __name__ == '__main__':
 	skus_to_reduce = make_dict(skus_to_reduce, 'ordered_quantity', ['sku_id'], repeated_key='sum')
 	skus_to_reduce = [{'sku_id': sku_id, 'ordered_quantity': qnt} for sku_id, qnt in skus_to_reduce.items()]
 
-	with Pool(60) as p:
+	with Pool(20) as p:
 		errors = p.map(get_stock_fix_from_orders, [(x, fixes_dict) for x in skus_to_reduce])
 
-	with Pool(60) as p:
+	with Pool(20) as p:
 		errors = p.map(fix_stock, [{'sku_id': sku_id, 'true_quantity': qnt} for sku_id, qnt in fixes_dict.items()])
 
 	# for x in [{'sku_id': sku_id, 'true_quantity': qnt} for sku_id, qnt in fixes_dict.items()]:
