@@ -274,7 +274,7 @@ if __name__ == '__main__':
 							COALESCE(e.estoque_disponivel - 0, 0)
 			end as stock_linx
 		from produtos_barra ps
-		INNER JOIN w_estoque_disponivel_sku e on ps.codigo_barra = e.codigo_barra and e.filial = 'e-commerce' and e.estoque_disponivel > 0
+		LEFT JOIN w_estoque_disponivel_sku e on ps.codigo_barra = e.codigo_barra and e.filial = 'e-commerce' and e.estoque_disponivel > 0
 		LEFT JOIN bi_vtex_product_items vpi on ps.codigo_barra = vpi.ean
 		LEFT JOIN (
 			select codigo_barra 
