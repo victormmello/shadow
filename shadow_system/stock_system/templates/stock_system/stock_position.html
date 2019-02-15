@@ -15,9 +15,11 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-12">
+				<br>
+				<br>
 				<form method="get">
-					<input type="text" class="form-control" id="ean" name="ean">
-					<button type="submit" style="display: none;"></button>
+					<input type="text" class="form-control" id="ean" name="ean" style="font-size: 50px; height: 80px;">
+					<button type="submit"  style="padding:50px;">GO!</button>
 				</form>
 				<script type="text/javascript">
 					$(function(){
@@ -31,7 +33,7 @@
 				<br>
 				<br>
 				{% if ean %}
-					<h1>{{ean}}: {{position}}</h1>
+					<h1 class="text-center">{{ean}}: {{position}}</h1>
 				{% endif %}
 			</div>
 		</div>
