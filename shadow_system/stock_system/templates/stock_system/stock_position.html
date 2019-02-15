@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<form method="get">
+					<input type="text" class="form-control" id="ean" name="ean">
+					<button type="submit" style="display: none;"></button>
+				</form>
+				<script type="text/javascript">
+					$(function(){
+					    $("#ean").focus();
+					});
+				</script>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<br>
+				<br>
+				{% if ean %}
+					<h1>{{ean}}: {{position}}</h1>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</body>
+</html>

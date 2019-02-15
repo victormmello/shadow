@@ -1,9 +1,13 @@
-from django.views.generic import ListView, TemplateView
 from stock_system.models import OrderItem, Order
 
+from django.views.generic import ListView, TemplateView
 from django.db.models import Sum, Case, Value as V, When, IntegerField, Q
 from django.db import connection
+
+from shadow_database import DatabaseConnection
+
 import datetime, copy
+
 
 def execute_query(query):
 	cursor = connection.cursor()
@@ -135,5 +139,38 @@ class OrderDashboard(TemplateView):
 		# 	invoiced_7d=Sum(Case(When(filter_7d, then=V(1)), default=0, output_field=IntegerField())),
 		# )		
 
+
+		return context
+
+
+class StockPosition(TemplateView):
+	template_name = 'stock_system/stock_position.html'
+
+	def get_context_data(self, **kwargs):
+		context = super(StockPosition, self).get_context_data(**kwargs)
+
+		ean = self.request.GET.get('ean')
+		context['ean'] = ean
+
+		if ean:
+			dc = DatabaseConnection()
+
+			ean_position = dc.select("""
+				SELECT
+					ps.codigo_barra as ean,
+					dsp.position as position,
+					LEFT(ps.codigo_barra, LEN(ps.codigo_barra) - LEN(ps.grade))
+				from dbo.produtos_barra ps
+				left join dbo.bi_django_stock_position dsp on dsp.product_color = LEFT(ps.codigo_barra, LEN(ps.codigo_barra) - LEN(ps.grade))
+				where ps.codigo_barra = '%s'
+				;
+			""" % ean, strip=True, dict_format=True)
+
+			if not ean_position:
+				context['position'] = 'Produto não existe'
+
+			else:
+				ean_position = ean_position[0]
+				context['position'] = ean_position['position']
 
 		return context
