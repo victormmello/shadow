@@ -1,31 +1,44 @@
 from shadow_vtex import vtex_config
 from bs4 import BeautifulSoup as Soup
-import time, requests
 from datetime import datetime
+import time, requests, random
 
 def try_to_request(*args, **kwargs):
-	retry = 3
+	validate_func = kwargs.pop('validate_func', None)
+	retry = kwargs.pop('retry', 3)
+
 	for i in range(0, retry):
 		response = None
 		try:
 			response = requests.request(*args, **kwargs)
 
 			# print(response.status_code)
+
+			if validate_func:
+				validation = validate_func(response)
+				if not validation:
+					raise Exception()
+
 			if response.status_code in (200, 201):
 				break
 			elif response.status_code == 404:
 				return None
-			elif response.status_code == 429:
+			elif response.status_code in (429, 594):
 				print('too fast... waiting')
-				time.sleep(10)
+				time.sleep(15 + random.randint(0, 5))
+				raise Exception('status 429')
 			else:
-				raise Exception()
+				raise Exception('status %s' % response.status_code)
 
 		except Exception as e:
+			time.sleep(2)
+			if str(e):
+				print(e)
+
 			if i == retry-1:
 				# import pdb; pdb.set_trace()
 				if response:
-					print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), response.text))
+					print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), 'desistindo: %s' % response.text))
 				else:
 					print('%s: %s' % (datetime.now().strftime('%H:%M:%S'), 'desistindo'))
 
@@ -42,7 +55,6 @@ def authenticated_request(*args, **kwargs):
 		headers = base_headers
 
 	return try_to_request(headers=headers, *args, **kwargs)
-
 
 def post_to_webservice(soap_action, soap_message, retry=3):
 	vtex_config.params["SOAPAction"] = soap_action
@@ -99,8 +111,6 @@ def update_vtex_product(product_id, update_dict, dafiti_store=False):
 	if not soup:
 		return 'error: soap_productget %s' % product_id
 
-
-	
 	product_dict = {
 		'AdWordsRemarketingCode': soup.find('a:AdWordsRemarketingCode').text,
 		'BrandId': soup.find('a:BrandId').text,
@@ -140,12 +150,8 @@ def update_vtex_product(product_id, update_dict, dafiti_store=False):
 		dafiti_store_str = '<arr:int>3</arr:int>'
 	product_dict['dafiti_store'] = dafiti_store_str
 
-
-	release_date_str = datetime.today().strftime('%Y-%m-%dT00:00:00')
-	if product_dict['ReleaseDate']:
-		release_date_str = '<vtex:ReleaseDate>%(ReleaseDate)s</vtex:ReleaseDate>' % product_dict
-	product_dict['release_date_str'] = release_date_str
-
+	if not product_dict['ReleaseDate']:
+		product_dict['ReleaseDate'] = datetime.today().strftime('%Y-%m-%dT00:00:00')
 
 	# --------------------------------------------------------------------------------------------------------------------------------
 
@@ -174,7 +180,7 @@ def update_vtex_product(product_id, update_dict, dafiti_store=False):
 						<!--<vtex:MetaTagDescription>%(MetaTagDescription)s</vtex:MetaTagDescription>-->
 						<vtex:Name>%(Name)s</vtex:Name>
 						<vtex:RefId>%(RefId)s</vtex:RefId>
-						%(release_date_str)s
+						<vtex:ReleaseDate>%(ReleaseDate)s</vtex:ReleaseDate>
 						<vtex:Score>%(Score)s</vtex:Score>
 						<vtex:ShowWithoutStock>%(ShowWithoutStock)s</vtex:ShowWithoutStock>
 						<!--<vtex:SupplierId>%(SupplierId)s</vtex:SupplierId>-->
