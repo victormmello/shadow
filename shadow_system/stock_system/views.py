@@ -19,7 +19,7 @@ def execute_query(query):
 	]
 
 class OrderList(ListView):
-	template_name = 'stock_system/order_list.html'
+	template_name = 'stock_system/order_list2.html'
 	filter_fields = [
 		{
 			'name': 'Pedido',
@@ -36,7 +36,7 @@ class OrderList(ListView):
 		{
 			'name': 'Status',
 			'field': 'status',
-			'choices': ['Tudo', 'Preparando Entrega', 'Pagamento Pendente', 'Faturado', 'Cancelado'],
+			'choices': ['Tudo', 'Preparando Entrega', 'Pagamento Pendente', 'Faturado', 'Cancelado', 'Pronto para o manuseio'],
 		},
 	]
 
@@ -64,6 +64,16 @@ class OrderList(ListView):
 					orders = orders.filter(**{field: values[0]})
 
 				print({field: values})
+
+		for order in orders:
+			order.status_color = 'black'
+			if order.status == 'Cancelado':
+				order.status_color = 'red'
+			elif order.status == 'Pagamento Pendente':
+				order.status_color = 'orange'
+			elif order.status == 'Faturado':
+				order.status_color = 'green'
+				
 
 		return orders
 
@@ -142,7 +152,6 @@ class OrderDashboard(TemplateView):
 
 		return context
 
-
 class StockPosition(TemplateView):
 	template_name = 'stock_system/stock_position.html'
 
@@ -172,5 +181,91 @@ class StockPosition(TemplateView):
 			else:
 				ean_position = ean_position[0]
 				context['position'] = ean_position['position']
+
+		return context
+
+class SkuHistory(ListView):
+	template_name = 'stock_system/sku_history.html'
+
+	def get_queryset(self):
+		ean = self.request.GET.get('ean')
+
+		if not ean:
+			return []
+		else:
+			dc = DatabaseConnection()
+
+			sku_history = dc.select("""
+				SELECT 
+					t.*
+				from (
+					SELECT distinct
+						ps.codigo_barra as ean,
+						'saida' as action,
+						case 
+							when lsp.DATA_PARA_TRANSFERENCIA > ls.DATA_PARA_TRANSFERENCIA then lsp.DATA_PARA_TRANSFERENCIA
+							else ls.DATA_PARA_TRANSFERENCIA 
+						end as transf_date,
+						lsp.QTDE_SAIDA as qnt,
+						ls.FILIAL_DESTINO as filial,
+						ls.NUMERO_NF_TRANSFERENCIA as nf
+					FROM loja_saidas ls
+					INNER JOIN loja_saidas_produto lsp on lsp.ROMANEIO_PRODUTO = ls.ROMANEIO_PRODUTO
+					inner join produtos_barra ps on ps.produto = lsp.produto and ps.COR_PRODUTO = lsp.COR_PRODUTO
+					where 1=1
+						and ls.filial = 'e-commerce'
+						and case 
+							when lsp.DATA_PARA_TRANSFERENCIA > ls.DATA_PARA_TRANSFERENCIA then lsp.DATA_PARA_TRANSFERENCIA
+							else ls.DATA_PARA_TRANSFERENCIA 
+						end >= DATEADD(day, -30, GETDATE())
+					UNION
+					SELECT distinct
+						ps.codigo_barra,
+						'entrada',
+						case 
+							when lep.DATA_PARA_TRANSFERENCIA > le.DATA_PARA_TRANSFERENCIA then lep.DATA_PARA_TRANSFERENCIA
+							else le.DATA_PARA_TRANSFERENCIA 
+						end,
+						lep.QTDE_ENTRADA,
+						le.FILIAL_ORIGEM,
+						le.NUMERO_NF_TRANSFERENCIA
+					FROM loja_entradas le
+					INNER JOIN loja_entradas_produto lep on lep.ROMANEIO_PRODUTO = le.ROMANEIO_PRODUTO
+					inner join produtos_barra ps on ps.produto = lep.produto and ps.COR_PRODUTO = lep.COR_PRODUTO
+					where 1=1
+						and le.filial = 'e-commerce'
+						and case 
+							when lep.DATA_PARA_TRANSFERENCIA > le.DATA_PARA_TRANSFERENCIA then lep.DATA_PARA_TRANSFERENCIA
+							else le.DATA_PARA_TRANSFERENCIA 
+						end >= DATEADD(day, -30, GETDATE())
+					UNION
+					SELECT
+						lvp.CODIGO_BARRA,
+						'venda',
+						data_venda,
+						lvp.qtde,
+						'venda',
+						'venda'
+					FROM dbo.LOJA_VENDA_PRODUTO lvp
+					inner join dbo.FILIAIS fil on fil.cod_filial = lvp.codigo_filial
+					INNER JOIN produtos p on lvp.produto = p.produto
+					where 1=1
+						and fil.filial = 'e-commerce' 
+						and data_venda >= DATEADD(day, -30, GETDATE())
+						and p.grupo_produto != 'GIFTCARD'
+						and lvp.qtde > 0
+				) t
+				where t.ean = '%s'
+				order by t.transf_date
+				;
+			""" % ean, strip=True, dict_format=True)
+
+			return sku_history
+
+	def get_context_data(self, **kwargs):
+		context = super(SkuHistory, self).get_context_data(**kwargs)
+
+		ean = self.request.GET.get('ean')
+		context['ean'] = ean
 
 		return context

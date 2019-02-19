@@ -22,9 +22,12 @@ class Command(BaseCommand):
 		order_item_infos = dc.select("""
 			SELECT
 				voi.*,
-				coalesce(e.estoque_disponivel, 0) as stock_warehouse
+				coalesce(e.estoque_disponivel, 0) as stock_warehouse,
+				dsp.position as warehouse_position
 			from dbo.bi_vtex_order_items voi
 			left join w_estoque_disponivel_sku e on e.codigo_barra = voi.ean and e.filial = 'e-commerce'
+			left join dbo.produtos_barra ps on ps.codigo_barra = voi.ean
+			left join dbo.bi_django_stock_position dsp on dsp.product_color = LEFT(voi.ean, LEN(voi.ean) - LEN(ps.grade))
 			where voi.created_at > '2018-12-26 10:03:33'
 			;
 		""", strip=True, dict_format=True)
@@ -55,7 +58,6 @@ class Command(BaseCommand):
 			order.state = order_info['state']
 			order.postal_code = order_info['postal_code']
 			order.street_number = order_info['street_number']
-			order.number = order_info['street_number']
 
 			order.payment_method_group = order_info['payment_method_group']
 
@@ -90,6 +92,7 @@ class Command(BaseCommand):
 				order_item.image_link = order_item_info['image_link']
 				order_item.stock_warehouse = order_item_info['stock_warehouse']
 				order_item.invoiced_quantity = order_item_info['invoiced_quantity']
+				order_item.warehouse_position = order_item_info['warehouse_position']
 
 			OrderItem.objects.bulk_create(order_items_to_create, batch_size=99)
 

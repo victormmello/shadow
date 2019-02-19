@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from stock_system.views import OrderList, OrderDashboard, StockPosition
+from stock_system.views import OrderList, OrderDashboard, StockPosition, SkuHistory
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +25,5 @@ urlpatterns = [
     path('orders/dashboard', OrderDashboard.as_view()),
 
     path('stock_position', StockPosition.as_view()),
+    path('sku_history', SkuHistory.as_view()),
 ]

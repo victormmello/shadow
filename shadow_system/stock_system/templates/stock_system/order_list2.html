@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+
+	<style type="text/css">
+		#yay td {
+			vertical-align: middle;
+		}
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		{% if filter_fields %}
+			<form method="get">
+				<div class="form-row">
+					{% for filter_field in filter_fields %}
+						<div class="col-auto">
+							<label for="filter_{{filter_field.field}}">{{filter_field.name}}</label>
+							{% if filter_field.choices %}
+								<select class="form-control" id="filter_{{filter_field.field}}" name="{{filter_field.field}}">
+									{% for choice in filter_field.choices %}
+										<option value="{{choice}}" {% if choice == filter_field.value%}selected{% endif %}>{{choice}}</option>
+									{% endfor %}
+								</select>
+							{% else %}
+								<input type="text" class="form-control" id="filter_{{filter_field.field}}" name="{{filter_field.field}}" value="{{filter_field.value}}">
+							{% endif %}
+						</div>
+					{% endfor %}
+				</div>
+				<button type="submit" style="display: none;"></button>
+			</form>
+		{% endif %}
+		
+		<br>
+		<br>
+	
+		<div class="row">
+			<div class="col-12">
+				<table id="yay" class="table table-bordered" style="text-align: center;">
+					<thead>
+						<tr>
+							<th>
+								<button type="button" class="btn btn-info js_toggle_all">D:</button>
+								Data
+							</th>
+							<th>Sequencial</th>
+							<th>Cliente</th>
+							<th>Status</th>
+							<th>Pag.</th>
+							<th>Entrega</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for order in object_list %}
+							<tr class="order_row">
+								<td>
+									<button type="button" class="btn btn-info js_toggle_items">=)</button>
+									{{order.vtex_created_at|date:"d/m/y H:i"}}
+									{% if order.payment_method_group == 'bankInvoice' %}
+										<br><span style="color: green;">{{order.vtex_paid_at|date:"d/m/y H:i"}}</span>
+									{% endif %}
+								</td>
+								<td>{{order.sequence}}</td>
+								<td>{{order.client_name}}</td>
+								<td>
+									<span style="color: {{order.status_color}}">{{order.status}}</span>
+									{% if order.status != 'Faturado' and order.invoiced_quantity %}
+										<br>(Faturado: {{order.invoiced_quantity}})
+									{% endif %}
+								</td>
+								<td>
+									{% if order.payment_method_group == 'bankInvoice' %}
+										Boleto
+									{% else %}
+										Cartão
+									{% endif %}
+								</td>
+								<td>{{order.courier}}</td>
+							</tr>
+							<tr class="items_row">
+								<td colspan="6">
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th>Cod. Barra</th>
+												<th>Qnt</th>
+												<th>Est</th>
+												<th>Posição</th>
+												<th>Produto</th>
+												<th>Imagem</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for order_item in order.order_items.all %}
+												<tr>
+
+													<td><a href="/sku_history?ean={{order_item.ean}}">{{order_item.ean}}</a></td>
+													{% if order_item.quantity == order_item.stock_warehouse %}
+														<td>{{order_item.quantity}}</td>
+														<td>{{order_item.stock_warehouse}}</td>
+													{% elif order_item.quantity > order_item.stock_warehouse %}
+														<td style="color: red;">{{order_item.quantity}}</td>
+														<td style="color: red;">{{order_item.stock_warehouse}}</td>
+													{% else %}
+														<td style="color: blue;">{{order_item.quantity}}</td>
+														<td style="color: blue;">{{order_item.stock_warehouse}}</td>
+													{% endif %}
+													<td>{{order_item.warehouse_position}}</td>
+													<td>{{order_item.product_name}}</td>
+													<td>
+														<img src="{{order_item.image_link}}">
+													</td>
+												</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+									
+								</td>
+							</tr>
+
+						{% endfor %}
+					</tbody>
+				</table>		
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$(function(){
+	    $("#filter_order_items__ean").focus();
+	    $('.js_toggle_items').on('click', function(){
+	    	$(this).parents('.order_row').next().toggle();
+	    });
+	    $('.js_toggle_all').on('click', function(){
+	    	$('.items_row').toggle();
+	    });
+	    
+	});
+</script>
+
+</html>

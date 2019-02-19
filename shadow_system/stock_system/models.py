@@ -19,7 +19,6 @@ class Order(models.Model):
 	state = models.TextField()
 	postal_code = models.TextField()
 	street_number = models.TextField()
-	number = models.TextField()
 	payment_method_group = models.TextField()
 
 	def invoiced_quantity(self):
@@ -27,6 +26,7 @@ class Order(models.Model):
 
 	class Meta:
 		app_label = 'stock_system'
+
 
 class OrderItem(models.Model):
 	ean = models.CharField(max_length=20)
@@ -38,6 +38,7 @@ class OrderItem(models.Model):
 	image_link = models.TextField()
 	stock_warehouse = models.IntegerField()
 	invoiced_quantity = models.IntegerField()
+	warehouse_position = models.CharField(max_length=5, null=True)
 
 	order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='order_items')
 

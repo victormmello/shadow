@@ -73,7 +73,6 @@
 							<th>state</th>
 							<th>postal_code</th>
 							<th>street_number</th>
-							<th>number</th> 
 							<th>vtex_sku</th>
 							<th>vtex_product_id</th>
 							<th>unit_sale_price</th>
@@ -104,6 +103,12 @@
 										<td rowspan="{{order.order_items.all|length}}">{{order.sequence}}</td>
 										<td rowspan="{{order.order_items.all|length}}">{{order.client_name}}</td>
 										<td rowspan="{{order.order_items.all|length}}">
+											{% if order.payment_method_group == 'bankInvoice' %}
+												Boleto
+											{% else %}
+												Cartão
+											{% endif %}
+											<br>
 											{{order.status}}
 											{% if order.status != 'Faturado' and order.invoiced_quantity %}
 												<br>(Faturado: {{order.invoiced_quantity}})
@@ -137,7 +142,6 @@
 										<td>{{order_item.order.neighborhood}}</td>
 										<td>{{order_item.order.state}}</td>
 										<td>{{order_item.order.postal_code}}</td>
-										<td>{{order_item.order.street_number}}</td>
 										<td>{{order_item.order.number}}</td> 
 										<td>{{order_item.vtex_sku}}</td>
 										<td>{{order_item.vtex_product_id}}</td>
